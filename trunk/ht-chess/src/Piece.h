@@ -3,13 +3,13 @@
 
 public enum Piece
 {
-	NONE,
-	KING,
-	QUEEN,
-	KNIGHT,
-	BISHOP,
-	TOWER,
-	ROOK
+	NONE,	//intet
+	KING,	//konge
+	QUEEN,	//dronning
+	KNIGHT,	//springer
+	BISHOP,	//løber
+	TOWER,	//tårn
+	ROOK	//bonde
 };
 
 #endif
