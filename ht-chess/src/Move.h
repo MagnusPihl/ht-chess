@@ -1,3 +1,6 @@
+#ifndef MOVE_H
+#define MOVE_H
+
 public class Move
 {
 	private int to;
@@ -49,3 +52,5 @@ public class Move
 			return content;
 		}
 };
+
+#endif
