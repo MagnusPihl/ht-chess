@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="ht-chess"
-	ProjectGUID="{51C91012-196B-4AA5-A6DB-D19A2B61BB40}"
-	RootNamespace="htchess"
+	Name="test_ht-chess"
+	ProjectGUID="{E7B94D58-43E1-42A9-AA60-8F79367CB74F}"
+	RootNamespace="test_htchess"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
 	>
@@ -114,6 +114,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
+				AdditionalIncludeDirectories="E:\boost"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -133,6 +134,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="E:\boost\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -159,6 +161,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				Description="Auto run test"
+				CommandLine="&quot;$(TargetDir)\$(TargetName).exe&quot; --result_code=no --report_level=no"
 			/>
 		</Configuration>
 	</Configurations>
@@ -171,7 +175,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\main.cpp"
+				RelativePath=".\testMove.cpp"
 				>
 			</File>
 		</Filter>
@@ -180,26 +184,6 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
-			<File
-				RelativePath=".\src\Board.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\Move.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\MoveSelector.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\Piece.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\Position.h"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"

@@ -1,7 +1,7 @@
 #ifndef POSITION_H
 #define POSITION_H
 
-public enum Position
+enum Position
 {
 	A1 = 0x00, A2 = 0x01, A3 = 0x02, A4 = 0x03, A5 = 0x04, A6 = 0x05, A7 = 0x06, A8 = 0x07,
 	B1 = 0x10, B2 = 0x11, B3 = 0x12, B4 = 0x13, B5 = 0x14, B6 = 0x15, B7 = 0x16, B8 = 0x17,
@@ -13,7 +13,7 @@ public enum Position
 	H1 = 0x70, H2 = 0x71, H3 = 0x72, H4 = 0x73, H5 = 0x74, H6 = 0x75, H7 = 0x76, H8 = 0x77,	
 };
 
-public enum Row {
+enum Row {
 	ROW_1 = 0x00,
 	ROW_2 = 0x01,
 	ROW_3 = 0x02,
@@ -24,7 +24,7 @@ public enum Row {
 	ROW_8 = 0x07,	
 }
 
-public enum Column {
+enum Column {
 	COLUMN_A = 0x00,
 	COLUMN_B = 0x10,
 	COLUMN_C = 0x20,

@@ -1,0 +1,11 @@
+1. Visual Studio -> Tools -> Options... -> Projects and Solutions -> VC++ Directories:
+Tilføj SDL folderen og SLD lib folderen til Include files og Library files.
+
+2. test_ht-chess project -> Properties -> Configuration Properties -> C/C++ -> General:
+Tilføj boost til Additional Include Directories
+
+3. test_ht-chess project -> Properties -> Configuration Properties -> Linker -> General:
+Tilføj boost\lib til Additional Library Directories
+
+4. test_ht-chess project -> Properties -> Configuration Properties -> Build Events -> Post-Build Event:
+Command Line = "$(TargetDir)\$(TargetName).exe" --result_code=no --report_level=no

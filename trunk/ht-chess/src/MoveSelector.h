@@ -1,7 +1,7 @@
 #ifndef MOVESELECTOR_H
 #define MOVESELECTOR_H
 
-public class MiniMax
+class MiniMax
 {
 private:
 	int miniMax(Board board, Move *path, bool isMaximizer=true, int curDepth=0, int maxDepth=100)

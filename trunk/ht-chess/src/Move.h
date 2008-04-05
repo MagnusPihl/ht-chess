@@ -1,56 +1,62 @@
 #ifndef MOVE_H
 #define MOVE_H
 
-public class Move
+#include "Piece.h"
+#include "Board.h"
+
+class Move
 {
-	private int to;
-	private int from;
-	private Piece special;
-	private Piece type;
-	private Piece content;
+private:
+	int to;
+	int from;
+	Piece special;
+	Piece type;
+	Piece content;
 
-	public Move(int from, int to, Piece special, Piece type, Piece content) :
-		this->from(from), this->to(to), this->special(special), this->type(type), this->content(content)
-		{
+public:
+	Move() {}
+	Move(int _from, int _to, Piece _special, Piece _type, Piece _content) :
+		from(_from), to(_to), special(_special), type(_type), content(_content)
+	{
 
-		}
+	}
 
-		//
-		public void execute(Board board)
-		{
+	//
+	void execute(Board board)
+	{
 
-		}
+	}
 
-		public void unexecute(Board board)
-		{
+	void unexecute(Board board)
+	{
 
-		}
+	}
 
-		//accessors
-		public int getOldPosition()
-		{
-			return from;
-		}
+	//accessors
+	int getOldPosition()
+	{
+		return from;
+	}
 
-		public int getNewPosition()
-		{
-			return to;
-		}
+	int getNewPosition()
+	{
+		return to;
+	}
 
-		public Piece getSpecial()
-		{
-			return special;
-		}
+	Piece getSpecial()
+	{
+		return special;
+	}
 
-		public Piece getPieceType()
-		{
-			return type;
-		}
+	Piece getPieceType()
+	{
+		return type;
+	}
 
-		public Piece getContent()
-		{
-			return content;
-		}
+	Piece getContent()
+	{
+		return content;
+	}
 };
 
 #endif
