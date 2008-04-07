@@ -5,6 +5,7 @@
 #include "Position.h"
 
 #define CHECK_OVERFLOW true
+#define BOARD_SIZE 256
 
 class Board
 {
@@ -12,7 +13,8 @@ private:
 	Piece* content;
 
 public:
-	static const int BOARD_SIZE = 256;
+
+	friend class BoardRenderer;
 
 	Board() : content(new Piece[BOARD_SIZE]) 
 	{
