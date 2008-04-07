@@ -85,6 +85,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="xcopy ..\post-build ${TargetDir} /H /R /E /Q /C /Y"
 			/>
 		</Configuration>
 		<Configuration
@@ -159,7 +160,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="xcopy ..\post-build ..\Release /H /R /E /Q /C /Y&#x0D;&#x0A;"
+				CommandLine="xcopy ..\post-build $(OutDir) /H /R /E /Q /C /Y"
 			/>
 		</Configuration>
 	</Configurations>

@@ -18,10 +18,33 @@ public:
 
 	Board() : content(new Piece[BOARD_SIZE]) 
 	{
-		for (int i = 0; i < BOARD_SIZE; ++i)	//Is this supposed to be less than check? Nothing was written.
+		for (int i = 0; i < BOARD_SIZE; ++i)
 		{
 			content[i] = NONE;
 		}	
+	}
+	
+	Board(const Board& rhs) : content(new Piece[BOARD_SIZE])
+	{
+		for (int i = 0; i < BOARD_SIZE; ++i)
+		{
+			content[i] = rhs.content[i];
+		}
+	}
+
+	Board& operator= (Board& rhs) {
+		if (this != &rhs)
+		{
+			for (int i = 0; i < BOARD_SIZE; ++i)
+			{
+				content[i] = rhs.content[i];
+			}
+		}
+		return *this;
+	}
+
+	~Board() {
+		delete [] content;
 	}
 
 	/**
