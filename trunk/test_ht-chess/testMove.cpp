@@ -16,7 +16,6 @@ struct Fixture
 BOOST_AUTO_TEST_CASE(testConstructor)
 {
 	Fixture f;
-
 	BOOST_CHECK_EQUAL(f.m1.getOldPosition(), 0);
 	BOOST_CHECK_EQUAL(f.m1.getNewPosition(), 1);
 	BOOST_CHECK_EQUAL(f.m1.getSpecial(), NONE);

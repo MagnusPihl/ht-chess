@@ -75,7 +75,7 @@ class BoardRenderer
 
 		void drawBoard(SDL_Surface* screen, Board* board) 
 		{
-			int x, y, pos, piece, posColor, pieceColor, type;
+			int x, y, pos, posColor, piece, pieceColor, type;			
 			SDL_Surface* picture;
 
 			for (x = 0; x < ROW_COUNT; ++x)
@@ -85,9 +85,9 @@ class BoardRenderer
 					destinationRect.x = x + 20;
 					destinationRect.y = y + 20;
 					pos = GET_POSITION(x,y);
+					piece = board->content[pos];					
+					pieceColor = GET_PIECE_COLOR(piece);
 					posColor = GET_POSITION_COLOR(piece);
-					piece = board->content[pos];
-					pieceColor = GET_POSITION_COLOR(piece);
 					type = GET_PIECE_TYPE(piece);
 					
 					if (pieceColor == BLACK) 
