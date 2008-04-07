@@ -2,14 +2,15 @@
 #define BOARD_H
 
 #include "Piece.h"
+#include "Position.h"
 
 #define CHECK_OVERFLOW true
-#define POSITION_OVERFLOW 0x88
 
 class Board
 {
 private:
 	Piece* content;
+
 public:
 	static const int BOARD_SIZE = 256;
 
@@ -26,7 +27,7 @@ public:
 	/**/
 	Piece getItemAt(int position) 
 	{
-#ifdef CHECK_OVERFLOW
+	#ifdef CHECK_OVERFLOW
 		if ((position & POSITION_OVERFLOW) != 0) 
 		{
 			throw "Index out of bounds: " + position;
@@ -35,9 +36,9 @@ public:
 		{
 			return content[position];
 		}
-#else
+	#else
 		return content[position];
-#endif
+	#endif
 	}
 };
 
