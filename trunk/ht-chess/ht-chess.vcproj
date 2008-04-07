@@ -159,7 +159,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy d:\Programmer\SDL-1.2.13\lib\SDL.dll $(OutDir)"
+				CommandLine="xcopy ..\post-build ..\Release /H /R /E /Q /C /Y&#x0D;&#x0A;xcopy ..\post-build ..\Debug /H /R /E /Q /C /Y"
 			/>
 		</Configuration>
 	</Configurations>
