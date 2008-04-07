@@ -38,8 +38,7 @@ void render()
     SDL_UnlockSurface(screen);
 
   // Tell SDL to update the whole screen
-  //SDL_UpdateRect(screen, 0, 0, WIDTH, HEIGHT);  
-	SDL_Flip(screen);  
+  //SDL_UpdateRect(screen, 0, 0, WIDTH, HEIGHT);  	
 }
 
 int main(int argc, char *argv[])
@@ -74,4 +73,7 @@ int main(int argc, char *argv[])
 		}
 		SDL_Flip(screen);	//Update screen
 	}
+
+	delete board;
+	delete renderer;
 }

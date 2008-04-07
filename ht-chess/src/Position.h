@@ -8,8 +8,8 @@
 #define POSITION_OVERFLOW 0x88
 #define COLUMN_SHIFT 4
 
-#define GET_POSITION(x,y) ((x | y) << COLUMN_SHIFT)
-#define GET_POSITION_COLOR(x) ((((x & 0x11) == 0x11) || ((x & 0x00) == 0x00)) ? BLACK : WHITE)
+#define GET_POSITION(x,y) (x | (y << COLUMN_SHIFT))
+#define GET_POSITION_COLOR(x) ((((x & 0x11) == 0x11) || ((x & 0x11) == 0x00)) ? BLACK : WHITE)
 
 enum Position
 {
