@@ -4,6 +4,7 @@
 #endif
 
 #include "SDL.h"
+//#include "SDL_ttf.h"
 #include "Board.h"
 #include "BoardRenderer.h"
 #include <math.h>

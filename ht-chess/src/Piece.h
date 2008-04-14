@@ -19,7 +19,7 @@ enum Piece
 	NONE = 6	//intet
 };
 
-enum ColoredPieces 
+enum ColoredPiece
 {
 	KING_BLACK = (BLACK | KING),		//konge
 	KING_WHITE = (WHITE | KING),	
@@ -32,7 +32,8 @@ enum ColoredPieces
 	ROOK_BLACK = (BLACK | ROOK),		//tårn
 	ROOK_WHITE = (WHITE | ROOK),
 	PAWN_BLACK = (BLACK | PAWN),		//bonde
-	PAWN_WHITE = (WHITE | PAWN)
+	PAWN_WHITE = (WHITE | PAWN),
+	NO_PIECE = NONE
 };
 
 static const char PIECE_CHARACTERS[] =
