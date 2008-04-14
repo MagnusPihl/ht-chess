@@ -1,46 +1,50 @@
 #ifndef MOVESELECTOR_H
 #define MOVESELECTOR_H
 
+#include <vector>
+#include <stdlib>
+#include "Move.h"
+
 class MiniMax
 {
 private:
 	int miniMax(Board board, Move *path, bool isMaximizer=true, int curDepth=0, int maxDepth=100)
 	{
-		if(curDepth == maxDepth /* AND OTHER SHITZ! */)		//if leaf
+		if(curDepth == maxDepth /* && board.gameEnded() ??? */)		//if leaf
 		{
 			return BoardEvaluator.boardValue(board);
 		}
 		else if(isMaximizer)	//if maximizer
 		{
 			int bestMove = -10000;
-			/*moveList = */MoveGenerator.generateMoves(board);
-			//foreach Move move in moveList
+			std::vector<Move> moveList = MoveGenerator.generateMoves(board);
+			for(std::vector<Move>::iterator itr = moveList.begin(); itr != moveList.end(); itr++)
 			{
-				//Execute move
+				(*itr).execute(&board);
 				curMove = miniMax(board, path, false, curDepth+1, maxDepth);
 				if(curMove > bestMove)
 				{
 					bestMove = curMove
 					path = move;
 				}
-				//Unexecute move
+				(*itr).unexecute(&board);
 			}
 		}
 		else	//if minimizer
 		{
 			int bestMove = 10000;
 			int curMove;
-			/*moveList = */MoveGenerator.generateMoves(board);
-			//foreach Move move in moveList
+			std::vector<Move> moveList = MoveGenerator.generateMoves(board);
+			for(std::vector<Move>::iterator itr = moveList.begin(); itr != moveList.end(); itr++)
 			{
-				//Execute move
+				(*itr).execute(&board);
 				curMove = miniMax(board, path, true, curDepth+1, maxDepth);
 				if(curMove < bestMove)
 				{
 					bestMove = curMove
 					path = move;
 				}
-				//Unexecute move
+				(*itr).unexecute(&board);
 			}
 		}
 	}
