@@ -11,15 +11,22 @@
 #define PIECE_NAME_POS 41
 #define POSITION_COLOR_POS 42
 #define PIECE_SIZE 70
+#define BORDER_LEFT 0
+#define BORDER_RIGHT 1
+#define BORDER_TOP 2
+#define BORDER_BOTTOM 3
+#define BORDER_COUNT 4
 
 class BoardRenderer 
 {	
 	private:
 
-		SDL_Rect pieceRect;
+		//SDL_Rect pieceRect;
 		SDL_Rect destinationRect;
+		SDL_Rect* borderRect[4];
 		SDL_Surface* white;
 		SDL_Surface* black;
+		SDL_Surface* border[4];
 		SDL_Surface* blackOnWhite[NONE];
 		SDL_Surface* blackOnBlack[NONE];
 		SDL_Surface* whiteOnBlack[NONE];	
@@ -31,6 +38,25 @@ class BoardRenderer
 
 			white = SDL_LoadBMP("C:\\docs\\AI\\projects\\skak\\Release\\images\\white.bmp");
 			black = SDL_LoadBMP("C:\\docs\\AI\\projects\\skak\\Release\\images\\black.bmp");
+			border[BORDER_LEFT] = SDL_LoadBMP("C:\\docs\\AI\\projects\\skak\\Release\\images\\borderLeft.bmp");
+			border[BORDER_RIGHT] = SDL_LoadBMP("C:\\docs\\AI\\projects\\skak\\Release\\images\\borderRight.bmp");
+			border[BORDER_TOP] = SDL_LoadBMP("C:\\docs\\AI\\projects\\skak\\Release\\images\\borderTop.bmp");
+			border[BORDER_BOTTOM] = SDL_LoadBMP("C:\\docs\\AI\\projects\\skak\\Release\\images\\borderBottom.bmp");
+			
+			for (i = 0; i < BORDER_COUNT; ++i) 
+			{
+				borderRect[i] = new SDL_Rect();
+				borderRect[i]->h = border[i]->h;
+				borderRect[i]->w = border[i]->w;				
+			}
+			borderRect[BORDER_LEFT]->x = 0;
+			borderRect[BORDER_LEFT]->y = 20;
+			borderRect[BORDER_RIGHT]->x = 580;
+			borderRect[BORDER_RIGHT]->y = 20;
+			borderRect[BORDER_TOP]->x = 0;
+			borderRect[BORDER_TOP]->y = 0;
+			borderRect[BORDER_BOTTOM]->x = 0;
+			borderRect[BORDER_BOTTOM]->y = 580;
 
 			char path[] = "C:\\docs\\AI\\projects\\skak\\Release\\images\\b w.bmp";
 			//			   012 34567 890 123456789 01234 56789012 3456789 0123456
@@ -69,17 +95,26 @@ class BoardRenderer
 		}
 
 	public:
-		BoardRenderer() : pieceRect(SDL_Rect()), destinationRect(SDL_Rect())
+		BoardRenderer() : destinationRect(SDL_Rect()) //pieceRect(SDL_Rect()),
 		{
-			pieceRect.w = PIECE_SIZE;
+			//borderRect = new SDL_Rect[BORDER_COUNT];
+			/*pieceRect.w = PIECE_SIZE;
 			pieceRect.h = PIECE_SIZE;
 			pieceRect.x = 0;
-			pieceRect.y = 0;
+			pieceRect.y = 0;*/
 			destinationRect.w = PIECE_SIZE;
 			destinationRect.h = PIECE_SIZE;		
 
 			loadResources();
-		}		
+		}	
+
+		~BoardRenderer() {			
+			for (int i = 0; i < BORDER_COUNT; ++i) 
+			{
+				delete borderRect[i];			
+			}
+			delete [] borderRect;
+		}	
 
 		void drawBoard(SDL_Surface* screen, Board* board) 
 		{
@@ -89,12 +124,21 @@ class BoardRenderer
 			int *ptr = (int*)screen->pixels;
 			ptr[54+screen->pitch*10] = 0x00FFFF;
 
+			for (int i = 0; i < BORDER_COUNT; ++i)
+			{
+				SDL_BlitSurface(
+								border[i], 
+								NULL, 
+								screen, 
+								borderRect[i]);	
+			}
+
 			for (x = 0; x < ROW_COUNT; ++x)
 			{
 				for (y = 0; y < COLUMN_COUNT; ++y)
 				{
-					destinationRect.x = x*PIECE_SIZE + 20;
-					destinationRect.y = y*PIECE_SIZE + 20;
+					destinationRect.x = (ROW_COUNT - 1 - x)*PIECE_SIZE + 20;
+					destinationRect.y = (COLUMN_COUNT - 1 - y)*PIECE_SIZE + 20;
 
 					pos = GET_POSITION(x,y);
 					piece = board->content[pos];					
@@ -115,12 +159,12 @@ class BoardRenderer
 					} 
 					else 
 					{
-						picture = (posColor == BLACK) ? white : black;
+						picture = (posColor == BLACK) ? black : white;
 					}
 						
 					SDL_BlitSurface(
 								picture, 
-								&pieceRect, 
+								NULL, //&pieceRect, 
 								screen, 
 								&destinationRect);
 				}

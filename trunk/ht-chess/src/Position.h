@@ -8,9 +8,37 @@
 #define POSITION_OVERFLOW 0x88
 #define COLUMN_SHIFT 4
 
-#define GET_POSITION(x,y) (x | (y << COLUMN_SHIFT))
-#define GET_POSITION_COLOR(x) ((((x & 0x11) == 0x11) || ((x & 0x11) == 0x00)) ? BLACK : WHITE)
 
+/**
+ *Retrieves the Column part of a position
+ *The column is not shifted to become a normal integer
+ */
+#define GET_COLUMN(x) (x & 0x0F)
+
+/**
+ *Retrieves the Column part of a position as a normal number
+ */
+#define GET_REAL_COLUMN(x) (x >> COLUMN_SHIFT)
+
+/**
+ *Retrieves the Row part of a position
+ */
+#define GET_ROW(y) (y & 0xF0)
+
+/**
+ * Retrieves position using two normal numbers
+ */
+#define GET_POSITION(x,y) (y | (x << COLUMN_SHIFT))
+
+/**
+ * Gets the color of the specified position
+ */
+#define GET_POSITION_COLOR(x) ((((x & 0x11) == 0x11) || ((x & 0x11) == 0x00)) ? WHITE : BLACK)
+
+/**
+ * The Columns are denoted with letters. A through H, A to left and H to the right
+ * The Rows are denoted using numbers. 1 at the bottom and 8 at the top
+ */
 enum Position
 {
 	A1 = 0x00, A2 = 0x01, A3 = 0x02, A4 = 0x03, A5 = 0x04, A6 = 0x05, A7 = 0x06, A8 = 0x07,
