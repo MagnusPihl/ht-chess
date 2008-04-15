@@ -85,7 +85,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="xcopy ..\post-build ${TargetDir} /H /R /E /Q /C /Y"
+				CommandLine="xcopy ..\post-build ${outdir} /H /R /E /Q /C /Y"
 			/>
 		</Configuration>
 		<Configuration
@@ -160,7 +160,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="xcopy ..\post-build $(OutDir) /H /R /E /Q /C /Y"
+				CommandLine="echo \.svn\ &gt; excludefile.txt&#x0D;&#x0A;echo excludefile.txt &gt;&gt; excludefile.txt&#x0D;&#x0A;xcopy ..\post-build $(OutDir) /H /R /E /Q /C /Y /EXCLUDE:excludefile.txt&#x0D;&#x0A;xcopy ..\post-build ..\ht-chess /H /R /E /Q /C /Y /EXCLUDE:excludefile.txt&#x0D;&#x0A;del excludefile.txt"
 			/>
 		</Configuration>
 	</Configurations>
