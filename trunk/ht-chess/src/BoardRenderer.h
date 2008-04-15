@@ -7,9 +7,9 @@
 #include "SDL.h"
 #include <stdio.h>
 
-#define PIECE_COLOR_POS 40
-#define PIECE_NAME_POS 41
-#define POSITION_COLOR_POS 42
+#define PIECE_COLOR_POS 7
+#define PIECE_NAME_POS 8
+#define POSITION_COLOR_POS 9
 #define PIECE_SIZE 70
 #define BORDER_LEFT 0
 #define BORDER_RIGHT 1
@@ -36,12 +36,12 @@ class BoardRenderer
 		{			
 			int i;
 
-			white = SDL_LoadBMP("C:\\docs\\AI\\projects\\skak\\Release\\images\\white.bmp");
-			black = SDL_LoadBMP("C:\\docs\\AI\\projects\\skak\\Release\\images\\black.bmp");
-			border[BORDER_LEFT] = SDL_LoadBMP("C:\\docs\\AI\\projects\\skak\\Release\\images\\borderLeft.bmp");
-			border[BORDER_RIGHT] = SDL_LoadBMP("C:\\docs\\AI\\projects\\skak\\Release\\images\\borderRight.bmp");
-			border[BORDER_TOP] = SDL_LoadBMP("C:\\docs\\AI\\projects\\skak\\Release\\images\\borderTop.bmp");
-			border[BORDER_BOTTOM] = SDL_LoadBMP("C:\\docs\\AI\\projects\\skak\\Release\\images\\borderBottom.bmp");
+			white = SDL_LoadBMP("images\\white.bmp");
+			black = SDL_LoadBMP("images\\black.bmp");
+			border[BORDER_LEFT] = SDL_LoadBMP("images\\borderLeft.bmp");
+			border[BORDER_RIGHT] = SDL_LoadBMP("images\\borderRight.bmp");
+			border[BORDER_TOP] = SDL_LoadBMP("images\\borderTop.bmp");
+			border[BORDER_BOTTOM] = SDL_LoadBMP("images\\borderBottom.bmp");
 			
 			for (i = 0; i < BORDER_COUNT; ++i) 
 			{
@@ -58,9 +58,9 @@ class BoardRenderer
 			borderRect[BORDER_BOTTOM]->x = 0;
 			borderRect[BORDER_BOTTOM]->y = 580;
 
-			char path[] = "C:\\docs\\AI\\projects\\skak\\Release\\images\\b w.bmp";
-			//			   012 34567 890 123456789 01234 56789012 3456789 0123456
-			//			   0           1           2          3           4 
+			char path[] = "images\\b w.bmp";
+			//			   0123456 7890123456789 01234 56789012 3456789 0123456
+			//			   0          1           2          3           4 
 
 			//			  "images\\b w.bmp";
 			//			   0123456 78901234567890123456789
