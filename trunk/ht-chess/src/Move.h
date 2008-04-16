@@ -1,5 +1,6 @@
 #ifndef MOVE_H
 #define MOVE_H
+//#define TEST_MOVE_VALIDITY
 
 #include "Piece.h"
 #include "Board.h"
@@ -42,8 +43,12 @@ public:
 	Move(int _from, int _to, ColoredPiece _special, ColoredPiece _piece, ColoredPiece _content) :
 		from(_from), to(_to), special(_special), piece(_piece), content(_content)
 	{
-
-	}
+		#ifdef TEST_MOVE_VALIDITY 
+			if (isValid(*this)) {
+				throw "invalid move";
+			}
+		#endif
+	}	
 
 	//
 	void execute(Board *_board)
@@ -154,6 +159,68 @@ public:
 				}							
 			}
 		}
+	}
+	
+	/**
+	 * Makes a general check on the validity of the move. 
+	 * Be advised though that this function does not check the actual board
+	 * for the legality. Does not check for checkmate, mate, stalemate, and blocking pieces
+	 * only validity of positions.
+	 */
+	static bool isValid(Move &move) {
+		//position validity
+		if (!IS_VALID_POSITION(move.from)) {
+			return false;
+		}
+		if (!IS_VALID_POSITION(move.to)) {
+			return false;
+		}
+		
+		//moved piece and taken piece must be of different colors
+		if ((move.content & PIECE_COLOR) == (move.piece & PIECE_COLOR)) {
+			return false;
+		}
+
+		//special moves
+		if (move.special != NO_PIECE) {
+			if ((move.special & KING) == KING) {
+				//king must be in initial position
+				if (GET_COLUMN(move.from) != COLUMN_E) {
+					return false;
+				}
+				if ((GET_COLUMN(move.to) != COLUMN_G) && (GET_COLUMN(move.to) != COLUMN_C)) {
+					return false;	
+				}
+
+				if ((move.special & BLACK) == BLACK) { //black
+					//king must be in top row
+					if ((GET_ROW(move.from) != ROW_8) || (GET_ROW(move.to) != ROW_8)) {
+						return false;					
+					}
+
+				} else { //white
+					//king must be in top row
+					if ((GET_ROW(move.from) != ROW_1) || (GET_ROW(move.to) != ROW_1)) {
+						return false;
+					}
+				}
+
+			} else if ((move.special & PAWN) == PAWN) {
+
+				if ((move.special & BLACK) == BLACK) { //black
+					
+				}
+
+			} else {
+				return false;
+			}
+
+		} else {
+			/*if (move.piece & PAWN) {				
+				if (GET_ROW(from) == )
+			}*/
+		}		
+		return true;
 	}
 
 	//accessors

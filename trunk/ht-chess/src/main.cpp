@@ -7,6 +7,7 @@
 //#include "SDL_ttf.h"
 #include "Board.h"
 #include "BoardRenderer.h"
+#include "MoveGenerator.h"
 #include <math.h>
 
 #define WIDTH 800
