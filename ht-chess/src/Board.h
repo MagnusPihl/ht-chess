@@ -91,7 +91,7 @@ public:
 	ColoredPiece getItemAt(int position) 
 	{
 	#ifdef CHECK_OVERFLOW
-		if ((IS_VALID_POSITION(position)) != 0) 
+		if (!IS_VALID_POSITION(position)) 
 		{
 			throw "Index out of bounds: " + position;
 		} 
