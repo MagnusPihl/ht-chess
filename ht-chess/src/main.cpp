@@ -5,6 +5,7 @@
 
 #include "SDL.h"
 //#include "SDL_ttf.h"
+#include "MouseHandler.h"
 #include "Board.h"
 #include "BoardRenderer.h"
 #include "MoveGenerator.h"
@@ -53,12 +54,19 @@ int main(int argc, char *argv[])
 	}
 	atexit(SDL_Quit);
 
-	screen = SDL_SetVideoMode(WIDTH, HEIGHT, 0, SDL_HWSURFACE | SDL_DOUBLEBUF);
-	//board = SDL_LoadBMP("..\\ht-chess\\images\\board.bmp");
+	screen = SDL_SetVideoMode(WIDTH, HEIGHT, 0, SDL_HWSURFACE | SDL_DOUBLEBUF); // | SDL_FULLSCREEN);
 	board = new Board();
 	renderer = new BoardRenderer();
+	//SDL_Surface *cursor = SDL_LoadBMP("images\\cursor.bmp");
+	//SDL_SetColorKey(cursor, SDL_SRCCOLORKEY, cursor->pixels[0]);
 
+	int playerColor = WHITE;
+	int selectedPiece = -1;
+
+	MouseHandler mouse;
 	SDL_Event event;
+	MouseEvent mouseEvent;
+	int mx, my;
 	while(true)
 	{
 		render();
@@ -73,6 +81,40 @@ int main(int argc, char *argv[])
 				}
 			}
 		}
+		while(mouse.PollEvent(&mouseEvent))
+		{
+			switch(mouseEvent.type)
+			{
+			case SDL_MOUSE_BUTTONDOWN:
+				if(mouseEvent.button == SDL_MOUSE_LEFT)
+				{
+					if(mouseEvent.x >= 20 && mouseEvent.x < 580 && mouseEvent.y >= 20 && mouseEvent.y < 580)
+					{
+						Position pos = GET_POSITION((mouseEvent.x-20)/70, ROW_COUNT-1-((mouseEvent.y-20)/70));
+						if(selectedPiece == -1 && GET_PIECE_COLOR(board->getItemAt(pos)) == playerColor)
+						{
+							selectedPiece = pos;
+							printf("You chose a piece to move.\n");
+						}
+						else if(selectedPiece != -1 && board->getItemAt(pos) == NO_PIECE)
+						{
+							selectedPiece = -1;
+							printf("You chose a position to move to.\n");
+						}
+					}
+				}
+				if(mouseEvent.button == SDL_MOUSE_RIGHT)
+				{
+					if(selectedPiece != -1)
+					{
+						selectedPiece = -1;
+						printf("You cancelled moving the selected piece.\n");
+					}
+				}
+				break;
+			}
+		}
+			
 		SDL_Flip(screen);	//Update screen
 	}
 
