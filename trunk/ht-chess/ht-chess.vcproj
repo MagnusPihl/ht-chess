@@ -160,7 +160,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="echo \.svn\ &gt; excludefile.txt&#x0D;&#x0A;echo excludefile.txt &gt;&gt; excludefile.txt&#x0D;&#x0A;xcopy ..\post-build $(OutDir) /H /R /E /Q /C /Y /EXCLUDE:excludefile.txt&#x0D;&#x0A;xcopy ..\post-build ..\ht-chess /H /R /E /Q /C /Y /EXCLUDE:excludefile.txt&#x0D;&#x0A;del excludefile.txt"
+				CommandLine="echo \.svn\ &gt; excludefile.txt&#x0D;&#x0A;echo excludefile.txt &gt;&gt; excludefile.txt&#x0D;&#x0A;xcopy ..\post-build $(OutDir) /H /R /E /Q /C /Y /EXCLUDE:excludefile.txt&#x0D;&#x0A;xcopy ..\post-build ..\ht-chess /H /R /E /Q /C /Y /EXCLUDE:excludefile.txt&#x0D;&#x0A;del excludefile.txt&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>
@@ -188,6 +188,10 @@
 			</File>
 			<File
 				RelativePath=".\src\BoardRenderer.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MouseHandler.h"
 				>
 			</File>
 			<File
