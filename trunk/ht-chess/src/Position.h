@@ -13,17 +13,17 @@
  *Retrieves the Column part of a position
  *The column is not shifted to become a normal integer
  */
-#define GET_COLUMN(x) (x & 0x0F)
+#define GET_COLUMN(x) ((x) & 0xF0)
 
 /**
  *Retrieves the Column part of a position as a normal number
  */
-#define GET_REAL_COLUMN(x) (x >> COLUMN_SHIFT)
+#define GET_REAL_COLUMN(x) ((x) >> COLUMN_SHIFT)
 
 /**
  *Retrieves the Row part of a position
  */
-#define GET_ROW(y) (y & 0xF0)
+#define GET_ROW(y) ((y) & 0x0F)
 
 /**
  * Retrieves position using two normal numbers
@@ -33,7 +33,7 @@
 /**
  * Gets the color of the specified position
  */
-#define GET_POSITION_COLOR(x) ((((x & 0x11) == 0x11) || ((x & 0x11) == 0x00)) ? WHITE : BLACK)
+#define GET_POSITION_COLOR(x) (((((x) & 0x11) == 0x11) || (((x) & 0x11) == 0x00)) ? WHITE : BLACK)
 
 #define IS_VALID_POSITION(pos) (((pos) & POSITION_OVERFLOW) != POSITION_OVERFLOW)
 
