@@ -33,7 +33,7 @@
 /**
  * Gets the color of the specified position
  */
-#define GET_POSITION_COLOR(pos) (((((pos) & 0x11) == 0x11) || (((pos) & 0x11) == 0x00)) ? WHITE : BLACK)
+#define GET_POSITION_COLOR(pos) (((((pos) & 0x11) == 0x11) || (((pos) & 0x11) == 0x00)) ? BLACK : WHITE)
 
 #define IS_VALID_POSITION(pos) (((pos) & POSITION_OVERFLOW) != POSITION_OVERFLOW)
 
