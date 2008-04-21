@@ -116,7 +116,7 @@ void Board::getPawnMovesFrom(int position, vector<Move> &moves) {
 	int column = GET_REAL_COLUMN(position);
 	ColoredPiece piece = content[position];
 	
-	if ((piece & WHITE) == WHITE) {			
+	if (GET_PIECE_COLOR(piece) == WHITE) {			
 		if ((row == ROW_1) && //double advance
 			(content[ GET_POSITION( column, row + 1) ] == NO_PIECE) &&
 			(content[ GET_POSITION( column, row + 2) ] == NO_PIECE)) {
@@ -139,7 +139,7 @@ void Board::getPawnMovesFrom(int position, vector<Move> &moves) {
 			}
 			
 			//left capture
-			if ((column > 0) && (((content[GET_POSITION(column - 1, row + 1)]) & BLACK) == BLACK)) {
+			if ((column > 0) && (GET_PIECE_COLOR(content[GET_POSITION(column - 1, row + 1)]) == BLACK)) {
 				moves.push_back(
 					Move(
 						GET_POSITION(column, row), 
@@ -150,7 +150,7 @@ void Board::getPawnMovesFrom(int position, vector<Move> &moves) {
 			}		
 						
 			//right capture	
-			if ((column < (COLUMN_COUNT - 1)) && (( ( content[ GET_POSITION( column + 1 , row + 1) ] ) & BLACK) == BLACK)) {
+			if ((column < (COLUMN_COUNT - 1)) && (GET_PIECE_COLOR(content[ GET_POSITION( column + 1 , row + 1) ]) == BLACK)) {
 				
 				moves.push_back(
 					Move(
@@ -167,7 +167,7 @@ void Board::getPawnMovesFrom(int position, vector<Move> &moves) {
 				moves.push_back(
 					Move(
 						GET_POSITION(column, row), 
-						GET_POSITION(column, row - 1), 
+						GET_POSITION(column, row + 1), 
 						special, 
 						piece, 
 						NO_PIECE));
@@ -196,7 +196,7 @@ void Board::getPawnMovesFrom(int position, vector<Move> &moves) {
 			}
 			
 			//left capture
-			if ((column > 0) && (((content[GET_POSITION(column - 1, row - 1)]) & WHITE) == WHITE)) {
+			if ((column > 0) && (GET_PIECE_COLOR(content[GET_POSITION(column - 1, row - 1)]) == WHITE)) {
 				moves.push_back(
 					Move(
 						GET_POSITION(column, row), 
@@ -207,7 +207,7 @@ void Board::getPawnMovesFrom(int position, vector<Move> &moves) {
 			}		
 						
 			//right capture	
-			if ((column < (COLUMN_COUNT - 1)) && (( ( content[ GET_POSITION( column + 1 , row - 1) ] ) & WHITE) == WHITE)) {
+			if ((column < (COLUMN_COUNT - 1)) && (GET_PIECE_COLOR( content[ GET_POSITION( column + 1 , row - 1) ] ) == WHITE)) {
 				
 				moves.push_back(
 					Move(
