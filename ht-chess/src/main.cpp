@@ -85,6 +85,10 @@ int main(int argc, char *argv[])
 	SDL_Surface *overlay = SDL_LoadBMP("images\\overlay.bmp");
 	SDL_SetColorKey(overlay, SDL_SRCCOLORKEY, SDL_MapRGB(overlay->format, 255, 0, 255));
 	SDL_Rect overlayRect = { 0, 0, 70, 70 };
+	SDL_Surface *fullOverlay = SDL_CreateRGBSurface(SDL_HWSURFACE, 600, 600, 32, 0, 0, 0, 100);
+	//SDL_SetAlpha(fullOverlay, SDL_SRCALPHA, 128);
+	SDL_SetColorKey(fullOverlay, SDL_SRCCOLORKEY, SDL_MapRGB(fullOverlay->format, 255, 0, 255));
+	std::vector<Move> moveList;
 
 	int gameTurn = WHITE;
 	bool turnDone = false;
@@ -149,25 +153,45 @@ int main(int argc, char *argv[])
 					else if(mouseEvent.x >= 20 && mouseEvent.x < 580 && mouseEvent.y >= 20 && mouseEvent.y < 580)
 					{
 						Position pos = GET_POSITION((mouseEvent.x-20)/70, ROW_COUNT-1-((mouseEvent.y-20)/70));
+						printf("Position is: %i, %i\n", ROW_COUNT-1-((mouseEvent.y-20)/70), (mouseEvent.x-20)/70);
+						printf("Pos is: %i, %i\n", ROW_COUNT-1-GET_ROW(pos), GET_REAL_COLUMN(pos));
 						if((selectedPiece == -1) && (GET_PIECE_COLOR(board->getItemAt(pos)) == gameTurn)
 							&& ((gameTurn==WHITE && player1IsHuman) || (gameTurn==BLACK && player2IsHuman)))
 						{
-							selectedPiece = pos;
-							cursorRect.x = GET_REAL_COLUMN(pos) * 70 + 20;
-							cursorRect.y = (ROW_COUNT-1-GET_ROW(pos)) * 70 + 20;
+							moveList.clear();
+							board->getMovesFromPosition(pos, moveList);
+							if(!moveList.empty())
+							{
+								SDL_FillRect(fullOverlay, NULL, SDL_MapRGB(screen->format, 255, 0, 255));
+								std::vector<Move>::iterator itr;
+								for(itr = moveList.begin(); itr != moveList.end(); itr++)
+								{
+									overlayRect.x = GET_REAL_COLUMN((*itr).getNewPosition()) * 70 + 20;
+									overlayRect.y = (ROW_COUNT-1-GET_ROW((*itr).getNewPosition())) * 70 + 20;
+									SDL_BlitSurface(overlay, NULL, fullOverlay, &overlayRect);
+								}
 							
-							//temp
-							overlayRect.x = GET_REAL_COLUMN(pos) * 70 + 20;
-							overlayRect.y = (ROW_COUNT-1-GET_ROW(pos)-1) * 70 + 20;
-							//temp
-
-							printf("You chose a piece to move.\n");
+								selectedPiece = pos;
+								cursorRect.x = GET_REAL_COLUMN(pos) * 70 + 20;
+								cursorRect.y = (ROW_COUNT-1-GET_ROW(pos)) * 70 + 20;
+								printf("You chose a piece to move.\n");
+							}
 						}
-						else if(selectedPiece != -1)	//Check if valid move!
+						else if(selectedPiece != -1)
 						{
-							selectedPiece = -1;
-							turnDone = true;
-							printf("You chose a position to move to.\n");
+							//Check if valid move!
+							std::vector<Move>::iterator itr;
+							for(itr = moveList.begin(); itr != moveList.end(); itr++)
+							{
+								if((*itr).getNewPosition() == pos)
+								{
+									selectedPiece = -1;
+									turnDone = true;
+									(*itr).execute(board);
+									printf("You chose a position to move to.\n");
+									break;
+								}
+							}
 						}
 					}
 				}
@@ -185,7 +209,7 @@ int main(int argc, char *argv[])
 		if(selectedPiece != -1)
 		{
 			SDL_BlitSurface(cursor, NULL, screen, &cursorRect);
-			SDL_BlitSurface(overlay, NULL, screen, &overlayRect);
+			SDL_BlitSurface(fullOverlay, NULL, screen, NULL);
 		}
 		SDL_BlitSurface(whiteText, NULL, screen, &whiteTextRect);
 		SDL_BlitSurface(blackText, NULL, screen, &blackTextRect);
