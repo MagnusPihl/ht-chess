@@ -2,57 +2,65 @@
 #define MOVESELECTOR_H
 
 #include <vector>
-#include <stdlib>
 #include "Move.h"
+#include "Piece.h"
 
 class MiniMax
 {
 private:
-	int miniMax(Board board, Move *path, bool isMaximizer=true, int curDepth=0, int maxDepth=100)
+	MoveGenerator moveGen;
+
+	int miniMax(Board &board, Move *path, bool isMaximizer=true, int curDepth=0, int maxDepth=100)
 	{
 		if(curDepth == maxDepth /* && board.gameEnded() ??? */)		//if leaf
 		{
-			return BoardEvaluator.boardValue(board);
+			//return BoardEvaluator.boardValue(board);
 		}
 		else if(isMaximizer)	//if maximizer
 		{
 			int bestMove = -10000;
-			std::vector<Move> moveList = MoveGenerator.generateMoves(board);
+			int curMove;
+			std::vector<Move> moveList;
+			moveGen.generateMoves(board, WHITE, moveList);
 			for(std::vector<Move>::iterator itr = moveList.begin(); itr != moveList.end(); itr++)
 			{
-				(*itr).execute(&board);
+				(*itr).execute(board);
 				curMove = miniMax(board, path, false, curDepth+1, maxDepth);
 				if(curMove > bestMove)
 				{
-					bestMove = curMove
-					path = move;
+					bestMove = curMove;
+					path = &(*itr);
 				}
-				(*itr).unexecute(&board);
+				(*itr).unexecute(board);
 			}
+			return bestMove;
 		}
 		else	//if minimizer
 		{
 			int bestMove = 10000;
 			int curMove;
-			std::vector<Move> moveList = MoveGenerator.generateMoves(board);
+			std::vector<Move> moveList;
+			moveGen.generateMoves(board, BLACK, moveList);
 			for(std::vector<Move>::iterator itr = moveList.begin(); itr != moveList.end(); itr++)
 			{
-				(*itr).execute(&board);
+				(*itr).execute(board);
 				curMove = miniMax(board, path, true, curDepth+1, maxDepth);
 				if(curMove < bestMove)
 				{
-					bestMove = curMove
-					path = move;
+					bestMove = curMove;
+					path = &(*itr);
 				}
-				(*itr).unexecute(&board);
+				(*itr).unexecute(board);
 			}
+			return bestMove;
 		}
+		//return NULL;
 	}
 public:
-	Move operator()(Board board, bool isMaximizer=true, int curDepth=0, int maxDepth=100) const
+	Move operator()(Board &board, bool isMaximizer=true, int curDepth=0, int maxDepth=100)
 	{
 		Move path;
-		miniMax(board, &path, isMaximize, curDepth, maxDepth);
+		miniMax(board, &path, isMaximizer, curDepth, maxDepth);
 		return path;
 	}
 };
@@ -61,7 +69,7 @@ class AlphaBeta
 {
 public:
 	Move operator()(Board board, int alpha=-10000, int beta=10000,
-		bool isMaximizer=true, int curDepth=0, int maxDepth=100) const
+		bool isMaximizer=true, int curDepth=0, int maxDepth=100)
 	{
 	}
 };

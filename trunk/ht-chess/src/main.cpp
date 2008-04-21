@@ -9,17 +9,18 @@
 #include "Board.h"
 #include "BoardRenderer.h"
 #include "MoveGenerator.h"
+#include "MoveSelector.h"
 #include <math.h>
+#include <vector>
 
 #define WIDTH 800
 #define HEIGHT 600
 
-SDL_Surface* screen;
-Board* board;
-BoardRenderer* renderer;
-SDL_Rect srcrect = {0,0,600,600};
-
 #define PITCH (screen->pitch / 4)
+
+SDL_Surface* screen;
+BoardRenderer renderer;
+Board board;
 
 void render()
 {   
@@ -31,7 +32,7 @@ void render()
   // Ask SDL for the time in milliseconds
   int tick = SDL_GetTicks();
 	
-  renderer->drawBoard(screen, board);
+  renderer.drawBoard(screen, board);
 
   //SDL_BlitSurface(board, &srcrect, screen, &srcrect);
 	//SDL_BlitSurface(board, NULL, screen, NULL);
@@ -60,8 +61,9 @@ int main(int argc, char *argv[])
 	atexit(SDL_Quit);
 
 	screen = SDL_SetVideoMode(WIDTH, HEIGHT, 0, SDL_HWSURFACE | SDL_DOUBLEBUF); // | SDL_FULLSCREEN);
-	board = new Board();
-	renderer = new BoardRenderer();
+	
+	SDL_Rect srcrect = {0,0,600,600};
+	MiniMax moveSelector;
 	
 	SDL_Color colorWhite = { 255, 255, 255 };
 	SDL_Color colorBlack = { 0, 0, 0 };
@@ -99,7 +101,6 @@ int main(int argc, char *argv[])
 	MouseHandler mouse;
 	SDL_Event event;
 	MouseEvent mouseEvent;
-	int mx, my;
 	while(true)
 	{
 		if(turnDone)
@@ -111,6 +112,7 @@ int main(int argc, char *argv[])
 		if(gameTurn == WHITE && !player1IsHuman)
 		{
 			printf("Running AI for WHITE.\n");	//Run AI
+			moveSelector(board);
 			turnDone = true;
 		}
 		else if(gameTurn == BLACK && !player2IsHuman)
@@ -155,11 +157,11 @@ int main(int argc, char *argv[])
 						Position pos = GET_POSITION((mouseEvent.x-20)/70, ROW_COUNT-1-((mouseEvent.y-20)/70));
 						printf("Position is: %i, %i\n", ROW_COUNT-1-((mouseEvent.y-20)/70), (mouseEvent.x-20)/70);
 						printf("Pos is: %i, %i\n", ROW_COUNT-1-GET_ROW(pos), GET_REAL_COLUMN(pos));
-						if((selectedPiece == -1) && (GET_PIECE_COLOR(board->getItemAt(pos)) == gameTurn)
+						if((selectedPiece == -1) && (GET_PIECE_COLOR(board.getItemAt(pos)) == gameTurn)
 							&& ((gameTurn==WHITE && player1IsHuman) || (gameTurn==BLACK && player2IsHuman)))
 						{
 							moveList.clear();
-							board->getMovesFromPosition(pos, moveList);
+							board.getMovesFromPosition(pos, moveList);
 							if(!moveList.empty())
 							{
 								SDL_FillRect(fullOverlay, NULL, SDL_MapRGB(screen->format, 255, 0, 255));
@@ -185,6 +187,8 @@ int main(int argc, char *argv[])
 							{
 								if((*itr).getNewPosition() == pos)
 								{
+									printf("From is: %i,%i\n", GET_REAL_COLUMN((*itr).getOldPosition()), GET_ROW((*itr).getOldPosition()));
+									printf("To is: %i,%i\n", GET_REAL_COLUMN((*itr).getNewPosition()), GET_ROW((*itr).getNewPosition()));
 									selectedPiece = -1;
 									turnDone = true;
 									(*itr).execute(board);
@@ -226,6 +230,5 @@ int main(int argc, char *argv[])
 		SDL_Flip(screen);	//Update screen
 	}
 
-	delete board;
-	delete renderer;
+	delete screen;
 }

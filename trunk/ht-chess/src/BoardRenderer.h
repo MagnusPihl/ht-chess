@@ -116,7 +116,7 @@ class BoardRenderer
 			delete [] borderRect;
 		}	
 
-		void drawBoard(SDL_Surface* screen, Board* board) 
+		void drawBoard(SDL_Surface* screen, Board &board) 
 		{
 			int x, y, pos, posColor, piece, pieceColor, type;			
 			SDL_Surface* picture;
@@ -141,7 +141,7 @@ class BoardRenderer
 					destinationRect.y = (ROW_COUNT - 1 - y)*PIECE_SIZE + 20;
 
 					pos = GET_POSITION(x,y);
-					piece = board->content[pos];					
+					piece = board.content[pos];					
 					pieceColor = GET_PIECE_COLOR(piece);
 					posColor = GET_POSITION_COLOR(pos);
 					type = GET_PIECE_TYPE(piece);
