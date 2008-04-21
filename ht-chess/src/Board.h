@@ -16,6 +16,9 @@ class Board
 {
 private:
 	ColoredPiece* content;
+	bool blackKingMoved;
+	bool whiteKingMoved;
+	int enPassantPosition;
 
 public:
 
@@ -77,7 +80,8 @@ public:
 	* xxx
 	* this function does not check if the king can be taken!
 	*/	
-	void getKingMovesFrom(int position, vector<Move> &moves);
+	void getKingMovesFrom(int position, vector<Move> &moves);	
+	void resetBoard();
 };
 
 #endif

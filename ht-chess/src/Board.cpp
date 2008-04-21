@@ -5,55 +5,14 @@
 
 Board::Board() : content(new ColoredPiece[CONTENT_SIZE]) 
 {
-	for (int i = 0; i < CONTENT_SIZE; ++i)
-	{
-		content[i] = NO_PIECE;
-	}	
-
-	//BLACK VIPS
-	content[A8] = ROOK_BLACK;
-	content[B8] = KNIGHT_BLACK;
-	content[C8] = BISHOP_BLACK;
-	content[D8] = QUEEN_BLACK;
-	content[E8] = KING_BLACK;
-	content[F8] = BISHOP_BLACK;
-	content[G8] = KNIGHT_BLACK;
-	content[H8] = ROOK_BLACK;
-	//BLACK PAWNS
-	content[A7] = PAWN_BLACK;
-	content[B7] = PAWN_BLACK;
-	content[C7] = PAWN_BLACK;
-	content[D7] = PAWN_BLACK;
-	content[E7] = PAWN_BLACK;
-	content[F7] = PAWN_BLACK;
-	content[G7] = PAWN_BLACK;
-	content[H7] = PAWN_BLACK;
-
-	//WHITE PAWNS
-	content[A2] = PAWN_WHITE;
-	content[B2] = PAWN_WHITE;
-	content[C2] = PAWN_WHITE;
-	content[D2] = PAWN_WHITE;
-	content[E2] = PAWN_WHITE;
-	content[F2] = PAWN_WHITE;
-	content[G2] = PAWN_WHITE;
-	content[H2] = PAWN_WHITE;
-	//WHITE VIPS
-	content[A1] = ROOK_WHITE;
-	content[B1] = KNIGHT_WHITE;
-	content[C1] = BISHOP_WHITE;
-	content[D1] = KING_WHITE;
-	content[E1] = QUEEN_WHITE;
-	content[F1] = BISHOP_WHITE;
-	content[G1] = KNIGHT_WHITE;
-	content[H1] = ROOK_WHITE;		
+	resetBoard();
 }
 
 Board::Board(const Board& rhs) : content(new ColoredPiece[CONTENT_SIZE])
 {
 	for (int i = 0; i < CONTENT_SIZE; ++i)
 	{
-		content[i] = rhs.content[i];
+		content[i] = rhs.content[i];		
 	}
 }
 
@@ -440,7 +399,7 @@ void Board::getKingMovesFrom(int position, vector<Move> &moves) {
 			(content[D1] == NO_PIECE)) {
 			moves.push_back(Move(E1, C1, KING_WHITE, KING_WHITE, NO_PIECE));
 		}
-	}
+	}	
 	
 	if ((position == E8) && (content[position] == KING_BLACK)) {
 		
@@ -478,5 +437,51 @@ void Board::getKingMovesFrom(int position, vector<Move> &moves) {
 		}		
 	}		
 }
+
+void Board::resetBoard() {
+	
+	for (int i = 0; i < CONTENT_SIZE; ++i)
+	{
+		content[i] = NO_PIECE;
+	}	
+
+	//BLACK VIPS
+	content[A8] = ROOK_BLACK;
+	content[B8] = KNIGHT_BLACK;
+	content[C8] = BISHOP_BLACK;
+	content[D8] = QUEEN_BLACK;
+	content[E8] = KING_BLACK;
+	content[F8] = BISHOP_BLACK;
+	content[G8] = KNIGHT_BLACK;
+	content[H8] = ROOK_BLACK;
+	//BLACK PAWNS
+	content[A7] = PAWN_BLACK;
+	content[B7] = PAWN_BLACK;
+	content[C7] = PAWN_BLACK;
+	content[D7] = PAWN_BLACK;
+	content[E7] = PAWN_BLACK;
+	content[F7] = PAWN_BLACK;
+	content[G7] = PAWN_BLACK;
+	content[H7] = PAWN_BLACK;
+
+	//WHITE PAWNS
+	content[A2] = PAWN_WHITE;
+	content[B2] = PAWN_WHITE;
+	content[C2] = PAWN_WHITE;
+	content[D2] = PAWN_WHITE;
+	content[E2] = PAWN_WHITE;
+	content[F2] = PAWN_WHITE;
+	content[G2] = PAWN_WHITE;
+	content[H2] = PAWN_WHITE;
+	//WHITE VIPS
+	content[A1] = ROOK_WHITE;
+	content[B1] = KNIGHT_WHITE;
+	content[C1] = BISHOP_WHITE;
+	content[D1] = KING_WHITE;
+	content[E1] = QUEEN_WHITE;
+	content[F1] = BISHOP_WHITE;
+	content[G1] = KNIGHT_WHITE;
+	content[H1] = ROOK_WHITE;
+}		
 
 #endif
