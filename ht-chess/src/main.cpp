@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
 	SDL_Rect restartTextRect = { 620, 500, 0, 0 };
 	SDL_Surface *quitText = TTF_RenderText_Shaded(font, "Quit", colorWhite, colorBlack);
 	SDL_Rect quitTextRect = { 620, 530, 0, 0 };
-	
+
 	SDL_Surface *cursor = SDL_LoadBMP("images\\cursor.bmp");
 	SDL_SetColorKey(cursor, SDL_SRCCOLORKEY, SDL_MapRGB(cursor->format, 255, 0, 255));
 	SDL_Rect cursorRect = { 0, 0, 70, 70 };
@@ -187,8 +187,6 @@ int main(int argc, char *argv[])
 							{
 								if((*itr).getNewPosition() == pos)
 								{
-									printf("From is: %i,%i\n", GET_REAL_COLUMN((*itr).getOldPosition()), GET_ROW((*itr).getOldPosition()));
-									printf("To is: %i,%i\n", GET_REAL_COLUMN((*itr).getNewPosition()), GET_ROW((*itr).getNewPosition()));
 									selectedPiece = -1;
 									turnDone = true;
 									(*itr).execute(board);
@@ -230,5 +228,15 @@ int main(int argc, char *argv[])
 		SDL_Flip(screen);	//Update screen
 	}
 
+	delete font;
+	delete whiteText;
+	delete blackText;
+	delete humanText;
+	delete aiText;
+	delete restartText;
+	delete quitText;
+	delete cursor;
+	delete overlay;
+	delete fullOverlay;
 	delete screen;
 }

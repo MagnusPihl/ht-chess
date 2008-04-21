@@ -35,7 +35,12 @@ public:
 
 	Board& operator= (Board& rhs);
 
+	ColoredPiece & operator[](int pos);
+	const ColoredPiece & operator[](int pos) const;
+
 	~Board();
+
+	void testMethod();
 
 	/**
 	/* Should we do boundary check here?
