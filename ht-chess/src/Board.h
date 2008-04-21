@@ -26,7 +26,6 @@ private:
 
 public:
 
-	friend class BoardRenderer;
 	friend class Move;
 
 	Board();

@@ -16,7 +16,7 @@ enum Piece
 	BISHOP = 3,	//løber
 	ROOK = 4,	//tårn
 	PAWN = 5,	//bonde
-	NONE = -1,	//intet
+	NONE = 6,	//intet
 	PIECE_TYPE_COUNT = 6
 };
 

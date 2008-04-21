@@ -572,7 +572,7 @@ int Board::getThreatOf(int position, int color) {
 			piece = content[to];
 		
 			if ((piece != NO_PIECE) && (GET_PIECE_COLOR(piece) != color)) {
-				if (piece > threat) {
+				if ((piece > threat)||(threat == NO_PIECE)) {
 					threat = piece;
 					if (GET_PIECE_TYPE(threat) == PAWN) {
 						return threat;
@@ -593,7 +593,7 @@ int Board::getThreatOf(int position, int color) {
 			piece = content[to];
 			
 			if ((piece != NO_PIECE) && (GET_PIECE_COLOR(piece) != color)) {
-				if (piece > threat) {
+				if ((piece > threat)||(threat == NO_PIECE)) {
 					threat = piece;
 					if (GET_PIECE_TYPE(threat) == PAWN) {
 						return threat;
