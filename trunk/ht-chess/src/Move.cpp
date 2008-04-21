@@ -16,9 +16,9 @@ Move::Move(int _from, int _to, ColoredPiece _special, ColoredPiece _piece, Color
 }	
 
 //
-void Move::execute(Board *_board)
+void Move::execute(Board &_board)
 {
-	ColoredPiece* board = _board->getContent();
+	vector<ColoredPiece> board = _board.getContent();
 	board[from] = NO_PIECE;
 	board[to] = piece;
 
@@ -26,17 +26,18 @@ void Move::execute(Board *_board)
 	//white bottom 1
 
 	//special moves
-	if (GET_PIECE_TYPE(special) == PAWN) { //en-passant
+	if (GET_PIECE_TYPE(special) == PAWN) { //en-passant or promotion
 
 		if (GET_PIECE_COLOR(special) == BLACK) { //black
 
-			if (GET_ROW(to) == ROW_3) {
-				board[GET_COLUMN(to) | ROW_4] = NO_PIECE;					
+			if (GET_ROW(to) == ROW_3) { //en-passant
+				board[GET_COLUMN(to) | ROW_4] = NO_PIECE;			
+				_board.setEnPassantPosition(INVALID_POSITION);
 			}
 
 		} else { //white
 			
-			if (GET_ROW(to) == ROW_6) {
+			if (GET_ROW(to) == ROW_6) { //en-passant
 				board[GET_COLUMN(to) | ROW_5] = NO_PIECE;					
 			}
 		}
@@ -65,9 +66,9 @@ void Move::execute(Board *_board)
 	}
 }
 
-void Move::unexecute(Board *_board)
+void Move::unexecute(Board &_board)
 {
-	ColoredPiece* board = _board->getContent();
+	vector<ColoredPiece> board = _board.getContent();
 	
 	if (special == NO_PIECE) {
 		board[from] = piece;
@@ -81,7 +82,7 @@ void Move::unexecute(Board *_board)
 				board[to] = content;
 
 			} else { //en-passant
-				board[GET_COLUMN(to) | ROW_4] = PAWN_WHITE;
+				board[GET_COLUMN(to) | ROW_4] = PAWN_WHITE;				
 				board[to] = NO_PIECE;
 				board[from] = piece;
 			}

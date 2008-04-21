@@ -44,8 +44,8 @@ public:
 	Move(int _from, int _to, ColoredPiece _special, ColoredPiece _piece, ColoredPiece _content);
 
 	//
-	void execute(Board *_board);
-	void unexecute(Board *_board);
+	void execute(Board &_board);
+	void unexecute(Board &_board);
 	
 	/**
 	 * Makes a general check on the validity of the move. 
