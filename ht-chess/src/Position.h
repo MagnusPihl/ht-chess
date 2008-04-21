@@ -30,7 +30,7 @@
  */
 #define GET_POSITION(x,y) ((Position)((y) | ((x) << COLUMN_SHIFT)))
 
-/**
+/**	
  * Gets the color of the specified position
  */
 #define GET_POSITION_COLOR(pos) (((((pos) & 0x11) == 0x11) || (((pos) & 0x11) == 0x00)) ? BLACK : WHITE)
