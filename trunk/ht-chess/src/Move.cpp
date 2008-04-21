@@ -103,7 +103,7 @@ void Move::unexecute(Board *_board)
 		board[from] = piece;
 		board[to] = NO_PIECE;
 		
-		if (GET_PIECE_COLOR(piece)) == BLACK) { //black				
+		if (GET_PIECE_COLOR(piece) == BLACK) { //black				
 
 			if (GET_COLUMN(to) == COLUMN_G) { //kingside castling					
 				board[F8] = NO_PIECE;
