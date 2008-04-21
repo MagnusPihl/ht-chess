@@ -26,23 +26,23 @@ void Move::execute(Board *_board)
 	//white bottom 1
 
 	//special moves
-	if ((special & PAWN) == PAWN) { //en-passant
+	if (GET_PIECE_TYPE(special) == PAWN) { //en-passant
 
-		if ((special & BLACK) == BLACK) { //black
+		if (GET_PIECE_COLOR(special) == BLACK) { //black
 
 			if (GET_ROW(to) == ROW_3) {
-				board[GET_COLUMN(to) & ROW_4] = NO_PIECE;					
+				board[GET_COLUMN(to) | ROW_4] = NO_PIECE;					
 			}
 
 		} else { //white
 			
 			if (GET_ROW(to) == ROW_6) {
-				board[GET_COLUMN(to) & ROW_5] = NO_PIECE;					
+				board[GET_COLUMN(to) | ROW_5] = NO_PIECE;					
 			}
 		}
-	} else if ((special & KING) == KING) { //castling
+	} else if (GET_PIECE_TYPE(special) == KING) { //castling
 
-		if ((special & BLACK) == BLACK) { //black
+		if (GET_PIECE_COLOR(special) == BLACK) { //black
 
 			if (GET_COLUMN(to) == COLUMN_G) { //kingside castling
 				board[F8] = ROOK_BLACK;
@@ -72,16 +72,16 @@ void Move::unexecute(Board *_board)
 	if (special == NO_PIECE) {
 		board[from] = piece;
 		board[to] = content;
-	} else if ((special & PAWN) == PAWN) { //promotion and en-passant
+	} else if (GET_PIECE_TYPE(special) == PAWN) { //promotion and en-passant
 					
-		if ((special & BLACK) == BLACK) { //black
+		if (GET_PIECE_COLOR(piece) == BLACK) { //black
 
 			if (GET_ROW(to) == ROW_1) { //promotion
 				board[from] = PAWN_BLACK;
 				board[to] = content;
 
 			} else { //en-passant
-				board[GET_COLUMN(to) & ROW_4] = PAWN_WHITE;
+				board[GET_COLUMN(to) | ROW_4] = PAWN_WHITE;
 				board[to] = NO_PIECE;
 				board[from] = piece;
 			}
@@ -93,17 +93,17 @@ void Move::unexecute(Board *_board)
 				board[to] = content;
 
 			} else { //en-passant
-				board[GET_COLUMN(to) & ROW_5] = PAWN_BLACK;
+				board[GET_COLUMN(to) | ROW_5] = PAWN_BLACK;
 				board[to] = NO_PIECE;
 				board[from] = piece;
 			}
 		}
 
-	} else if ((special & KING) == KING) { //castling
+	} else if (GET_PIECE_TYPE(special) == KING) { //castling
 		board[from] = piece;
 		board[to] = NO_PIECE;
 		
-		if ((special & BLACK) == BLACK) { //black				
+		if (GET_PIECE_COLOR(piece)) == BLACK) { //black				
 
 			if (GET_COLUMN(to) == COLUMN_G) { //kingside castling					
 				board[F8] = NO_PIECE;
