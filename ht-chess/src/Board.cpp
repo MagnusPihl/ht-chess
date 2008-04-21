@@ -3,12 +3,12 @@
 
 #include "Board.h"
 
-Board::Board() : content(new ColoredPiece[CONTENT_SIZE]) 
+Board::Board() : content(vector<ColoredPiece>(CONTENT_SIZE)) 
 {
 	resetBoard();
 }
 
-Board::Board(const Board& rhs) : content(new ColoredPiece[CONTENT_SIZE])
+Board::Board(const Board& rhs) : content(vector<ColoredPiece>(CONTENT_SIZE))
 {
 	for (int i = 0; i < CONTENT_SIZE; ++i)
 	{
@@ -28,7 +28,7 @@ Board& Board::operator= (Board& rhs) {
 }
 
 Board::~Board() {
-	delete [] content;
+	//delete stuff
 }
 
 /**
@@ -46,7 +46,7 @@ ColoredPiece Board::getItemAt(int position)
 	return content[position];
 }
 
-ColoredPiece* Board::getContent() {
+vector<ColoredPiece> & Board::getContent() {
 	return content;
 }
 
@@ -482,6 +482,18 @@ void Board::resetBoard() {
 	content[F1] = BISHOP_WHITE;
 	content[G1] = KNIGHT_WHITE;
 	content[H1] = ROOK_WHITE;
-}		
+}	
+
+bool Board::hasKingMoved(int color) {
+	return (color == WHITE) ? whiteKingMoved : blackKingMoved;
+}
+
+int Board::getEnPassantPosition() {
+	return enPassantPosition;
+}
+
+void Board::setEnPassantPosition(int position) {
+	enPassantPosition = position;
+}	
 
 #endif
