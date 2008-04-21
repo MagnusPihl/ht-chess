@@ -86,6 +86,7 @@ public:
 	bool hasKingMoved(int color);	
 	int getEnPassantPosition();
 	void setEnPassantPosition(int position);
+	int getThreatOf(int position);
 };
 
 #endif

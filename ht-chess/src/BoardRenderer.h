@@ -27,10 +27,10 @@ class BoardRenderer
 		SDL_Surface* white;
 		SDL_Surface* black;
 		SDL_Surface* border[4];
-		SDL_Surface* blackOnWhite[NONE];
-		SDL_Surface* blackOnBlack[NONE];
-		SDL_Surface* whiteOnBlack[NONE];	
-		SDL_Surface* whiteOnWhite[NONE];
+		SDL_Surface* blackOnWhite[PIECE_TYPE_COUNT];
+		SDL_Surface* blackOnBlack[PIECE_TYPE_COUNT];
+		SDL_Surface* whiteOnBlack[PIECE_TYPE_COUNT];	
+		SDL_Surface* whiteOnWhite[PIECE_TYPE_COUNT];
 
 		void loadResources()
 		{			
