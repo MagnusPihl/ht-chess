@@ -35,7 +35,7 @@
  */
 #define GET_POSITION_COLOR(pos) (((((pos) & 0x11) == 0x11) || (((pos) & 0x11) == 0x00)) ? BLACK : WHITE)
 
-#define IS_VALID_POSITION(pos) (((pos) & POSITION_OVERFLOW) != POSITION_OVERFLOW)
+#define IS_VALID_POSITION(pos) (((pos) & POSITION_OVERFLOW) == 0)
 
 /**
  * The Columns are denoted with letters. A through H, A to left and H to the right
