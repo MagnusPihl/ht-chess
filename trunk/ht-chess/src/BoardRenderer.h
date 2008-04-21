@@ -23,10 +23,10 @@ class BoardRenderer
 
 		//SDL_Rect pieceRect;
 		SDL_Rect destinationRect;
-		SDL_Rect* borderRect[4];
+		SDL_Rect* borderRect[BORDER_COUNT];
 		SDL_Surface* white;
 		SDL_Surface* black;
-		SDL_Surface* border[4];
+		SDL_Surface* border[BORDER_COUNT];
 		SDL_Surface* blackOnWhite[PIECE_TYPE_COUNT];
 		SDL_Surface* blackOnBlack[PIECE_TYPE_COUNT];
 		SDL_Surface* whiteOnBlack[PIECE_TYPE_COUNT];	
@@ -66,28 +66,28 @@ class BoardRenderer
 			//			   0123456 78901234567890123456789
 			//			   0         1         2
 
-			for (i = 0; i < NONE; ++i)
+			for (i = 0; i < PIECE_TYPE_COUNT; ++i)
 			{
 				path[PIECE_NAME_POS] = PIECE_CHARACTERS[i];
 				blackOnWhite[i]	= SDL_LoadBMP(path);
 			}
 
 			path[POSITION_COLOR_POS] = 'b';
-			for (i = 0; i < NONE; ++i)
+			for (i = 0; i < PIECE_TYPE_COUNT; ++i)
 			{
 				path[PIECE_NAME_POS] = PIECE_CHARACTERS[i];
 				blackOnBlack[i]	= SDL_LoadBMP(path);
 			}
 
 			path[PIECE_COLOR_POS] = 'w';
-			for (i = 0; i < NONE; ++i)
+			for (i = 0; i < PIECE_TYPE_COUNT; ++i)
 			{
 				path[PIECE_NAME_POS] = PIECE_CHARACTERS[i];
 				whiteOnBlack[i]	= SDL_LoadBMP(path);
 			}
 
 			path[POSITION_COLOR_POS] = 'w';
-			for (i = 0; i < NONE; ++i)
+			for (i = 0; i < PIECE_TYPE_COUNT; ++i)
 			{
 				path[PIECE_NAME_POS] = PIECE_CHARACTERS[i];
 				whiteOnWhite[i]	= SDL_LoadBMP(path);
@@ -141,12 +141,12 @@ class BoardRenderer
 					destinationRect.y = (ROW_COUNT - 1 - y)*PIECE_SIZE + 20;
 
 					pos = GET_POSITION(x,y);
-					piece = board.content[pos];					
+					piece = board[pos];					
 					pieceColor = GET_PIECE_COLOR(piece);
 					posColor = GET_POSITION_COLOR(pos);
 					type = GET_PIECE_TYPE(piece);
 					
-					if (type != NONE) 
+					if (type != NO_PIECE) 
 					{
 						if (pieceColor == BLACK) 
 						{
