@@ -16,7 +16,8 @@ enum Piece
 	BISHOP = 3,	//løber
 	ROOK = 4,	//tårn
 	PAWN = 5,	//bonde
-	NONE = 6	//intet
+	NONE = -1,	//intet
+	PIECE_TYPE_COUNT = 6
 };
 
 enum ColoredPiece

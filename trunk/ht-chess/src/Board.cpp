@@ -496,4 +496,68 @@ void Board::setEnPassantPosition(int position) {
 	enPassantPosition = position;
 }	
 
+/**
+ * Returns the smallest piece threatening the selected position
+ */
+int Board::getThreatOf(int position) {
+	int row = GET_ROW(position);
+	int column = GET_REAL_COLUMN(position);
+	int color = GET_PIECE_COLOR(content[position]);
+	static int availableMoves[32] = 
+			   {1,1, 1,-1, -1,-1, -1,1, 0,1,   1,0,   0,-1, -1,0, 
+				1,2, 2,1,  2,-1,  1,-2, -1,-2, -2,-1, -2,1, -1,2};
+	int to;
+	bool blocked;
+	ColoredPiece piece;
+	int threat = NO_PIECE;
+	
+	for (int i = 0; i < 16; i += 2) {
+		blocked = false;
+		int x = column;
+		int y = row;
+		
+		while (!blocked) {
+			x += availableMoves[i];
+			y += availableMoves[i+1];
+			
+			to = GET_POSITION(x, y);						
+			if (!IS_VALID_POSITION(to)) {
+				break;
+			}
+			
+			piece = content[to];
+		
+			if ((piece != NO_PIECE) && (GET_PIECE_COLOR(piece) != color)) {
+				if (piece > threat) {
+					threat = piece;
+					if (GET_PIECE_TYPE(threat) == PAWN) {
+						return threat;
+					}
+				}
+			}
+			
+			if (piece != NO_PIECE) {
+				blocked = true;
+			}
+		}
+	}
+		
+	for (int i = 16; i < 32; i += 2) {
+		to = GET_POSITION(column + availableMoves[i], row + availableMoves[i+1]);			
+		
+		if (IS_VALID_POSITION(to)) {
+			piece = content[to];
+			
+			if ((piece != NO_PIECE) && (GET_PIECE_COLOR(piece) != color)) {
+				if (piece > threat) {
+					threat = piece;
+					if (GET_PIECE_TYPE(threat) == PAWN) {
+						return threat;
+					}
+				}
+			}			
+		}
+	}		
+}
+
 #endif
