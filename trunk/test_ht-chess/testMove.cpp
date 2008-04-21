@@ -1,4 +1,8 @@
-#include "../ht-chess/src/Move.h"
+//#include "../ht-chess/src/Move.h"
+#include <Move.h>
+#include <Move.cpp>
+#include <Board.h>
+#include <Board.cpp>
 
 #define BOOST_TEST_MODULE testMove
 #include <boost/test/unit_test.hpp>
