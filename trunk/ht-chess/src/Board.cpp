@@ -27,8 +27,23 @@ Board& Board::operator= (Board& rhs) {
 	return *this;
 }
 
+ColoredPiece & Board::operator[](int pos)
+{
+    return content[pos];
+}
+
+const ColoredPiece & Board::operator[](int pos) const
+{
+    return content[pos];
+}
+
 Board::~Board() {
 	//delete stuff
+}
+
+void Board::testMethod()
+{
+	content[D4] = (ColoredPiece)(BLACK | QUEEN);
 }
 
 /**
