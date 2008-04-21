@@ -92,7 +92,7 @@ void Board::getPawnMovesFrom(int position, vector<Move> &moves) {
 		if ((row + 1) < ROW_COUNT) { //single advances							
 			ColoredPiece special = NO_PIECE;
 			
-			if ((row + 1) == ROW_COUNT) { //promotion
+			if ((row + 1) == (ROW_COUNT - 1)) { //promotion
 				special = piece;
 				piece = QUEEN_WHITE; //could be changed to let user choose					
 			}
@@ -146,7 +146,7 @@ void Board::getPawnMovesFrom(int position, vector<Move> &moves) {
 					NO_PIECE));
 		}
 		
-		if ((row - 1) > 0) { //single advances							
+		if ((row - 1) >= 0) { //single advances							
 			ColoredPiece special = NO_PIECE;
 			
 			if ((row - 1) == 0) { //promotion
@@ -382,40 +382,69 @@ void Board::getKingMovesFrom(int position, vector<Move> &moves) {
 	int to;
 	ColoredPiece piece;
 	
-	//castling
-	if ((position == E1) && (content[position] == KING_WHITE)) { 
-	
-		//kingside
-		if ((content[F1] == NO_PIECE) &&
-			(content[G1] == NO_PIECE) &&
-			(content[H1] == ROOK_WHITE)) {
-			moves.push_back(Move(E1, G1, KING_WHITE, KING_WHITE, NO_PIECE));
-		}
-		
-		//queenside
-		if ((content[A1] == ROOK_WHITE) &&
-			(content[B1] == NO_PIECE) &&
-			(content[C1] == NO_PIECE) &&
-			(content[D1] == NO_PIECE)) {
-			moves.push_back(Move(E1, C1, KING_WHITE, KING_WHITE, NO_PIECE));
+	//castling	
+	if ((!whiteKingMoved) && (position == E1) && (content[position] == KING_WHITE)) { 	
+						
+		if (NO_PIECE == getThreatOf(E1, color)) {
+					
+			//kingside
+			if ((!whiteRookHMoved) &&
+				(content[F1] == NO_PIECE) &&
+				(content[G1] == NO_PIECE) &&
+				(content[H1] == ROOK_WHITE)) {
+				
+				if ((NO_PIECE == getThreatOf(F1, color)) &&
+					(NO_PIECE == getThreatOf(G1, color))) {
+					
+					moves.push_back(Move(E1, G1, KING_WHITE, KING_WHITE, NO_PIECE));
+				}
+			}
+			
+			//queenside
+			if ((!whiteRookAMoved) &&
+				(content[A1] == ROOK_WHITE) &&
+				(content[B1] == NO_PIECE) &&
+				(content[C1] == NO_PIECE) &&
+				(content[D1] == NO_PIECE)) {
+				
+				if ((NO_PIECE == getThreatOf(C1, color)) &&
+					(NO_PIECE == getThreatOf(D1, color))) {
+					
+					moves.push_back(Move(E1, C1, KING_WHITE, KING_WHITE, NO_PIECE));
+				}
+			}
 		}
 	}	
 	
-	if ((position == E8) && (content[position] == KING_BLACK)) {
+	if ((!blackKingMoved) && (position == E8) && (content[position] == KING_BLACK)) {
 		
-		//kingside
-		if ((content[F8] == NO_PIECE) &&
-			(content[G8] == NO_PIECE) &&
-			(content[H8] == ROOK_BLACK)) {
-			moves.push_back(Move(E8, G8, KING_BLACK, KING_BLACK, NO_PIECE));
-		}
-		
-		//queenside
-		if ((content[A8] == ROOK_BLACK) &&
-			(content[B8] == NO_PIECE) &&
-			(content[C8] == NO_PIECE) &&
-			(content[D8] == NO_PIECE)) {
-			moves.push_back(Move(E8, C8, KING_BLACK, KING_BLACK, NO_PIECE));
+		if (NO_PIECE == getThreatOf(position, color)) {
+			//kingside
+			if ((!blackRookHMoved) &&
+				(content[F8] == NO_PIECE) &&
+				(content[G8] == NO_PIECE) &&
+				(content[H8] == ROOK_BLACK)) {
+				
+				if ((NO_PIECE == getThreatOf(F8, color)) &&
+					(NO_PIECE == getThreatOf(G8, color))) {
+				
+					moves.push_back(Move(E8, G8, KING_BLACK, KING_BLACK, NO_PIECE));
+				}
+			}
+			
+			//queenside
+			if ((!blackRookAMoved) &&
+				(content[A8] == ROOK_BLACK) &&
+				(content[B8] == NO_PIECE) &&
+				(content[C8] == NO_PIECE) &&
+				(content[D8] == NO_PIECE)) {
+				
+				if ((NO_PIECE == getThreatOf(D8, color)) &&
+					(NO_PIECE == getThreatOf(C8, color))) {
+								
+					moves.push_back(Move(E8, C8, KING_BLACK, KING_BLACK, NO_PIECE));
+				}
+			}
 		}
 	}
 			
@@ -423,23 +452,24 @@ void Board::getKingMovesFrom(int position, vector<Move> &moves) {
 	for (int i = 0; i < 16; i += 2) {
 		to = GET_POSITION(column + availableMoves[i], row + availableMoves[i+1]);			
 		if (IS_VALID_POSITION(to)) {
-			piece = content[to];
+			piece = content[to];			
 		
-			if ((piece == NO_PIECE) || (GET_PIECE_COLOR(piece) != color)) {
-				moves.push_back(
-						Move(
-							position, 
-							to, 
-							NO_PIECE, 
-							content[position], 
-							piece));
+			if ((piece == NO_PIECE) || (GET_PIECE_COLOR(piece) != color)) {				
+				if (NO_PIECE == getThreatOf(position, color)) {
+					moves.push_back(
+							Move(
+								position, 
+								to, 
+								NO_PIECE, 
+								content[position], 
+								piece));
+				}
 			}	
 		}		
 	}		
 }
 
-void Board::resetBoard() {
-	
+void Board::resetBoard() {		
 	for (int i = 0; i < CONTENT_SIZE; ++i)
 	{
 		content[i] = NO_PIECE;
@@ -488,21 +518,20 @@ bool Board::hasKingMoved(int color) {
 	return (color == WHITE) ? whiteKingMoved : blackKingMoved;
 }
 
-int Board::getEnPassantPosition() {
+/*int Board::getEnPassantPosition() {
 	return enPassantPosition;
 }
 
 void Board::setEnPassantPosition(int position) {
 	enPassantPosition = position;
-}	
+}	*/
 
 /**
  * Returns the smallest piece threatening the selected position
  */
-int Board::getThreatOf(int position) {
+int Board::getThreatOf(int position, int color) {
 	int row = GET_ROW(position);
-	int column = GET_REAL_COLUMN(position);
-	int color = GET_PIECE_COLOR(content[position]);
+	int column = GET_REAL_COLUMN(position);	
 	static int availableMoves[32] = 
 			   {1,1, 1,-1, -1,-1, -1,1, 0,1,   1,0,   0,-1, -1,0, 
 				1,2, 2,1,  2,-1,  1,-2, -1,-2, -2,-1, -2,1, -1,2};
