@@ -8,29 +8,20 @@
 using namespace std;
 
 class MoveGenerator {
-
-private:
-	Board *board;
-	vector<Move> lastGenerated;	
 	
 public:
 
-	MoveGenerator(Board *_board) : board(_board) {}
-
-	vector<Move> & generateMoves(int color) {	
-		lastGenerated.clear();
+	static void generateMoves(Board &board, int color, vector<Move> &moves) {			
 		int x, y, position;		
 		
 		for (x = 0; x < ROW_COUNT; ++x) {
 			for (y = 0; y < COLUMN_COUNT; ++y) {	
 				position = GET_POSITION(x,y);
-				if (GET_PIECE_COLOR(board->getItemAt(position)) == color) {
-					board->getMovesFromPosition(position, lastGenerated);
+				if (GET_PIECE_COLOR(board.getItemAt(position)) == color) {
+					board.getMovesFromPosition(position, moves);
 				}			
 			}
 		}
-		
-		return lastGenerated;
 	}
 };
 
