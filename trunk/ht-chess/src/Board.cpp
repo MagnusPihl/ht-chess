@@ -117,7 +117,7 @@ void Board::getPawnMovesFrom(int position, vector<Move> &moves) {
 	ColoredPiece piece = content[position];
 	
 	if (GET_PIECE_COLOR(piece) == WHITE) {			
-		if ((row == ROW_1) && //double advance
+		if ((row == ROW_2) && //double advance
 			(content[ GET_POSITION( column, row + 1) ] == NO_PIECE) &&
 			(content[ GET_POSITION( column, row + 2) ] == NO_PIECE)) {
 			
@@ -289,7 +289,7 @@ void Board::getBishopMovesFrom(int position, vector<Move> &moves) {
 		
 		while (!blocked) {
 			column += availableMoves[i];
-			row += availableMoves[i];
+			row += availableMoves[i+1];
 			
 			to = GET_POSITION(column, row);						
 			if (!IS_VALID_POSITION(to)) {
@@ -336,7 +336,7 @@ void Board::getRookMovesFrom(int position, vector<Move> &moves) {
 		
 		while (!blocked) {
 			column += availableMoves[i];
-			row += availableMoves[i];
+			row += availableMoves[i+1];
 			
 			to = GET_POSITION(column, row);						
 			if (!IS_VALID_POSITION(to)) {
@@ -383,7 +383,7 @@ void Board::getQueenMovesFrom(int position, vector<Move> &moves) {
 		
 		while (!blocked) {
 			column += availableMoves[i];
-			row += availableMoves[i];
+			row += availableMoves[i+1];
 			
 			to = GET_POSITION(column, row);						
 			if (!IS_VALID_POSITION(to)) {
