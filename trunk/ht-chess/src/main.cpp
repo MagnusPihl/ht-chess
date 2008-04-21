@@ -112,7 +112,7 @@ int main(int argc, char *argv[])
 		if(gameTurn == WHITE && !player1IsHuman)
 		{
 			printf("Running AI for WHITE.\n");	//Run AI
-			moveSelector(board);
+			//moveSelector(board);
 			turnDone = true;
 		}
 		else if(gameTurn == BLACK && !player2IsHuman)
