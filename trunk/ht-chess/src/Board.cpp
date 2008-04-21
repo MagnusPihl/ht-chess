@@ -251,16 +251,19 @@ void Board::getKnightMovesFrom(int position, vector<Move> &moves) {
 	
 	for (int i = 0; i < 16; i += 2) {
 		to = GET_POSITION(column + availableMoves[i], row + availableMoves[i+1]);			
-		piece = content[to];
 		
-		if ((piece == NO_PIECE) || (GET_PIECE_COLOR(piece) != color)) {
-			moves.push_back(
-					Move(
-						position, 
-						to, 
-						NO_PIECE, 
-						content[position], 
-						piece));
+		if (IS_VALID_POSITION(to)) {
+			piece = content[to];
+			
+			if ((piece == NO_PIECE) || (GET_PIECE_COLOR(piece) != color)) {
+				moves.push_back(
+						Move(
+							position, 
+							to, 
+							NO_PIECE, 
+							content[position], 
+							piece));
+			}
 		}
 	}		
 }
@@ -460,17 +463,19 @@ void Board::getKingMovesFrom(int position, vector<Move> &moves) {
 	//normal moves
 	for (int i = 0; i < 16; i += 2) {
 		to = GET_POSITION(column + availableMoves[i], row + availableMoves[i+1]);			
-		piece = content[to];
+		if (IS_VALID_POSITION(to)) {
+			piece = content[to];
 		
-		if ((piece == NO_PIECE) || (GET_PIECE_COLOR(piece) != color)) {
-			moves.push_back(
-					Move(
-						position, 
-						to, 
-						NO_PIECE, 
-						content[position], 
-						piece));
-		}
+			if ((piece == NO_PIECE) || (GET_PIECE_COLOR(piece) != color)) {
+				moves.push_back(
+						Move(
+							position, 
+							to, 
+							NO_PIECE, 
+							content[position], 
+							piece));
+			}	
+		}		
 	}		
 }
 
