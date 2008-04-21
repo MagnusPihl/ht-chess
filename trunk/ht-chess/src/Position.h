@@ -28,12 +28,12 @@
 /**
  * Retrieves position using two normal numbers
  */
-#define GET_POSITION(x,y) ((Position)(y | (x << COLUMN_SHIFT)))
+#define GET_POSITION(x,y) ((Position)((y) | ((x) << COLUMN_SHIFT)))
 
 /**
  * Gets the color of the specified position
  */
-#define GET_POSITION_COLOR(x) (((((x) & 0x11) == 0x11) || (((x) & 0x11) == 0x00)) ? WHITE : BLACK)
+#define GET_POSITION_COLOR(pos) (((((pos) & 0x11) == 0x11) || (((pos) & 0x11) == 0x00)) ? WHITE : BLACK)
 
 #define IS_VALID_POSITION(pos) (((pos) & POSITION_OVERFLOW) != POSITION_OVERFLOW)
 
