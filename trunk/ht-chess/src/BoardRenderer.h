@@ -137,8 +137,8 @@ class BoardRenderer
 			{
 				for (y = 0; y < COLUMN_COUNT; ++y)
 				{
-					destinationRect.x = (ROW_COUNT - 1 - x)*PIECE_SIZE + 20;
-					destinationRect.y = (COLUMN_COUNT - 1 - y)*PIECE_SIZE + 20;
+					destinationRect.x = x*PIECE_SIZE + 20;
+					destinationRect.y = (ROW_COUNT - 1 - y)*PIECE_SIZE + 20;
 
 					pos = GET_POSITION(x,y);
 					piece = board->content[pos];					
