@@ -288,10 +288,10 @@ void Board::getBishopMovesFrom(int position, vector<Move> &moves) {
 		int y = row;
 		
 		while (!blocked) {
-			column += availableMoves[i];
-			row += availableMoves[i+1];
+			x += availableMoves[i];
+			y += availableMoves[i+1];
 			
-			to = GET_POSITION(column, row);						
+			to = GET_POSITION(x, y);						
 			if (!IS_VALID_POSITION(to)) {
 				break;
 			}
@@ -335,10 +335,10 @@ void Board::getRookMovesFrom(int position, vector<Move> &moves) {
 		int y = row;
 		
 		while (!blocked) {
-			column += availableMoves[i];
-			row += availableMoves[i+1];
+			x += availableMoves[i];
+			y += availableMoves[i+1];
 			
-			to = GET_POSITION(column, row);						
+			to = GET_POSITION(x, y);						
 			if (!IS_VALID_POSITION(to)) {
 				break;
 			}
@@ -382,10 +382,10 @@ void Board::getQueenMovesFrom(int position, vector<Move> &moves) {
 		int y = row;
 		
 		while (!blocked) {
-			column += availableMoves[i];
-			row += availableMoves[i+1];
+			x += availableMoves[i];
+			y += availableMoves[i+1];
 			
-			to = GET_POSITION(column, row);						
+			to = GET_POSITION(x, y);						
 			if (!IS_VALID_POSITION(to)) {
 				break;
 			}
