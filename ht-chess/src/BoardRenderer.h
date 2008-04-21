@@ -109,10 +109,10 @@ class BoardRenderer
 		}	
 
 		~BoardRenderer() {			
-			for (int i = 0; i < BORDER_COUNT; ++i) 
+			/*for (int i = 0; i < BORDER_COUNT; ++i) 
 			{
 				delete borderRect[i];			
-			}
+			}*/
 			delete [] borderRect;
 		}	
 

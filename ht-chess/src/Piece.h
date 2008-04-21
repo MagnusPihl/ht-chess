@@ -5,8 +5,8 @@
 #define WHITE 0x20
 #define PIECE_COLOR (BLACK | WHITE)
 #define PIECE_TYPE 0x0F
-#define GET_PIECE_COLOR(x) (x & PIECE_COLOR)
-#define GET_PIECE_TYPE(x) (x & PIECE_TYPE)
+#define GET_PIECE_COLOR(x) ((x) & PIECE_COLOR)
+#define GET_PIECE_TYPE(x) ((x) & PIECE_TYPE)
 
 enum Piece
 {	
