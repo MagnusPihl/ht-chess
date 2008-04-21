@@ -17,12 +17,17 @@ class Board
 private:
 	vector<ColoredPiece> content;
 	bool blackKingMoved;
+	bool blackRookAMoved;
+	bool blackRookHMoved;
 	bool whiteKingMoved;
+	bool whiteRookAMoved;
+	bool whiteRookHMoved;
 	int enPassantPosition;
 
 public:
 
 	friend class BoardRenderer;
+	friend class Move;
 
 	Board();
 	
@@ -84,9 +89,11 @@ public:
 	
 	void resetBoard();	
 	bool hasKingMoved(int color);	
+	/*bool hasRookAMoved(int color);
+	bool hasRookBMoved(int color);
 	int getEnPassantPosition();
-	void setEnPassantPosition(int position);
-	int getThreatOf(int position);
+	void setEnPassantPosition(int position);*/
+	int getThreatOf(int position, int color);
 };
 
 #endif
