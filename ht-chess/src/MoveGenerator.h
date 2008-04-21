@@ -17,7 +17,7 @@ public:
 
 	MoveGenerator(Board *_board) : board(_board) {}
 
-	vector<Move> * generateMoves(int color) {	
+	vector<Move> & generateMoves(int color) {	
 		lastGenerated.clear();
 		int x, y, position;		
 		
@@ -30,7 +30,7 @@ public:
 			}
 		}
 		
-		return &lastGenerated;
+		return lastGenerated;
 	}
 };
 
