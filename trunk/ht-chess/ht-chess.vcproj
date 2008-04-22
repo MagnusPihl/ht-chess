@@ -202,6 +202,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\Core.h"
+				>
+			</File>
+			<File
 				RelativePath=".\src\MouseHandler.h"
 				>
 			</File>
