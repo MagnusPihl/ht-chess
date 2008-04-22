@@ -23,7 +23,7 @@ class BoardRenderer
 
 		//SDL_Rect pieceRect;
 		SDL_Rect destinationRect;
-		SDL_Rect* borderRect[BORDER_COUNT];
+		SDL_Rect borderRect[BORDER_COUNT];
 		SDL_Surface* white;
 		SDL_Surface* black;
 		SDL_Surface* border[BORDER_COUNT];
@@ -45,18 +45,17 @@ class BoardRenderer
 			
 			for (i = 0; i < BORDER_COUNT; ++i) 
 			{
-				borderRect[i] = new SDL_Rect();
-				borderRect[i]->h = border[i]->h;
-				borderRect[i]->w = border[i]->w;				
+				borderRect[i].h = border[i]->h;
+				borderRect[i].w = border[i]->w;				
 			}
-			borderRect[BORDER_LEFT]->x = 0;
-			borderRect[BORDER_LEFT]->y = 20;
-			borderRect[BORDER_RIGHT]->x = 580;
-			borderRect[BORDER_RIGHT]->y = 20;
-			borderRect[BORDER_TOP]->x = 0;
-			borderRect[BORDER_TOP]->y = 0;
-			borderRect[BORDER_BOTTOM]->x = 0;
-			borderRect[BORDER_BOTTOM]->y = 580;
+			borderRect[BORDER_LEFT].x = 0;
+			borderRect[BORDER_LEFT].y = 20;
+			borderRect[BORDER_RIGHT].x = 580;
+			borderRect[BORDER_RIGHT].y = 20;
+			borderRect[BORDER_TOP].x = 0;
+			borderRect[BORDER_TOP].y = 0;
+			borderRect[BORDER_BOTTOM].x = 0;
+			borderRect[BORDER_BOTTOM].y = 580;
 
 			char path[] = "images\\b w.bmp";
 			//			   0123456 7890123456789 01234 56789012 3456789 0123456
@@ -108,12 +107,18 @@ class BoardRenderer
 			loadResources();
 		}	
 
-		~BoardRenderer() {			
-			/*for (int i = 0; i < BORDER_COUNT; ++i) 
-			{
-				delete borderRect[i];			
-			}*/
-			delete [] borderRect;
+		~BoardRenderer() {
+			SDL_FreeSurface(white);
+			SDL_FreeSurface(black);
+			for(int i=0; i < BORDER_COUNT; i++)
+				SDL_FreeSurface(border[i]);
+			for(int i=0; i < PIECE_TYPE_COUNT; i++)
+			{			
+				SDL_FreeSurface(blackOnWhite[i]);
+				SDL_FreeSurface(blackOnBlack[i]);
+				SDL_FreeSurface(whiteOnBlack[i]);
+				SDL_FreeSurface(whiteOnWhite[i]);
+			}
 		}	
 
 		void drawBoard(SDL_Surface* screen, Board &board) 
@@ -130,7 +135,7 @@ class BoardRenderer
 								border[i], 
 								NULL, 
 								screen, 
-								borderRect[i]);	
+								&borderRect[i]);	
 			}
 
 			for (x = 0; x < ROW_COUNT; ++x)
