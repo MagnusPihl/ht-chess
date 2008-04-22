@@ -1,6 +1,8 @@
 #ifndef MOVESELECTOR_H
 #define MOVESELECTOR_H
 
+#define DEFAULT_PLY 3
+
 #include <vector>
 #include "Move.h"
 #include "Piece.h"
@@ -10,11 +12,11 @@ class MiniMax
 private:
 	MoveGenerator moveGen;
 
-	int miniMax(Board &board, Move *path, bool isMaximizer=true, int curDepth=0, int maxDepth=100)
+	int miniMax(Board &board, Move &path, bool isMaximizer=true, int curDepth=0, int maxDepth=100)
 	{
 		if(curDepth == maxDepth /* && board.gameEnded() ??? */)		//if leaf
 		{
-			//return BoardEvaluator.boardValue(board);
+			return 0;//BoardEvaluator.boardValue(board);
 		}
 		else if(isMaximizer)	//if maximizer
 		{
@@ -29,7 +31,7 @@ private:
 				if(curMove > bestMove)
 				{
 					bestMove = curMove;
-					path = &(*itr);
+					path = (*itr);
 				}
 				(*itr).unexecute(board);
 			}
@@ -48,19 +50,18 @@ private:
 				if(curMove < bestMove)
 				{
 					bestMove = curMove;
-					path = &(*itr);
+					path = (*itr);
 				}
 				(*itr).unexecute(board);
 			}
 			return bestMove;
 		}
-		//return NULL;
 	}
 public:
-	Move operator()(Board &board, bool isMaximizer=true, int curDepth=0, int maxDepth=100)
+	Move operator()(Board &board, bool isMaximizer=true, int maxDepth=DEFAULT_PLY)
 	{
 		Move path;
-		miniMax(board, &path, isMaximizer, curDepth, maxDepth);
+		miniMax(board, path, isMaximizer, 0, maxDepth);
 		return path;
 	}
 };
