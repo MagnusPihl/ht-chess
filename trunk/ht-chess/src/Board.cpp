@@ -470,7 +470,9 @@ void Board::getKingMovesFrom(int position, vector<Move> &moves) {
 			piece = content[to];			
 		
 			if ((piece == NO_PIECE) || (GET_PIECE_COLOR(piece) != color)) {				
-				if (NO_PIECE == getThreatOf(position, color)) {
+				printf("creating moves\n");
+				if (NO_PIECE == getThreatOf(to, color)) {
+					printf("adding move: %i, %i\n", position, to);
 					moves.push_back(
 							Move(
 								position, 
@@ -548,21 +550,26 @@ int Board::getThreatOf(int position, int color) {
 	int row = GET_ROW(position);
 	int column = GET_REAL_COLUMN(position);	
 	static int availableMoves[32] = 
-			   {1,1, 1,-1, -1,-1, -1,1, 0,1,   1,0,   0,-1, -1,0, 
+			   {1,1, -1,1, 1,-1, -1,-1, 0,1,   1,0,   0,-1, -1,0, 
 				1,2, 2,1,  2,-1,  1,-2, -1,-2, -2,-1, -2,1, -1,2};
+			/*	EN   WN    ES	 WS	    N	   E	  S     W
+			*/
 	int to;
 	bool blocked;
 	ColoredPiece piece;
 	int threat = NO_PIECE;
+	int x, y, distance;
 	
 	for (int i = 0; i < 16; i += 2) {
 		blocked = false;
-		int x = column;
-		int y = row;
+		x = column;
+		y = row;
+		distance = 0;
 		
 		while (!blocked) {
 			x += availableMoves[i];
 			y += availableMoves[i+1];
+			distance++;
 			
 			to = GET_POSITION(x, y);						
 			if (!IS_VALID_POSITION(to)) {
@@ -572,18 +579,62 @@ int Board::getThreatOf(int position, int color) {
 			piece = content[to];
 		
 			if ((piece != NO_PIECE) && (GET_PIECE_COLOR(piece) != color)) {
+				
 				if ((piece > threat)||(threat == NO_PIECE)) {
-					threat = piece;
-					if (GET_PIECE_TYPE(threat) == PAWN) {
-						return threat;
-					}
+				
+					if ((0 <= i)&&(i < 8)) {
+					
+						switch (GET_PIECE_TYPE(piece)) {
+							case PAWN:
+								if (distance == 1) {
+									//printf("%i\n", i);
+								
+									if (color == BLACK) { //threatening piece must be black							
+										if (i >= 4) {
+											return piece;
+										}		
+																
+									} else {
+									
+										if (i < 4) {
+											return piece;
+										}
+									}
+								}
+								break;
+							case KING:
+								if (distance == 1) {									
+									threat = piece;
+								}
+								break;
+							case QUEEN:
+							case BISHOP:		
+								threat = piece;
+						}	
+					} else {
+					
+						switch (GET_PIECE_TYPE(piece)) {
+							case KING:
+								if (distance == 1) {									
+									threat = piece;
+								}
+								break;
+							case QUEEN:
+							case ROOK:		
+								threat = piece;
+						}
+					}										
 				}
 			}
 			
 			if (piece != NO_PIECE) {
 				blocked = true;
 			}
-		}
+		}		
+	}
+	
+	if ((threat != NO_PIECE) && (GET_PIECE_TYPE(threat) > KNIGHT)) {
+		return threat;
 	}
 		
 	for (int i = 16; i < 32; i += 2) {
@@ -592,16 +643,13 @@ int Board::getThreatOf(int position, int color) {
 		if (IS_VALID_POSITION(to)) {
 			piece = content[to];
 			
-			if ((piece != NO_PIECE) && (GET_PIECE_COLOR(piece) != color)) {
-				if ((piece > threat)||(threat == NO_PIECE)) {
-					threat = piece;
-					if (GET_PIECE_TYPE(threat) == PAWN) {
-						return threat;
-					}
-				}
+			if ((piece != NO_PIECE) && (GET_PIECE_COLOR(piece) != color) && (GET_PIECE_TYPE(piece) == KNIGHT)) {
+				return threat;
 			}			
 		}
-	}		
+	}	
+	
+	return threat;	
 }
 
 #endif
