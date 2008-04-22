@@ -23,6 +23,8 @@ private:
 	bool whiteRookAMoved;
 	bool whiteRookHMoved;
 	int enPassantPosition;
+	int whiteKingPosition;
+	int blackKingPosition;
 
 public:
 
@@ -98,6 +100,10 @@ public:
 	int getEnPassantPosition();
 	void setEnPassantPosition(int position);*/
 	int getThreatOf(int position, int color);
+	
+	bool isStalemate(int color);
+	bool isCheck(int color);
+	bool isCheckmate(int color);
 };
 
 #endif

@@ -470,9 +470,7 @@ void Board::getKingMovesFrom(int position, vector<Move> &moves) {
 			piece = content[to];			
 		
 			if ((piece == NO_PIECE) || (GET_PIECE_COLOR(piece) != color)) {				
-				printf("creating moves\n");
 				if (NO_PIECE == getThreatOf(to, color)) {
-					printf("adding move: %i, %i\n", position, to);
 					moves.push_back(
 							Move(
 								position, 
@@ -490,7 +488,7 @@ void Board::resetBoard() {
 	for (int i = 0; i < CONTENT_SIZE; ++i)
 	{
 		content[i] = NO_PIECE;
-	}	
+	}	 
 
 	//BLACK VIPS
 	content[A8] = ROOK_BLACK;
@@ -524,11 +522,14 @@ void Board::resetBoard() {
 	content[A1] = ROOK_WHITE;
 	content[B1] = KNIGHT_WHITE;
 	content[C1] = BISHOP_WHITE;
-	content[D1] = KING_WHITE;
-	content[E1] = QUEEN_WHITE;
+	content[D1] = QUEEN_WHITE;
+	content[E1] = KING_WHITE;
 	content[F1] = BISHOP_WHITE;
 	content[G1] = KNIGHT_WHITE;
 	content[H1] = ROOK_WHITE;
+	
+	blackKingPosition = E8;
+	whiteKingPosition = D1;
 }	
 
 bool Board::hasKingMoved(int color) {
@@ -586,9 +587,7 @@ int Board::getThreatOf(int position, int color) {
 					
 						switch (GET_PIECE_TYPE(piece)) {
 							case PAWN:
-								if (distance == 1) {
-									//printf("%i\n", i);
-								
+								if (distance == 1) {								
 									if (color == BLACK) { //threatening piece must be black							
 										if (i >= 4) {
 											return piece;
@@ -602,26 +601,28 @@ int Board::getThreatOf(int position, int color) {
 									}
 								}
 								break;
-							case KING:
-								if (distance == 1) {									
-									threat = piece;
-								}
-								break;
 							case QUEEN:
 							case BISHOP:		
 								threat = piece;
-						}	
-					} else {
-					
-						switch (GET_PIECE_TYPE(piece)) {
+								break;								
 							case KING:
 								if (distance == 1) {									
 									threat = piece;
 								}
 								break;
+						}	
+					} else {
+					
+						switch (GET_PIECE_TYPE(piece)) {							
 							case QUEEN:
 							case ROOK:		
 								threat = piece;
+								break;
+							case KING:
+								if (distance == 1) {									
+									threat = piece;
+								}
+								break;
 						}
 					}										
 				}
@@ -644,12 +645,34 @@ int Board::getThreatOf(int position, int color) {
 			piece = content[to];
 			
 			if ((piece != NO_PIECE) && (GET_PIECE_COLOR(piece) != color) && (GET_PIECE_TYPE(piece) == KNIGHT)) {
-				return threat;
+				return piece;
 			}			
 		}
 	}	
 	
 	return threat;	
+}
+
+bool Board::isStalemate(int color) {
+	return false;
+}
+
+bool Board::isCheck(int color) {
+	if (color == WHITE) {
+		if (NO_PIECE != getThreatOf(whiteKingPosition, WHITE)) {
+			return true;
+		}
+	} else {
+		if (NO_PIECE != getThreatOf(blackKingPosition, BLACK)) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Board::isCheckmate(int color) {
+	
+	return false;
 }
 
 #endif

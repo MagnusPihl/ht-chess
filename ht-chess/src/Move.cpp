@@ -38,12 +38,13 @@ void Move::execute(Board &board)
 			}
 			break;			
 	
-		case KING:
-		
+		case KING:			
 			if (GET_PIECE_COLOR(piece) == WHITE) {
-				board.blackKingMoved = true;
-			} else {
+				board.whiteKingPosition = to;
 				board.whiteKingMoved = true;
+			} else {
+				board.blackKingPosition = to;
+				board.blackKingMoved = true;
 			}
 			break;
 			
@@ -147,7 +148,8 @@ void Move::unexecute(Board &board)
 		board[to] = NO_PIECE;
 		
 		if (GET_PIECE_COLOR(piece) == BLACK) { //black				
-
+			
+			board.blackKingPosition = from;
 			board.blackKingMoved = false;
 			if (GET_COLUMN(to) == COLUMN_G) { //kingside castling					
 				board[F8] = NO_PIECE;
@@ -162,6 +164,7 @@ void Move::unexecute(Board &board)
 		} else { //white
 
 			board.whiteKingMoved = false;
+			board.whiteKingPosition = from;
 			if (GET_COLUMN(to) == COLUMN_G) { //kingside castling
 				board[F1] = NO_PIECE;
 				board[H1] = ROOK_WHITE;
