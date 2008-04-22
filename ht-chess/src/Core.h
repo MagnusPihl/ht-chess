@@ -117,12 +117,13 @@ public:
 			if(gameTurn == WHITE && !player1IsHuman)
 			{
 				printf("Running AI for WHITE.\n");	//Run AI
-				//moveSelector(board);
+				moveSelector(board, true).execute(board);
 				turnDone = true;
 			}
 			else if(gameTurn == BLACK && !player2IsHuman)
 			{
 				printf("Running AI for BLACK.\n");
+				moveSelector(board, false).execute(board);
 				turnDone = true;
 			}
 
