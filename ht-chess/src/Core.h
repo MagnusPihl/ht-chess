@@ -11,6 +11,8 @@
 #include <math.h>
 #include <vector>
 
+#define AI_TYPE AlphaBeta
+
 #define WIDTH 800
 #define HEIGHT 600
 
@@ -43,7 +45,7 @@ private:
 	SDL_Surface *overlay;
 	SDL_Surface *fullOverlay;
 	
-	MiniMax moveSelector;
+	AI_TYPE moveSelector;
 	std::vector<Move> moveList;
 	BoardRenderer renderer;
 	Board board;
@@ -112,6 +114,16 @@ public:
 				if(gameTurn == WHITE) gameTurn = BLACK;
 				else gameTurn = WHITE;
 				turnDone = false;
+			}
+			if(board.isCheckmate(gameTurn) && gameTurn!=0)
+			{
+				printf("Checkmate!\n");
+				gameTurn=0;
+			}
+			else if(board.isStalemate() && gameTurn!=0)
+			{
+				printf("Stalemate!\n");
+				gameTurn=0;
 			}
 			if(gameTurn == WHITE && !player1IsHuman)
 			{
