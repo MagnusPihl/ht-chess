@@ -224,6 +224,7 @@ void Board::getPawnMovesFrom(Position position, vector<Move> &moves) {
 	
 	if (color == WHITE) {			
 		if ((row + 1) < ROW_COUNT) { //single advances							
+		
 			if ((row == ROW_2) && //double advance
 				(content[ GET_POSITION( column, row + 1) ] == NO_PIECE) &&
 				(content[ GET_POSITION( column, row + 2) ] == NO_PIECE)) {
@@ -246,7 +247,7 @@ void Board::getPawnMovesFrom(Position position, vector<Move> &moves) {
 				move.unexecute(*this);
 			}	
 			
-			if ((row == ROW_4)&&(GET_ROW(enPassantPosition) == ROW_5)) { //en-passant
+			if ((row == ROW_5)&&(GET_ROW(enPassantPosition) == ROW_6)) { //en-passant
 				int x = GET_REAL_COLUMN(enPassantPosition);
 				
 				if (((column + 1) == x) || ((column - 1) == x)) {
@@ -340,7 +341,7 @@ void Board::getPawnMovesFrom(Position position, vector<Move> &moves) {
 			}
 		}
 	} else { //black
-		if ((row - 1) >= 0) { //single advances			
+		if (row > 0) { //single advances			
 			if ((row == ROW_7) && //double advance
 				(content[ GET_POSITION( column, row - 1) ] == NO_PIECE) &&
 				(content[ GET_POSITION( column, row - 2) ] == NO_PIECE)) {
