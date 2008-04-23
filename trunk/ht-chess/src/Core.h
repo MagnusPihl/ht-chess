@@ -82,7 +82,6 @@ public:
 	~Core()
 	{
 		TTF_Quit();
-		//delete font;
 		SDL_FreeSurface(whiteText);
 		SDL_FreeSurface(blackText);
 		SDL_FreeSurface(humanText);
@@ -116,13 +115,11 @@ public:
 			}
 			if(gameTurn == WHITE && !player1IsHuman)
 			{
-				printf("Running AI for WHITE.\n");	//Run AI
 				moveSelector(board, true).execute(board);
 				turnDone = true;
 			}
 			else if(gameTurn == BLACK && !player2IsHuman)
 			{
-				printf("Running AI for BLACK.\n");
 				moveSelector(board, false).execute(board);
 				turnDone = true;
 			}
@@ -165,15 +162,13 @@ public:
 						else if(mouseEvent.x >= 20 && mouseEvent.x < 580 && mouseEvent.y >= 20 && mouseEvent.y < 580)
 						{
 							Position pos = GET_POSITION((mouseEvent.x-20)/70, ROW_COUNT-1-((mouseEvent.y-20)/70));
-							printf("Position is: %i, %i\n", ROW_COUNT-1-((mouseEvent.y-20)/70), (mouseEvent.x-20)/70);
-							printf("Pos is: %i, %i\n", ROW_COUNT-1-GET_ROW(pos), GET_REAL_COLUMN(pos));
 							if((selectedPiece == -1) && (GET_PIECE_COLOR(board.getItemAt(pos)) == gameTurn)
 								&& ((gameTurn==WHITE && player1IsHuman) || (gameTurn==BLACK && player2IsHuman)))
 							{
 								moveList.clear();
 								board.getMovesFromPosition(pos, moveList);
-								if(!moveList.empty())
-								{
+								/*if(!moveList.empty())
+								{*/
 									SDL_FillRect(fullOverlay, NULL, SDL_MapRGB(screen->format, 255, 0, 255));
 									std::vector<Move>::iterator itr;
 									for(itr = moveList.begin(); itr != moveList.end(); itr++)
@@ -186,8 +181,7 @@ public:
 									selectedPiece = pos;
 									cursorRect.x = GET_REAL_COLUMN(pos) * 70 + 20;
 									cursorRect.y = (ROW_COUNT-1-GET_ROW(pos)) * 70 + 20;
-									printf("You chose a piece to move.\n");
-								}
+								//}
 							}
 							else if(selectedPiece != -1)
 							{
@@ -200,7 +194,6 @@ public:
 										selectedPiece = -1;
 										turnDone = true;
 										(*itr).execute(board);
-										printf("You chose a position to move to.\n");
 										break;
 									}
 								}
@@ -212,7 +205,6 @@ public:
 						if(selectedPiece != -1)
 						{
 							selectedPiece = -1;
-							printf("You cancelled moving the selected piece.\n");
 						}
 					}
 					break;
