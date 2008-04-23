@@ -23,6 +23,9 @@
 #define WHITE_ROOKA_MOVED ((hasMoved & HAS_MOVED_ROOKA_WHITE) == HAS_MOVED_ROOKA_WHITE)
 #define WHITE_ROOKH_MOVED ((hasMoved & HAS_MOVED_ROOKH_WHITE) == HAS_MOVED_ROOKH_WHITE)
 
+#define BLACK_INDEX 0
+#define WHITE_INDEX 1
+
 using namespace std;
 class Move;
 
@@ -32,10 +35,9 @@ private:
 	vector<ColoredPiece> content;
 	int hasMoved;
 	int enPassantPosition;
-	int whiteKingPosition;
-	int blackKingPosition;
-	int whiteMaterialValue;
-	int blackMaterialValue;
+	int kingPosition[2]; //0 = black, 1 = white	
+	int materialValue[2];
+	int hasCastled[2]; 
 
 public:
 
@@ -106,6 +108,7 @@ public:
 	
 	void resetBoard();	
 	bool hasKingMoved(int color);	
+	void setPositionOfKing(int position, int color);
 	int getPositionOfKing(int color);
 	/*bool hasRookAMoved(int color);
 	bool hasRookBMoved(int color);
@@ -116,6 +119,7 @@ public:
 	bool isStalemate(int color);
 	bool isCheck(int color);
 	bool isCheckmate(int color);
+	bool hasPerformedCastling(int color);
 	int getMaterialValue(int color);
 };
 

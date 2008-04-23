@@ -194,6 +194,7 @@ public:
 										selectedPiece = -1;
 										turnDone = true;
 										(*itr).execute(board);
+										printf("The material value of white: %i, and black: %i\n", board.getMaterialValue(WHITE), board.getMaterialValue(BLACK));
 										break;
 									}
 								}

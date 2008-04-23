@@ -633,10 +633,13 @@ void Board::resetBoard() {
 	content[G1] = KNIGHT_WHITE;
 	content[H1] = ROOK_WHITE;
 	
-	blackKingPosition = E8;	
-	whiteKingPosition = E1;
+	kingPosition[BLACK_INDEX] = E8;	
+	kingPosition[WHITE_INDEX] = E1;
 	hasMoved = 0;	
-}	
+	
+	materialValue[WHITE_INDEX] = PIECE_VALUE[QUEEN] + (PIECE_VALUE[ROOK] * 2) + (PIECE_VALUE[BISHOP] * 2) + (PIECE_VALUE[KNIGHT] * 2) + (PIECE_VALUE[PAWN] * 8);
+	materialValue[BLACK_INDEX] = materialValue[WHITE_INDEX];
+}
 
 bool Board::hasKingMoved(int color) {
 	return (color == WHITE) ? WHITE_KING_MOVED : BLACK_KING_MOVED;
@@ -759,34 +762,38 @@ int Board::getThreatOf(int position, int color) {
 	return threat;	
 }
 
-int Board::getPositionOfKing(int color) {
-	
-	return (color == WHITE) ? whiteKingPosition : blackKingPosition;
+void Board::setPositionOfKing(int position, int color) {
+	kingPosition[(color == WHITE)] = position;
+}
+
+int Board::getPositionOfKing(int color) {	
+	return kingPosition[(color == WHITE)];
 }
 
 bool Board::isStalemate(int color) {
 	return false;
 }
 
-bool Board::isCheck(int color) {
-	if (color == WHITE) {
-		if (NO_PIECE != getThreatOf(whiteKingPosition, WHITE)) {
-			return true;
-		}
-	} else {
-		if (NO_PIECE != getThreatOf(blackKingPosition, BLACK)) {
-			return true;
-		}
+bool Board::isCheck(int color) {	
+	if (NO_PIECE != getThreatOf(kingPosition[(color == WHITE)], color)) {
+		return true;
 	}
 	return false;
 }
 
 bool Board::isCheckmate(int color) {
-	
+	throw "";
 	return false;
 }
 
 
-int getMaterialValue(int color);
+int Board::getMaterialValue(int color) {
+	return materialValue[(color == WHITE)];
+}
+
+bool Board::hasPerformedCastling(int color) {
+	throw "";	
+	return false;
+}
 
 #endif

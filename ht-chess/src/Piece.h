@@ -8,13 +8,23 @@
 #define GET_PIECE_COLOR(x) ((x) & PIECE_COLOR)
 #define GET_PIECE_TYPE(x) ((x) & PIECE_TYPE)
 
+static const int PIECE_VALUE[7] = {
+	10000,	//konge
+	900,	//dronning
+	500,	//tårn
+	300,	//løber
+	300,	//springer
+	100,	//bonde
+	0,	//intet	
+};
+
 enum Piece
 {	
 	KING = 0,	//konge
-	QUEEN = 1,	//dronning
-	KNIGHT = 2,	//springer
+	QUEEN = 1,	//dronning	
+	ROOK = 2,	//tårn
 	BISHOP = 3,	//løber
-	ROOK = 4,	//tårn
+	KNIGHT = 4,	//springer
 	PAWN = 5,	//bonde
 	NONE = 6,	//intet
 	PIECE_TYPE_COUNT = 6
@@ -41,9 +51,9 @@ static const char PIECE_CHARACTERS[] =
 {
 	'k',	//konge
 	'q',	//dronning
-	'n',	//springer
-	'b',	//løber
 	'r',	//tårn
+	'b',	//løber
+	'n',	//springer
 	'p',	//bonde
 	' '	//intet	
 };
