@@ -233,6 +233,10 @@
 				RelativePath=".\src\Position.h"
 				>
 			</File>
+			<File
+				RelativePath=".\src\Validator.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"

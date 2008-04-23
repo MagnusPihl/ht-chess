@@ -6,6 +6,7 @@
 #include <vector>
 #include "Move.h"
 #include "Piece.h"
+#include "Validator.h"
 
 class MiniMax
 {
@@ -70,13 +71,14 @@ class AlphaBeta
 {
 private:
 	MoveGenerator moveGen;
+	Validator validator;
 
 	int alphaBeta(Board &board, Move &path, bool isMaximizer=true, int curDepth=0,
 		int maxDepth=100, int alpha=-100000, int beta=100000)
 	{
 		if(curDepth == maxDepth || board.isCheckmate() || board.isStalemate())		//if leaf
 		{
-			return 0;//BoardEvaluator.boardValue(board);
+			return validator(board, curDepth);
 		}
 		else if(isMaximizer)	//if maximizer
 		{
