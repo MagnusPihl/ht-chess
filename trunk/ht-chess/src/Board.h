@@ -9,6 +9,20 @@
 #define CHECK_OVERFLOW true
 #define CONTENT_SIZE 256
 
+#define HAS_MOVED_KING_BLACK 0x01
+#define HAS_MOVED_ROOKA_BLACK 0x02
+#define HAS_MOVED_ROOKH_BLACK 0x04
+#define HAS_MOVED_KING_WHITE 0x10
+#define HAS_MOVED_ROOKA_WHITE 0x20
+#define HAS_MOVED_ROOKH_WHITE 0x40
+
+#define WHITE_KING_MOVED ((hasMoved & HAS_MOVED_KING_WHITE) == HAS_MOVED_KING_WHITE)
+#define BLACK_KING_MOVED ((hasMoved & HAS_MOVED_KING_BLACK) == HAS_MOVED_KING_BLACK)
+#define BLACK_ROOKA_MOVED ((hasMoved & HAS_MOVED_ROOKA_BLACK) == HAS_MOVED_ROOKA_BLACK)
+#define BLACK_ROOKH_MOVED ((hasMoved & HAS_MOVED_ROOKH_BLACK) == HAS_MOVED_ROOKH_BLACK)
+#define WHITE_ROOKA_MOVED ((hasMoved & HAS_MOVED_ROOKA_WHITE) == HAS_MOVED_ROOKA_WHITE)
+#define WHITE_ROOKH_MOVED ((hasMoved & HAS_MOVED_ROOKH_WHITE) == HAS_MOVED_ROOKH_WHITE)
+
 using namespace std;
 class Move;
 
@@ -16,15 +30,12 @@ class Board
 {
 private:
 	vector<ColoredPiece> content;
-	bool blackKingMoved;
-	bool blackRookAMoved;
-	bool blackRookHMoved;
-	bool whiteKingMoved;
-	bool whiteRookAMoved;
-	bool whiteRookHMoved;
+	int hasMoved;
 	int enPassantPosition;
 	int whiteKingPosition;
 	int blackKingPosition;
+	int whiteMaterialValue;
+	int blackMaterialValue;
 
 public:
 
@@ -95,6 +106,7 @@ public:
 	
 	void resetBoard();	
 	bool hasKingMoved(int color);	
+	int getPositionOfKing(int color);
 	/*bool hasRookAMoved(int color);
 	bool hasRookBMoved(int color);
 	int getEnPassantPosition();
@@ -104,6 +116,7 @@ public:
 	bool isStalemate(int color);
 	bool isCheck(int color);
 	bool isCheckmate(int color);
+	int getMaterialValue(int color);
 };
 
 #endif

@@ -5,8 +5,8 @@
 
 Move::Move() {}
 
-Move::Move(int _from, int _to, ColoredPiece _special, ColoredPiece _piece, ColoredPiece _content) :
-	from(_from), to(_to), special(_special), piece(_piece), content(_content)
+Move::Move(int _from, int _to, ColoredPiece _special, ColoredPiece _piece, ColoredPiece _content, int hasMovedBefore) :
+	from(_from), to(_to), special(_special), piece(_piece), content(_content), hasMovedBefore(hasMovedBefore)
 {
 	#ifdef TEST_MOVE_VALIDITY 
 		if (isValid(*this)) {
@@ -41,21 +41,28 @@ void Move::execute(Board &board)
 		case KING:			
 			if (GET_PIECE_COLOR(piece) == WHITE) {
 				board.whiteKingPosition = to;
-				board.whiteKingMoved = true;
+				board.hasMoved |= HAS_MOVED_KING_WHITE;
 			} else {
 				board.blackKingPosition = to;
-				board.blackKingMoved = true;
+				board.hasMoved |= HAS_MOVED_KING_BLACK;				
 			}
 			break;
 			
 		case ROOK:
 			//set rook moved
-			/*if (GET_PIECE_COLOR(piece) == WHITE) {
-				if ()
-				board.blackKingMoved = true;
+			if (GET_PIECE_COLOR(piece) == WHITE) {
+				if (((board.hasMoved & HAS_MOVED_ROOKA_WHITE) != 0)&&(from == A1)) {
+					board.hasMoved |= HAS_MOVED_ROOKA_WHITE;
+				} else if (((board.hasMoved & HAS_MOVED_ROOKH_WHITE) != 0)&&(from == H1)) {
+					board.hasMoved |= HAS_MOVED_ROOKH_WHITE;
+				}
 			} else {
-				board.whiteKingMoved = true;
-			}*/
+				if (((board.hasMoved & HAS_MOVED_ROOKA_BLACK) != 0)&&(from == A8)) {
+					board.hasMoved |= HAS_MOVED_ROOKA_BLACK;
+				} else if (((board.hasMoved & HAS_MOVED_ROOKH_BLACK) != 0)&&(from == H8)) {
+					board.hasMoved |= HAS_MOVED_ROOKH_BLACK;
+				}
+			}
 			break;
 			
 	}
@@ -85,11 +92,11 @@ void Move::execute(Board &board)
 				if (GET_COLUMN(to) == COLUMN_G) { //kingside castling
 					board[F8] = ROOK_BLACK;
 					board[H8] = NO_PIECE;
-					board.blackRookHMoved = true;
+					board.hasMoved |= HAS_MOVED_ROOKH_BLACK;
 				} else { //queenside castling
 					board[D8] = ROOK_BLACK;
 					board[A8] = NO_PIECE;
-					board.blackRookAMoved = true;
+					board.hasMoved |= HAS_MOVED_ROOKA_BLACK;
 				}
 
 			} else { //white
@@ -97,11 +104,11 @@ void Move::execute(Board &board)
 				if (GET_COLUMN(to) == COLUMN_G) { //kingside castling
 					board[F1] = ROOK_WHITE;
 					board[H1] = NO_PIECE;
-					board.whiteRookHMoved = true;
+					board.hasMoved |= HAS_MOVED_ROOKH_WHITE;
 				} else { //queenside castling
 					board[D1] = ROOK_WHITE;
 					board[A1] = NO_PIECE;
-					board.whiteRookAMoved = true;
+					board.hasMoved |= HAS_MOVED_ROOKH_WHITE;
 				}							
 			}
 			break;			
@@ -110,6 +117,7 @@ void Move::execute(Board &board)
 
 void Move::unexecute(Board &board)
 {
+	board.hasMoved = hasMovedBefore;
 	
 	if (special == NO_PIECE) {
 		board[from] = piece;
@@ -150,29 +158,23 @@ void Move::unexecute(Board &board)
 		if (GET_PIECE_COLOR(piece) == BLACK) { //black				
 			
 			board.blackKingPosition = from;
-			board.blackKingMoved = false;
 			if (GET_COLUMN(to) == COLUMN_G) { //kingside castling					
 				board[F8] = NO_PIECE;
 				board[H8] = ROOK_BLACK;
-				board.blackRookHMoved = false;
 			} else { //queenside castling
 				board[D8] = NO_PIECE;
 				board[A8] = ROOK_BLACK;
-				board.blackRookAMoved = false;
 			}
 
 		} else { //white
 
-			board.whiteKingMoved = false;
 			board.whiteKingPosition = from;
 			if (GET_COLUMN(to) == COLUMN_G) { //kingside castling
 				board[F1] = NO_PIECE;
 				board[H1] = ROOK_WHITE;
-				board.whiteRookHMoved = false;
 			} else { //queenside castling
 				board[D1] = NO_PIECE;
 				board[A1] = ROOK_WHITE;
-				board.whiteRookAMoved = false;
 			}							
 		}
 	}
