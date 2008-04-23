@@ -11,7 +11,7 @@
 #include <math.h>
 #include <vector>
 
-#define AI_TYPE AlphaBeta
+#define AI_TYPE AlphaBetaOptimized
 
 #define WIDTH 800
 #define HEIGHT 600
@@ -98,7 +98,7 @@ public:
 
 	void run()
 	{
-		int gameTurn = WHITE;
+		Color gameTurn = WHITE;
 		bool turnDone = false;
 		int selectedPiece = -1;
 		bool player1IsHuman = true;
@@ -111,19 +111,18 @@ public:
 		{
 			if(turnDone)
 			{
-				if(gameTurn == WHITE) gameTurn = BLACK;
-				else gameTurn = WHITE;
+				gameTurn = GET_OPPOSITE_COLOR(gameTurn);
 				turnDone = false;
 			}
 			if(board.isCheckmate(gameTurn) && gameTurn!=0)
 			{
 				printf("Checkmate!\n");
-				gameTurn=0;
+				gameTurn=NO_COLOR;
 			}
 			else if(board.isStalemate() && gameTurn!=0)
 			{
 				printf("Stalemate!\n");
-				gameTurn=0;
+				gameTurn=NO_COLOR;
 			}
 			if(gameTurn == WHITE && !player1IsHuman)
 			{
