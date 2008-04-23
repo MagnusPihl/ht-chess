@@ -179,7 +179,7 @@ public:
 							{
 								moveList.clear();
 								board.getMovesFromPosition(pos, moveList);
-								/*if(!moveList.empty())
+								/*if(!moveList.empty())		//If this is enabled, players can't choose pieces with no valid moves.
 								{*/
 									SDL_FillRect(fullOverlay, NULL, SDL_MapRGB(screen->format, 255, 0, 255));
 									std::vector<Move>::iterator itr;
