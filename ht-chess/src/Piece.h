@@ -54,6 +54,7 @@ static const int PIECE_VALUE[7] = {
 
 enum Color 
 {
+	NO_COLOR = 0x00,
 	BLACK = 0x10,
 	WHITE = 0x20
 };
