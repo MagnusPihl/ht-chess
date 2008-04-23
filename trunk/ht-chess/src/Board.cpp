@@ -791,9 +791,8 @@ int Board::getMaterialValue(int color) {
 	return materialValue[(color == WHITE)];
 }
 
-bool Board::hasPerformedCastling(int color) {
-	throw "";	
-	return false;
+bool Board::hasPerformedCastling(int color) {	
+	return hasCastled[(color == WHITE)];
 }
 
 #endif

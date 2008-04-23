@@ -97,6 +97,7 @@ void Move::execute(Board &board)
 		case KING: //castling
 
 			if (color == BLACK) { //black
+				board.hasCastled[BLACK_INDEX] = true;
 
 				if (GET_COLUMN(to) == COLUMN_G) { //kingside castling
 					board[F8] = ROOK_BLACK;
@@ -109,6 +110,7 @@ void Move::execute(Board &board)
 				}
 
 			} else { //white
+				board.hasCastled[WHITE_INDEX] = true;
 
 				if (GET_COLUMN(to) == COLUMN_G) { //kingside castling
 					board[F1] = ROOK_WHITE;
@@ -173,6 +175,8 @@ void Move::unexecute(Board &board)
 		board.setPositionOfKing(from, color);
 
 		if (color == BLACK) { //black				
+		
+			board.hasCastled[BLACK_INDEX] = false;
 			
 			if (GET_COLUMN(to) == COLUMN_G) { //kingside castling					
 				board[F8] = NO_PIECE;
@@ -183,6 +187,8 @@ void Move::unexecute(Board &board)
 			}
 
 		} else { //white
+			
+			board.hasCastled[WHITE_INDEX] = false;
 
 			if (GET_COLUMN(to) == COLUMN_G) { //kingside castling
 				board[F1] = NO_PIECE;
