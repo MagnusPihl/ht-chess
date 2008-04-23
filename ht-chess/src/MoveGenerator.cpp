@@ -3,8 +3,9 @@
 
 #include "MoveGenerator.h"
 
-void MoveGenerator::generateMoves(Board &board, int color, std::vector<Move> &moves) {			
-	int x, y, position;		
+void MoveGenerator::generateMoves(Board &board, Color color, std::vector<Move> &moves) {			
+	int x, y;		
+	Position position;
 	
 	for (x = 0; x < ROW_COUNT; ++x) {
 		for (y = 0; y < COLUMN_COUNT; ++y) {	

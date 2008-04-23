@@ -30,11 +30,20 @@
  */
 #define GET_POSITION(x,y) ((Position)((y) | ((x) << COLUMN_SHIFT)))
 
+/**
+ * Creates position using column and row, not normal numbers
+ */
+#define COMBINE_TO_POSITION(column, row) ((Position)((column) | (row)))
+
 /**	
  * Gets the color of the specified position
  */
 #define GET_POSITION_COLOR(pos) (((((pos) & 0x11) == 0x11) || (((pos) & 0x11) == 0x00)) ? BLACK : WHITE)
 
+
+/**
+* Returns false if the specified position is invalid
+*/
 #define IS_VALID_POSITION(pos) (((pos) & POSITION_OVERFLOW) == 0)
 
 /**

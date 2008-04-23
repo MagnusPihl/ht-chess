@@ -14,15 +14,15 @@ struct Fixture
 
     Fixture() 
     {
-		m1 = Move(0, 1, NO_PIECE, KNIGHT_BLACK, PAWN_WHITE, 0, 0);
+		m1 = Move(A2, A3, NO_PIECE, KNIGHT_BLACK, PAWN_WHITE, 0, INVALID_POSITION);
     } 
 };
 
 BOOST_AUTO_TEST_CASE(testConstructor)
 {
 	Fixture f;
-	BOOST_CHECK_EQUAL(f.m1.getOldPosition(), 0);
-	BOOST_CHECK_EQUAL(f.m1.getNewPosition(), 1);
+	BOOST_CHECK_EQUAL(f.m1.getOldPosition(), A2);
+	BOOST_CHECK_EQUAL(f.m1.getNewPosition(), A3);
 	BOOST_CHECK_EQUAL(f.m1.getSpecial(), NO_PIECE);
 	BOOST_CHECK_EQUAL(f.m1.getPiece(), KNIGHT_BLACK);
 	BOOST_CHECK_EQUAL(f.m1.getContent(), PAWN_WHITE);

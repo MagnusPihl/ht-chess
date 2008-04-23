@@ -46,14 +46,14 @@ private:
 	/**
 	* Not finished yet
 	*/
-	int enPassantPosition;
+	Position enPassantPosition;
 	
 	/**
 	* Keeps track of the positions of the black and white kings on the board.
 	* Use BLACK_INDEX and WHITE_INDEX to index the array. 
 	* 0 = black, 1 = white	
 	*/
-	int kingPosition[2];
+	Position kingPosition[2];
 	
 	/**
 	* Keeps track of the material value of the black and white. 
@@ -101,10 +101,10 @@ public:
 	/**
 	* Enables fast read write access to board contents.
 	* Overloaded index operator. No overflow checking!
-	* param: int, position - position 
+	* param: Position, position - position 
 	* return: ColoredPiece& - Reference to board position
 	*/
-	ColoredPiece & operator[](int position);
+	ColoredPiece & operator[](Position position);
 					
 	//const ColoredPiece & operator[](int pos) const;
 
@@ -118,10 +118,10 @@ public:
 	* Gets the piece if any at the specified position.
 	* if CHECK_OVERFLOW is defined then this function will throw an exception
 	* if position is out of bounds.
-	* param: int, position - position 
+	* param: Position, position - position 
 	* return: ColoredPiece - NO_PIECE if no piece at position, else Piece | Color
 	*/		
-	ColoredPiece getItemAt(int position);
+	ColoredPiece getItemAt(Position position);
 
 	/**
 	* Get the contents of the board
@@ -132,10 +132,10 @@ public:
 	* Add all legal moves that does not endanger the king to the provided vector
 	* The detects piece type and color from position. If no piece is present at
 	* the specified position nothing is added.	
-	* param: int, position - position of piece
+	* param: Position, position - position of piece
 	* param: vector<Move>, move - vector to add moves to
 	*/		
-	void getMovesFromPosition(int position, vector<Move> &moves);
+	void getMovesFromPosition(Position position, vector<Move> &moves);
 	
 	
 	/**	
@@ -147,10 +147,10 @@ public:
 	* The pawn must be present at the specified position. The color of the piece
 	* is derived from the position.
 	* 
-	* param: int, position - position of the pawn
+	* param: Position, position - position of the pawn
 	* param: vector<Move>, move - vector to add moves to
 	*/
-	void getPawnMovesFrom(int position, vector<Move> &moves);
+	void getPawnMovesFrom(Position position, vector<Move> &moves);
 		
 		
 	/**
@@ -163,10 +163,10 @@ public:
 	* Add all legal moves that does not endanger the king to the provided vector
 	* The knight must be present at the specified position. The color of the piece
 	* is derived from the position.
-	* param: int, position - position of the knight
+	* param: Position, position - position of the knight
 	* param: vector<Move>, move - vector to add moves to
 	*/	
-	void getKnightMovesFrom(int position, vector<Move> &moves);
+	void getKnightMovesFrom(Position position, vector<Move> &moves);
 	
 	/**
 	* x x
@@ -176,10 +176,10 @@ public:
 	* Add all legal moves that does not endanger the king to the provided vector
 	* The bishop must be present at the specified position. The color of the piece
 	* is derived from the position.
-	* param: int, position - position of the bishop
+	* param: Position, position - position of the bishop
 	* param: vector<Move>, move - vector to add moves to
 	*/	
-	void getBishopMovesFrom(int position, vector<Move> &moves);
+	void getBishopMovesFrom(Position position, vector<Move> &moves);
 	
 	/**
 	*  x
@@ -189,10 +189,10 @@ public:
 	* Add all legal moves that does not endanger the king to the provided vector
 	* The rook must be present at the specified position. The color of the piece
 	* is derived from the position.
-	* param: int, position - position of the rook
+	* param: Position, position - position of the rook
 	* param: vector<Move>, move - vector to add moves to
 	*/	
-	void getRookMovesFrom(int position, vector<Move> &moves);
+	void getRookMovesFrom(Position position, vector<Move> &moves);
 	
 	/**
 	* xxx
@@ -202,10 +202,10 @@ public:
 	* Add all legal moves that does not endanger the king to the provided vector
 	* The queen must be present at the specified position. The color of the piece
 	* is derived from the position.
-	* param: int, position - position of the queen
+	* param: Position, position - position of the queen
 	* param: vector<Move>, move - vector to add moves to
 	*/	
-	void getQueenMovesFrom(int position, vector<Move> &moves);
+	void getQueenMovesFrom(Position position, vector<Move> &moves);
 	
 	/**
 	* xxx
@@ -216,10 +216,10 @@ public:
 	* The king must be present at the specified position. The color of the piece
 	* is derived from the position.
 	* This function also creates king and queenside castling moves
-	* param: int, position - position of the king
+	* param: Position, position - position of the king
 	* param: vector<Move>, move - vector to add moves to
 	*/	
-	void getKingMovesFrom(int position, vector<Move> &moves);	
+	void getKingMovesFrom(Position position, vector<Move> &moves);	
 		
 	/**
 	* Reset board to initial start position. Black pieces in row 7 and 8.
@@ -229,55 +229,55 @@ public:
 	
 	/**
 	* Tells whether the king of the specified color has moved	
-	* param: int, color - player color
+	* param: Color, color - player color
 	* return: bool - true if the king has moved, false otherwise
 	*/
-	bool hasKingMoved(int color);	
+	bool hasKingMoved(Color color);	
 	
 	/**
 	* Set the position of a players king. Note this position is only a reference
 	* it doesn't update the board.
-	* param: int, position - position of king
-	* param: int, color - player color
+	* param: Position, position - position of king
+	* param: Color, color - player color
 	*/
-	void setPositionOfKing(int position, int color);
+	void setPositionOfKing(Position position, Color color);
 	
 	/**
 	* Get the position of a players king	
-	* param: int, color - player color
-	* return: int - position of king
+	* param: Color, color - player color
+	* return: Position - position of king
 	*/
-	int getPositionOfKing(int color);
+	Position getPositionOfKing(Color color);
 	
 	/**
 	* Tells whether the specified position is under attack for the specified player
-	* param: int, position - position
-	* param: int, color - player color
-	* return: int - the least valued piece threatening the selected position
+	* param: Position, position - position
+	* param: Color, color - player color
+	* return: ColoredPiece - the least valued piece threatening the selected position
 	*	values goes down from king through queen, rook, bishop, knight to pawn.
 	*/
-	int getThreatOf(int position, int color);
+	ColoredPiece getThreatOf(Position position, Color color);
 	
 	/**
 	* Tells whether the specified player is stalemate	
-	* param: int, color - Player color
+	* param: Color, color - Player color
 	* return: bool - true if player is stalemate
 	*/
-	bool isStalemate(int color);
+	bool isStalemate(Color color);
 	
 	/**	
 	* Tells whether the specified player is in check
-	* param: int, color - Player color
+	* param: Color, color - Player color
 	* return: bool - true if player is in check
 	*/
-	bool isCheck(int color);
+	bool isCheck(Color color);
 	
 	/**
 	* Tells whether the specified player is checkmate	
-	* param: int, color - Player color
+	* param: Color, color - Player color
 	* return: bool - true if player is in checkmate
 	*/
-	bool isCheckmate(int color);
+	bool isCheckmate(Color color);
 	
 	/**
 	* Returns whom if any player is stalemate
@@ -297,18 +297,18 @@ public:
 	
 	/**
 	* Returns true if castling has performed på specified player
-	* param: int, color - Player color
+	* param: Color, color - Player color
 	* return: bool
 	*/
-	bool hasPerformedCastling(int color);
+	bool hasPerformedCastling(Color color);
 	
 	/**
 	* Returns the sum value of the piece the specified color has left
 	* The material value does not include the king
-	* param: int, color - Player color
+	* param: Color, color - Player color
 	* return: int, material value - Positive value of all piece except the king
 	*/
-	int getMaterialValue(int color);
+	int getMaterialValue(Color color);
 };
 
 #endif

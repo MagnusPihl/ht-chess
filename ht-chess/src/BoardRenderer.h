@@ -123,7 +123,11 @@ class BoardRenderer
 
 		void drawBoard(SDL_Surface* screen, Board &board) 
 		{
-			int x, y, pos, posColor, piece, pieceColor, type;			
+			int x, y;			
+			Piece type;
+			Position pos;			
+			Color posColor, pieceColor;
+			ColoredPiece piece;
 			SDL_Surface* picture;
 			//
 			int *ptr = (int*)screen->pixels;
