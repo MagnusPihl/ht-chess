@@ -13,7 +13,7 @@ struct Fixture
 
     Fixture() 
     {
-		m1 = Move(0, 1, NO_PIECE, KNIGHT_BLACK, PAWN_WHITE);
+		m1 = Move(0, 1, NO_PIECE, KNIGHT_BLACK, PAWN_WHITE, 0);
     } 
 };
 
