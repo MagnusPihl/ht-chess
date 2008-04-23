@@ -13,8 +13,8 @@ private:
 	/**
 	* To and from defines the postion the piece moved from and to
 	*/	
-	int to;
-	int from;
+	Position to;
+	Position from;
 
 	/**
 	* If special is a pawn the move is either en-passant or promotion
@@ -49,7 +49,7 @@ private:
 	* Defines what position if any an en-passant moves was possible to before the move
 	* When creating a move just pass in the corresponding field in board.
 	*/
-	int enPassantPosition;
+	Position enPassantPosition;
 
 public:
 
@@ -62,8 +62,8 @@ public:
 	/**
 	* Constructor. Does not check validity of move.
 	*
-	* param: int, _from - position where _piece is moved from
-	* param: int, _to - position where _piece is moved to
+	* param: Position, _from - position where _piece is moved from
+	* param: Position, _to - position where _piece is moved to
 	* param: ColoredPiece, _special -
 	*	If special is a pawn the move is either en-passant or promotion
 	*		If the _to position is the row the row before the row of pawns the move is en-passant 
@@ -76,9 +76,9 @@ public:
 	* param: ColoredPiece, _content - the piece that occupied the to position before the move
 	* param: int, _hasMoved - bit mask keeping track of whether the rooks and kings were moved before.
 	*	helps in calculating castling.
-	* param: int, enPassantPosition - position where en-passant was available before the move.	
+	* param: Position, enPassantPosition - position where en-passant was available before the move.	
 	*/
-	Move(int _from, int _to, ColoredPiece _special, ColoredPiece _piece, ColoredPiece _content, int _hasMoved, int _enPassantPosition);
+	Move(Position _from, Position _to, ColoredPiece _special, ColoredPiece _piece, ColoredPiece _content, int _hasMoved, Position _enPassantPosition);
 
 	/**
 	* Executes updating the board accordingly
@@ -105,15 +105,15 @@ public:
 	
 	/**
 	* Get position where piece should be moved from
-	* return: int - position
+	* return: Position - position
 	*/
-	int getOldPosition();
+	Position getOldPosition();
 	
 	/**
 	* Get position where piece should be moved to
-	* return: int - position
+	* return: Position - position
 	*/	
-	int getNewPosition();
+	Position getNewPosition();
 	
 	/**
 	* Get ColoredPiece representing special move.
@@ -145,9 +145,9 @@ public:
 	
 	/**
 	* Get available en-passant position before move.
-	* return: int - position.
+	* return: Position - position.
 	*/	
-	int getEnPassantPosition();
+	Position getEnPassantPosition();
 };
 
 #endif

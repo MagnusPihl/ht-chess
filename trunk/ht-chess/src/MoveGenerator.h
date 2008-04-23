@@ -11,7 +11,7 @@ class Move;
 class MoveGenerator {
 	
 public:
-	static void generateMoves(Board &board, int color, std::vector<Move> &moves);
+	static void generateMoves(Board &board, Color color, std::vector<Move> &moves);
 	
 };
 

@@ -55,7 +55,7 @@ Board& Board::operator= (Board& rhs) {
 
 /*****************************************************************************/
 
-ColoredPiece & Board::operator[](int position)
+ColoredPiece & Board::operator[](Position position)
 {
     return content[position];
 }
@@ -70,7 +70,7 @@ Board::~Board() {
 
 /*****************************************************************************/
 
-ColoredPiece Board::getItemAt(int position) 
+ColoredPiece Board::getItemAt(Position position) 
 {
 	#ifdef CHECK_OVERFLOW
 		if (!IS_VALID_POSITION(position)) 
@@ -91,21 +91,21 @@ vector<ColoredPiece> & Board::getContent() {
 
 /*****************************************************************************/
 
-void Board::setPositionOfKing(int position, int color) {
+void Board::setPositionOfKing(Position position, Color color) {
 	kingPosition[(color == WHITE)] = position;
 }
 
 
 /*****************************************************************************/
 
-int Board::getPositionOfKing(int color) {	
+Position Board::getPositionOfKing(Color color) {	
 	return kingPosition[(color == WHITE)];
 }
 
 
 /*****************************************************************************/
 
-bool Board::isStalemate(int color) {
+bool Board::isStalemate(Color color) {
 	if ((materialValue[BLACK_INDEX] == 0) && (materialValue[WHITE_INDEX] == 0)) {
 		return true;
 	}
@@ -122,7 +122,7 @@ bool Board::isStalemate(int color) {
 
 /*****************************************************************************/
 
-bool Board::isCheck(int color) {	
+bool Board::isCheck(Color color) {	
 	if (NO_PIECE != getThreatOf(kingPosition[(color == WHITE)], color)) {
 		return true;
 	}
@@ -132,7 +132,7 @@ bool Board::isCheck(int color) {
 
 /*****************************************************************************/
 
-bool Board::isCheckmate(int color) {
+bool Board::isCheckmate(Color color) {
 	if (isCheck(color)) {
 		moveList.clear();	
 		MoveGenerator::generateMoves(*this, color, moveList);		
@@ -172,28 +172,28 @@ int Board::isStalemate() {
 
 /*****************************************************************************/
 
-int Board::getMaterialValue(int color) {
+int Board::getMaterialValue(Color color) {
 	return materialValue[(color == WHITE)];
 }
 
 
 /*****************************************************************************/
 
-bool Board::hasPerformedCastling(int color) {	
+bool Board::hasPerformedCastling(Color color) {	
 	return hasCastled[(color == WHITE)];
 }
 
 
 /*****************************************************************************/
 
-bool Board::hasKingMoved(int color) {
+bool Board::hasKingMoved(Color color) {
 	return (color == WHITE) ? WHITE_KING_MOVED : BLACK_KING_MOVED;
 }
 
 
 /*****************************************************************************/
 
-void Board::getMovesFromPosition(int position, vector<Move> &moves) {
+void Board::getMovesFromPosition(Position position, vector<Move> &moves) {
 	#ifdef CHECK_OVERFLOW
 		if (!IS_VALID_POSITION(position)) 
 		{
@@ -216,36 +216,60 @@ void Board::getMovesFromPosition(int position, vector<Move> &moves) {
 
 /*****************************************************************************/
 
-void Board::getPawnMovesFrom(int position, vector<Move> &moves) {
+void Board::getPawnMovesFrom(Position position, vector<Move> &moves) {
 	int row = GET_ROW(position);
 	int column = GET_REAL_COLUMN(position);
-	int color = GET_PIECE_COLOR(content[position]);
+	Color color = GET_PIECE_COLOR(content[position]);
 	ColoredPiece piece = content[position];
 	
 	if (color == WHITE) {			
-		if ((row == ROW_2) && //double advance
-			(content[ GET_POSITION( column, row + 1) ] == NO_PIECE) &&
-			(content[ GET_POSITION( column, row + 2) ] == NO_PIECE)) {
-			
-			Move move = Move(
-					GET_POSITION(column, row), 
-					GET_POSITION(column, row + 2), 
-					NO_PIECE, 
-					piece, 
-					NO_PIECE,
-					hasMoved,
-					enPassantPosition);
-									
-			move.execute(*this);
-			
-			if (NO_PIECE == getThreatOf(getPositionOfKing(color),color)) {
-				moves.push_back(move);
-			}
-								
-			move.unexecute(*this);
-		}
-		
 		if ((row + 1) < ROW_COUNT) { //single advances							
+			if ((row == ROW_2) && //double advance
+				(content[ GET_POSITION( column, row + 1) ] == NO_PIECE) &&
+				(content[ GET_POSITION( column, row + 2) ] == NO_PIECE)) {
+				
+				Move move = Move(
+						position, 
+						GET_POSITION(column, row + 2), 
+						NO_PIECE, 
+						piece, 
+						NO_PIECE,
+						hasMoved,
+						enPassantPosition);
+										
+				move.execute(*this);
+				
+				if (NO_PIECE == getThreatOf(getPositionOfKing(color),color)) {
+					moves.push_back(move);
+				}
+									
+				move.unexecute(*this);
+			}	
+			
+			if ((row == ROW_4)&&(GET_ROW(enPassantPosition) == ROW_5)) { //en-passant
+				int x = GET_REAL_COLUMN(enPassantPosition);
+				
+				if (((column + 1) == x) || ((column - 1) == x)) {
+				
+					Move move = Move(
+						position, 
+						enPassantPosition, 
+						piece, 
+						piece, 
+						PAWN_BLACK,
+						hasMoved,
+						enPassantPosition);
+						
+					move.execute(*this);
+						
+					if (NO_PIECE == getThreatOf(getPositionOfKing(color),color)) {
+						moves.push_back(move);
+					}
+					
+					move.unexecute(*this);
+				}
+			}
+		
 			ColoredPiece special = NO_PIECE;
 			
 			if ((row + 1) == (ROW_COUNT - 1)) { //promotion
@@ -256,7 +280,7 @@ void Board::getPawnMovesFrom(int position, vector<Move> &moves) {
 			//left capture
 			if ((column > 0) && (GET_PIECE_COLOR(content[GET_POSITION(column - 1, row + 1)]) == BLACK)) {
 				Move move = Move(
-						GET_POSITION(column, row), 
+						position, 
 						GET_POSITION(column - 1, row + 1), 
 						special, 
 						piece, 
@@ -277,7 +301,7 @@ void Board::getPawnMovesFrom(int position, vector<Move> &moves) {
 			if ((column < (COLUMN_COUNT - 1)) && (GET_PIECE_COLOR(content[ GET_POSITION( column + 1 , row + 1) ]) == BLACK)) {
 				
 				Move move = Move(
-						GET_POSITION(column, row), 
+						position, 
 						GET_POSITION(column + 1, row + 1), 
 						special, 
 						piece, 
@@ -298,7 +322,7 @@ void Board::getPawnMovesFrom(int position, vector<Move> &moves) {
 			if (content[GET_POSITION(column, row + 1)] == NO_PIECE) {
 				
 				 Move move = Move(
-						GET_POSITION(column, row), 
+						position, 
 						GET_POSITION(column, row + 1), 
 						special, 
 						piece, 
@@ -316,29 +340,52 @@ void Board::getPawnMovesFrom(int position, vector<Move> &moves) {
 			}
 		}
 	} else { //black
-		if ((row == ROW_7) && //double advance
-			(content[ GET_POSITION( column, row - 1) ] == NO_PIECE) &&
-			(content[ GET_POSITION( column, row - 2) ] == NO_PIECE)) {
-			
-			Move move = Move(
-					GET_POSITION(column, row), 
-					GET_POSITION(column, row - 2), 
-					NO_PIECE, 
-					piece, 
-					NO_PIECE,
-					hasMoved,
-					enPassantPosition);
+		if ((row - 1) >= 0) { //single advances			
+			if ((row == ROW_7) && //double advance
+				(content[ GET_POSITION( column, row - 1) ] == NO_PIECE) &&
+				(content[ GET_POSITION( column, row - 2) ] == NO_PIECE)) {
+				
+				Move move = Move(
+						position, 
+						GET_POSITION(column, row - 2), 
+						NO_PIECE, 
+						piece, 
+						NO_PIECE,
+						hasMoved,
+						enPassantPosition);
+										
+				move.execute(*this);
+				
+				if (NO_PIECE == getThreatOf(getPositionOfKing(color),color)) {
+					moves.push_back(move);
+				}
 									
-			move.execute(*this);
-			
-			if (NO_PIECE == getThreatOf(getPositionOfKing(color),color)) {
-				moves.push_back(move);
+				move.unexecute(*this);
 			}
-								
-			move.unexecute(*this);
-		}
-		
-		if ((row - 1) >= 0) { //single advances							
+			
+			if ((row == ROW_4)&&(GET_ROW(enPassantPosition) == ROW_3)) { //en-passant
+				int x = GET_REAL_COLUMN(enPassantPosition);
+				
+				if (((column + 1) == x) || ((column - 1) == x)) {
+				
+					Move move = Move(
+						position, 
+						enPassantPosition, 
+						piece, 
+						piece, 
+						PAWN_WHITE,
+						hasMoved,
+						enPassantPosition);
+						
+					move.execute(*this);
+						
+					if (NO_PIECE == getThreatOf(getPositionOfKing(color),color)) {
+						moves.push_back(move);
+					}
+					
+					move.unexecute(*this);
+				}
+			}						
 			ColoredPiece special = NO_PIECE;
 			
 			if ((row - 1) == 0) { //promotion
@@ -349,7 +396,7 @@ void Board::getPawnMovesFrom(int position, vector<Move> &moves) {
 			//left capture
 			if ((column > 0) && (GET_PIECE_COLOR(content[GET_POSITION(column - 1, row - 1)]) == WHITE)) {
 				Move move =	Move(
-						GET_POSITION(column, row), 
+						position, 
 						GET_POSITION(column - 1, row - 1), 
 						special, 
 						piece, 
@@ -370,7 +417,7 @@ void Board::getPawnMovesFrom(int position, vector<Move> &moves) {
 			if ((column < (COLUMN_COUNT - 1)) && (GET_PIECE_COLOR( content[ GET_POSITION( column + 1 , row - 1) ] ) == WHITE)) {
 				
 				Move move = Move(
-						GET_POSITION(column, row), 
+						position, 
 						GET_POSITION(column + 1, row - 1), 
 						special, 
 						piece, 
@@ -391,7 +438,7 @@ void Board::getPawnMovesFrom(int position, vector<Move> &moves) {
 			if (content[GET_POSITION(column, row - 1)] == NO_PIECE) {
 				
 				Move move = Move(
-						GET_POSITION(column, row), 
+						position, 
 						GET_POSITION(column, row - 1), 
 						special, 
 						piece, 
@@ -414,12 +461,12 @@ void Board::getPawnMovesFrom(int position, vector<Move> &moves) {
 
 /*****************************************************************************/		
 
-void Board::getKnightMovesFrom(int position, vector<Move> &moves) {
+void Board::getKnightMovesFrom(Position position, vector<Move> &moves) {
 	int row = GET_ROW(position);
 	int column = GET_REAL_COLUMN(position);
-	int color = GET_PIECE_COLOR(content[position]);
+	Color color = GET_PIECE_COLOR(content[position]);
 	static int availableMoves[16] = {1,2, 2,1, 2,-1, 1,-2, -1,-2, -2,-1, -2,1, -1,2};
-	int to;
+	Position to;
 	ColoredPiece piece;
 	
 	for (int i = 0; i < 16; i += 2) {
@@ -453,12 +500,12 @@ void Board::getKnightMovesFrom(int position, vector<Move> &moves) {
 
 /*****************************************************************************/
 
-void Board::getBishopMovesFrom(int position, vector<Move> &moves) {
+void Board::getBishopMovesFrom(Position position, vector<Move> &moves) {
 	int row = GET_ROW(position);
 	int column = GET_REAL_COLUMN(position);
-	int color = GET_PIECE_COLOR(content[position]);
+	Color color = GET_PIECE_COLOR(content[position]);
 	static int availableMoves[8] = {1,1, 1,-1, -1,-1, -1,1};
-	int to;
+	Position to;
 	bool blocked;
 	ColoredPiece piece;
 	
@@ -507,12 +554,12 @@ void Board::getBishopMovesFrom(int position, vector<Move> &moves) {
 
 /*****************************************************************************/
 
-void Board::getRookMovesFrom(int position, vector<Move> &moves) {
+void Board::getRookMovesFrom(Position position, vector<Move> &moves) {
 	int row = GET_ROW(position);
 	int column = GET_REAL_COLUMN(position);
-	int color = GET_PIECE_COLOR(content[position]);
+	Color color = GET_PIECE_COLOR(content[position]);
 	static int availableMoves[8] = {0,1, 1,0, 0,-1, -1,0};
-	int to;
+	Position to;
 	bool blocked;
 	ColoredPiece piece;
 	
@@ -561,12 +608,12 @@ void Board::getRookMovesFrom(int position, vector<Move> &moves) {
 
 /*****************************************************************************/
 
-void Board::getQueenMovesFrom(int position, vector<Move> &moves) {
+void Board::getQueenMovesFrom(Position position, vector<Move> &moves) {
 	int row = GET_ROW(position);
 	int column = GET_REAL_COLUMN(position);
-	int color = GET_PIECE_COLOR(content[position]);
+	Color color = GET_PIECE_COLOR(content[position]);
 	static int availableMoves[16] = {1,1, 1,-1, -1,-1, -1,1, 0,1, 1,0, 0,-1, -1,0};
-	int to;
+	Position to;
 	bool blocked;
 	ColoredPiece piece;
 	
@@ -615,12 +662,12 @@ void Board::getQueenMovesFrom(int position, vector<Move> &moves) {
 
 /*****************************************************************************/
 	
-void Board::getKingMovesFrom(int position, vector<Move> &moves) {
+void Board::getKingMovesFrom(Position position, vector<Move> &moves) {
 	int row = GET_ROW(position);
 	int column = GET_REAL_COLUMN(position);
-	int color = GET_PIECE_COLOR(content[position]);
+	Color color = GET_PIECE_COLOR(content[position]);
 	static int availableMoves[16] = {1,1, 1,-1, -1,-1, -1,1, 0,1, 1,0, 0,-1, -1,0};
-	int to;
+	Position to;
 	ColoredPiece piece;
 	
 	//castling	
@@ -722,7 +769,7 @@ void Board::getKingMovesFrom(int position, vector<Move> &moves) {
 
 /*****************************************************************************/
 
-int Board::getThreatOf(int position, int color) {
+ColoredPiece Board::getThreatOf(Position position, Color color) {
 	int row = GET_ROW(position);
 	int column = GET_REAL_COLUMN(position);	
 	static int availableMoves[32] = 
@@ -730,10 +777,10 @@ int Board::getThreatOf(int position, int color) {
 				1,2, 2,1,  2,-1,  1,-2, -1,-2, -2,-1, -2,1, -1,2};
 			/*	EN   WN    ES	 WS	    N	   E	  S     W
 			*/
-	int to;
+	Position to;
 	bool blocked;
 	ColoredPiece piece;
-	int threat = NO_PIECE;
+	ColoredPiece threat = NO_PIECE;
 	int x, y, distance;
 	
 	for (int i = 0; i < 16; i += 2) {
