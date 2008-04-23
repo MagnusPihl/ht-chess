@@ -37,7 +37,7 @@ private:
 	int enPassantPosition;
 	int kingPosition[2]; //0 = black, 1 = white	
 	int materialValue[2];
-	int hasCastled[2]; 
+	bool hasCastled[2]; 
 
 public:
 
