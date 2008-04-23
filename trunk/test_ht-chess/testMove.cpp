@@ -3,6 +3,7 @@
 #include <Move.cpp>
 #include <Board.h>
 #include <Board.cpp>
+#include <MoveGenerator.cpp>
 
 #define BOOST_TEST_MODULE testMove
 #include <boost/test/unit_test.hpp>

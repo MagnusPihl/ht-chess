@@ -187,6 +187,10 @@
 				RelativePath=".\src\Move.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\src\MoveGenerator.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
