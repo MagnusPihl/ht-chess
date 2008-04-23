@@ -3,12 +3,12 @@
 
 #include "Board.h"
 
-Board::Board() : content(vector<ColoredPiece>(CONTENT_SIZE)) 
+Board::Board() : content(std::vector<ColoredPiece>(CONTENT_SIZE)), moveList(std::vector<Move>())
 {
 	resetBoard();
 }
 
-Board::Board(const Board& rhs) : content(vector<ColoredPiece>(CONTENT_SIZE))
+Board::Board(const Board& rhs) : content(std::vector<ColoredPiece>(CONTENT_SIZE)), moveList(std::vector<Move>())
 {
 	for (int i = 0; i < CONTENT_SIZE; ++i)
 	{
@@ -771,6 +771,13 @@ int Board::getPositionOfKing(int color) {
 }
 
 bool Board::isStalemate(int color) {
+	if (!isCheck(color)) {
+		moveList.clear();	
+		MoveGenerator::generateMoves(*this, color, moveList);		
+		if (moveList.empty()) {
+			return true;
+		}
+	}
 	return false;
 }
 
@@ -782,7 +789,13 @@ bool Board::isCheck(int color) {
 }
 
 bool Board::isCheckmate(int color) {
-	throw "";
+	if (isCheck(color)) {
+		moveList.clear();	
+		MoveGenerator::generateMoves(*this, color, moveList);		
+		if (moveList.empty()) {
+			return true;
+		}
+	}
 	return false;
 }
 

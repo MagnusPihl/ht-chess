@@ -4,6 +4,7 @@
 #include "Piece.h"
 #include "Position.h"
 #include "Move.h"
+#include "MoveGenerator.h"
 #include <vector>
 
 #define CHECK_OVERFLOW true
@@ -37,7 +38,8 @@ private:
 	int enPassantPosition;
 	int kingPosition[2]; //0 = black, 1 = white	
 	int materialValue[2];
-	bool hasCastled[2]; 
+	bool hasCastled[2]; 	
+	std::vector<Move> moveList;
 
 public:
 
