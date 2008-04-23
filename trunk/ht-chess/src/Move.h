@@ -43,14 +43,53 @@ private:
 	* Defines what piece involved castling were moved before this moved was initiated.
 	* When creating a move just pass in the corresponding field in board.
 	*/
-	int hasMovedBefore;	
+	int hasMoved;	
+	
+	/**
+	* Defines what position if any an en-passant moves was possible to before the move
+	* When creating a move just pass in the corresponding field in board.
+	*/
+	int enPassantPosition;
 
 public:
-	Move();
-	Move(int _from, int _to, ColoredPiece _special, ColoredPiece _piece, ColoredPiece _content, int hasMovedBefore);
 
-	//
+	/**
+	* Default constructor. No fields are initialized!
+	*/
+	Move();
+	
+	
+	/**
+	* Constructor. Does not check validity of move.
+	*
+	* param: int, _from - position where _piece is moved from
+	* param: int, _to - position where _piece is moved to
+	* param: ColoredPiece, _special -
+	*	If special is a pawn the move is either en-passant or promotion
+	*		If the _to position is the row the row before the row of pawns the move is en-passant 
+	*		If the row to row is the last row then the move is an promotion
+	*	If special is a king then the move is castling 
+	*		the type of castling is determined by looking at the _to field	
+	*	If special is none, then no special move is done
+	* param: ColoredPiece, _piece - the piece being moved
+	*	If a the move is a promotion then _piece is the result of the promotion
+	* param: ColoredPiece, _content - the piece that occupied the to position before the move
+	* param: int, _hasMoved - bit mask keeping track of whether the rooks and kings were moved before.
+	*	helps in calculating castling.
+	* param: int, enPassantPosition - position where en-passant was available before the move.	
+	*/
+	Move(int _from, int _to, ColoredPiece _special, ColoredPiece _piece, ColoredPiece _content, int _hasMoved, int _enPassantPosition);
+
+	/**
+	* Executes updating the board accordingly
+	* param: Board&, _board - board to execute move on	
+	*/
 	void execute(Board &_board);
+	
+	/**
+	* Unexecutes move, rolling back all changes to the board accordingly
+	* param: Board&, _board - board to undo move on	
+	*/
 	void unexecute(Board &_board);
 	
 	/**
@@ -59,14 +98,56 @@ public:
 	 * for the legality. Does not check for checkmate, mate, stalemate, and blocking pieces
 	 * only validity of positions.
 	 */
-	static bool isValid(Move &move);
+	/*static bool isValid(Move &move);*/
+	
 	
 	//accessors
-	int getOldPosition(void);
-	int getNewPosition(void);
-	ColoredPiece getSpecial(void);
-	ColoredPiece getPiece(void);
-	ColoredPiece getContent(void);
+	
+	/**
+	* Get position where piece should be moved from
+	* return: int - position
+	*/
+	int getOldPosition();
+	
+	/**
+	* Get position where piece should be moved to
+	* return: int - position
+	*/	
+	int getNewPosition();
+	
+	/**
+	* Get ColoredPiece representing special move.
+	* King is castling, derive kingside and queenside from the new position.
+	* Pawn is either promotion or en-passant, derive which from either the new or old position.
+	* return: ColoredPiece
+	*/	
+	ColoredPiece getSpecial();
+	
+	/**
+	* Get ColoredPiece being moved.
+	* If a promotion has taken place piece well be the resulting piece.
+	* return: ColoredPiece
+	*/	
+	ColoredPiece getPiece();
+	
+	/**
+	* Get ColoredPiece that was captured during the move, if any.
+	* return: ColoredPiece - NO_PIECE if no piece was captured
+	*/	
+	ColoredPiece getContent();
+	
+	/**
+	* Get hasMoved field information, which keeps track of whether
+	* kings and rooks were moved before the move.
+	* return: int - bit mask.
+	*/	
+	int getHasMoved();
+	
+	/**
+	* Get available en-passant position before move.
+	* return: int - position.
+	*/	
+	int getEnPassantPosition();
 };
 
 #endif
