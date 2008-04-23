@@ -38,7 +38,7 @@ void Move::execute(Board &board)
 				}
 			} else {
 				if (GET_ROW(from) - GET_ROW(to) == 2) {
-					board.enPassantPosition = COMBINE_TO_POSITION(GET_COLUMN(to), ROW_5);
+					board.enPassantPosition = COMBINE_TO_POSITION(GET_COLUMN(to), ROW_6);
 				}
 			}
 			break;			
@@ -80,7 +80,7 @@ void Move::execute(Board &board)
 
 				if (GET_ROW(to) == ROW_3) { //en-passant
 					board[COMBINE_TO_POSITION(GET_COLUMN(to), ROW_4)] = NO_PIECE;					
-				} else {
+				} else {					
 					board.materialValue[BLACK_INDEX] += PIECE_VALUE[QUEEN] - PIECE_VALUE[PAWN];
 				}
 
@@ -149,7 +149,7 @@ void Move::unexecute(Board &board)
 
 			if (GET_ROW(to) == ROW_1) { //promotion
 				board.materialValue[BLACK_INDEX] += PIECE_VALUE[PAWN] - PIECE_VALUE[QUEEN];
-				board[from] = PAWN_BLACK;
+				board[from] = special;
 				board[to] = content;
 
 			} else { //en-passant
@@ -162,7 +162,7 @@ void Move::unexecute(Board &board)
 
 			if (GET_ROW(to) == ROW_8) { //promotion
 				board.materialValue[WHITE_INDEX] += PIECE_VALUE[PAWN] - PIECE_VALUE[QUEEN];
-				board[from] = PAWN_WHITE;
+				board[from] = special;
 				board[to] = content;
 
 			} else { //en-passant
