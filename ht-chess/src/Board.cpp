@@ -3,10 +3,14 @@
 
 #include "Board.h"
 
+
 Board::Board() : content(std::vector<ColoredPiece>(CONTENT_SIZE)), moveList(std::vector<Move>())
 {
 	resetBoard();
 }
+
+
+/*****************************************************************************/
 
 Board::Board(const Board& rhs) : content(std::vector<ColoredPiece>(CONTENT_SIZE)), moveList(std::vector<Move>())
 {
@@ -14,7 +18,19 @@ Board::Board(const Board& rhs) : content(std::vector<ColoredPiece>(CONTENT_SIZE)
 	{
 		content[i] = rhs.content[i];		
 	}
+	
+	hasMoved = rhs.hasMoved;
+	enPassantPosition = rhs.enPassantPosition;
+	
+	for (int i = 0; i < 2; i++) {
+		kingPosition[i] = rhs.kingPosition[i];	
+		materialValue[i] = rhs.materialValue[i];			
+		hasCastled[i] = rhs.hasCastled[i];
+	}	
 }
+
+
+/*****************************************************************************/
 
 Board& Board::operator= (Board& rhs) {
 	if (this != &rhs)
@@ -23,32 +39,37 @@ Board& Board::operator= (Board& rhs) {
 		{
 			content[i] = rhs.content[i];
 		}
+			
+		hasMoved = rhs.hasMoved;
+		enPassantPosition = rhs.enPassantPosition;
+		
+		for (int i = 0; i < 2; i++) {
+			kingPosition[i] = rhs.kingPosition[i];	
+			materialValue[i] = rhs.materialValue[i];			
+			hasCastled[i] = rhs.hasCastled[i];
+		}		
 	}
 	return *this;
 }
 
-ColoredPiece & Board::operator[](int pos)
+
+/*****************************************************************************/
+
+ColoredPiece & Board::operator[](int position)
 {
-    return content[pos];
+    return content[position];
 }
 
-const ColoredPiece & Board::operator[](int pos) const
-{
-    return content[pos];
-}
+
+/*****************************************************************************/
 
 Board::~Board() {
 	//delete stuff
 }
 
-void Board::testMethod()
-{
-	content[D4] = (ColoredPiece)(BLACK | QUEEN);
-}
 
-/**
-/* Should we do boundary check here?
-/**/
+/*****************************************************************************/
+
 ColoredPiece Board::getItemAt(int position) 
 {
 	#ifdef CHECK_OVERFLOW
@@ -61,9 +82,13 @@ ColoredPiece Board::getItemAt(int position)
 	return content[position];
 }
 
+/*****************************************************************************/
+
 vector<ColoredPiece> & Board::getContent() {
 	return content;
 }
+
+/*****************************************************************************/
 
 void Board::getMovesFromPosition(int position, vector<Move> &moves) {
 	#ifdef CHECK_OVERFLOW
@@ -83,7 +108,10 @@ void Board::getMovesFromPosition(int position, vector<Move> &moves) {
 		case QUEEN: return getQueenMovesFrom(position, moves);
 		case KING: return getKingMovesFrom(position, moves);
 	}
-}		
+}	
+
+
+/*****************************************************************************/
 
 void Board::getPawnMovesFrom(int position, vector<Move> &moves) {
 	int row = GET_ROW(position);
@@ -272,14 +300,9 @@ void Board::getPawnMovesFrom(int position, vector<Move> &moves) {
 	}	
 }
 	
-	
-/**
-*  x x
-* x   x
-*   0
-* x   x
-*  x x
-*/	
+
+/*****************************************************************************/		
+
 void Board::getKnightMovesFrom(int position, vector<Move> &moves) {
 	int row = GET_ROW(position);
 	int column = GET_REAL_COLUMN(position);
@@ -315,11 +338,9 @@ void Board::getKnightMovesFrom(int position, vector<Move> &moves) {
 	}		
 }
 
-/**
-* x x
-*  0
-* x x
-*/	
+
+/*****************************************************************************/
+
 void Board::getBishopMovesFrom(int position, vector<Move> &moves) {
 	int row = GET_ROW(position);
 	int column = GET_REAL_COLUMN(position);
@@ -370,11 +391,9 @@ void Board::getBishopMovesFrom(int position, vector<Move> &moves) {
 	}		
 }
 
-/**
-*  x
-* x0x
-*  x
-*/	
+
+/*****************************************************************************/
+
 void Board::getRookMovesFrom(int position, vector<Move> &moves) {
 	int row = GET_ROW(position);
 	int column = GET_REAL_COLUMN(position);
@@ -425,11 +444,9 @@ void Board::getRookMovesFrom(int position, vector<Move> &moves) {
 	}		
 }
 
-/**
-* xxx
-* x0x
-* xxx
-*/	
+
+/*****************************************************************************/
+
 void Board::getQueenMovesFrom(int position, vector<Move> &moves) {
 	int row = GET_ROW(position);
 	int column = GET_REAL_COLUMN(position);
@@ -480,12 +497,9 @@ void Board::getQueenMovesFrom(int position, vector<Move> &moves) {
 	}		
 }
 
-/**
-* xxx
-* x0x
-* xxx
-* this function does not check if the king can be taken!
-*/	
+
+/*****************************************************************************/
+	
 void Board::getKingMovesFrom(int position, vector<Move> &moves) {
 	int row = GET_ROW(position);
 	int column = GET_REAL_COLUMN(position);
@@ -589,6 +603,9 @@ void Board::getKingMovesFrom(int position, vector<Move> &moves) {
 	}		
 }
 
+
+/*****************************************************************************/
+
 void Board::resetBoard() {		
 	for (int i = 0; i < CONTENT_SIZE; ++i)
 	{
@@ -641,21 +658,16 @@ void Board::resetBoard() {
 	materialValue[BLACK_INDEX] = materialValue[WHITE_INDEX];
 }
 
+
+/*****************************************************************************/
+
 bool Board::hasKingMoved(int color) {
 	return (color == WHITE) ? WHITE_KING_MOVED : BLACK_KING_MOVED;
 }
 
-/*int Board::getEnPassantPosition() {
-	return enPassantPosition;
-}
 
-void Board::setEnPassantPosition(int position) {
-	enPassantPosition = position;
-}	*/
+/*****************************************************************************/
 
-/**
- * Returns the smallest piece threatening the selected position
- */
 int Board::getThreatOf(int position, int color) {
 	int row = GET_ROW(position);
 	int column = GET_REAL_COLUMN(position);	
@@ -762,13 +774,22 @@ int Board::getThreatOf(int position, int color) {
 	return threat;	
 }
 
+
+/*****************************************************************************/
+
 void Board::setPositionOfKing(int position, int color) {
 	kingPosition[(color == WHITE)] = position;
 }
 
+
+/*****************************************************************************/
+
 int Board::getPositionOfKing(int color) {	
 	return kingPosition[(color == WHITE)];
 }
+
+
+/*****************************************************************************/
 
 bool Board::isStalemate(int color) {
 	if ((materialValue[BLACK_INDEX] == 0) && (materialValue[WHITE_INDEX] == 0)) {
@@ -784,12 +805,18 @@ bool Board::isStalemate(int color) {
 	return false;
 }
 
+
+/*****************************************************************************/
+
 bool Board::isCheck(int color) {	
 	if (NO_PIECE != getThreatOf(kingPosition[(color == WHITE)], color)) {
 		return true;
 	}
 	return false;
 }
+
+
+/*****************************************************************************/
 
 bool Board::isCheckmate(int color) {
 	if (isCheck(color)) {
@@ -802,6 +829,9 @@ bool Board::isCheckmate(int color) {
 	return false;
 }
 
+
+/*****************************************************************************/
+
 int Board::isCheckmate() {
 	if (isCheckmate(WHITE)) {
 		return WHITE;
@@ -811,6 +841,9 @@ int Board::isCheckmate() {
 	}
 	return 0;
 }
+
+
+/*****************************************************************************/
 
 int Board::isStalemate() {
 	if (isStalemate(WHITE)) {
@@ -822,9 +855,15 @@ int Board::isStalemate() {
 	return 0;
 }
 
+
+/*****************************************************************************/
+
 int Board::getMaterialValue(int color) {
 	return materialValue[(color == WHITE)];
 }
+
+
+/*****************************************************************************/
 
 bool Board::hasPerformedCastling(int color) {	
 	return hasCastled[(color == WHITE)];
