@@ -135,6 +135,10 @@ void Move::unexecute(Board &board)
 		board.materialValue[(GET_PIECE_COLOR(content) == WHITE)] += PIECE_VALUE[GET_PIECE_TYPE(content)];
 	}
 	
+	if (GET_PIECE_TYPE(piece) == KING) {		
+		board.setPositionOfKing(from, color);
+	}
+	
 	if (special == NO_PIECE) {
 		board[from] = piece;
 		board[to] = content;
@@ -172,7 +176,6 @@ void Move::unexecute(Board &board)
 	} else if (GET_PIECE_TYPE(special) == KING) { //castling
 		board[from] = piece;
 		board[to] = NO_PIECE;		
-		board.setPositionOfKing(from, color);
 
 		if (color == BLACK) { //black				
 		
