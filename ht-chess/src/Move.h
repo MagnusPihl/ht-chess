@@ -38,10 +38,16 @@ private:
 	* If content is None then no piece was taken
 	*/	
 	ColoredPiece content;
+	
+	/**
+	* Defines what piece involved castling were moved before this moved was initiated.
+	* When creating a move just pass in the corresponding field in board.
+	*/
+	int hasMovedBefore;	
 
 public:
 	Move();
-	Move(int _from, int _to, ColoredPiece _special, ColoredPiece _piece, ColoredPiece _content);
+	Move(int _from, int _to, ColoredPiece _special, ColoredPiece _piece, ColoredPiece _content, int hasMovedBefore);
 
 	//
 	void execute(Board &_board);
