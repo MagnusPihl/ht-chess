@@ -121,6 +121,8 @@ public:
 	bool isStalemate(int color);
 	bool isCheck(int color);
 	bool isCheckmate(int color);
+	int isStalemate();
+	int isCheckmate();
 	bool hasPerformedCastling(int color);
 	int getMaterialValue(int color);
 };

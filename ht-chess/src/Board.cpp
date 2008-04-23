@@ -771,6 +771,9 @@ int Board::getPositionOfKing(int color) {
 }
 
 bool Board::isStalemate(int color) {
+	if ((materialValue[BLACK_INDEX] == 0) && (materialValue[WHITE_INDEX] == 0)) {
+		return true;
+	}
 	if (!isCheck(color)) {
 		moveList.clear();	
 		MoveGenerator::generateMoves(*this, color, moveList);		
@@ -799,6 +802,25 @@ bool Board::isCheckmate(int color) {
 	return false;
 }
 
+int Board::isCheckmate() {
+	if (isCheckmate(WHITE)) {
+		return WHITE;
+	}
+	if (isCheckmate(BLACK)) {
+		return BLACK;
+	}
+	return 0;
+}
+
+int Board::isStalemate() {
+	if (isStalemate(WHITE)) {
+		return WHITE;
+	}
+	if (isStalemate(BLACK)) {
+		return BLACK;
+	}
+	return 0;
+}
 
 int Board::getMaterialValue(int color) {
 	return materialValue[(color == WHITE)];
