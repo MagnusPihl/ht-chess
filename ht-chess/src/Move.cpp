@@ -5,8 +5,8 @@
 
 Move::Move() {}
 
-Move::Move(int _from, int _to, ColoredPiece _special, ColoredPiece _piece, ColoredPiece _content, int hasMovedBefore) :
-	from(_from), to(_to), special(_special), piece(_piece), content(_content), hasMovedBefore(hasMovedBefore)
+Move::Move(int _from, int _to, ColoredPiece _special, ColoredPiece _piece, ColoredPiece _content, int _hasMoved, int _enPassantPosition) :
+	from(_from), to(_to), special(_special), piece(_piece), content(_content), hasMoved(_hasMoved), enPassantPosition(_enPassantPosition)
 {
 	#ifdef TEST_MOVE_VALIDITY 
 		if (isValid(*this)) {
@@ -128,7 +128,8 @@ void Move::execute(Board &board)
 
 void Move::unexecute(Board &board)
 {
-	board.hasMoved = hasMovedBefore;
+	board.hasMoved = hasMoved;
+	board.enPassantPosition = enPassantPosition;
 	int color = GET_PIECE_COLOR(piece);
 	
 	if (content != NO_PIECE) {
@@ -204,13 +205,49 @@ void Move::unexecute(Board &board)
 	}
 }
 
+//accessors
+int Move::getOldPosition()
+{
+	return from;
+}
+
+int Move::getNewPosition()
+{
+	return to;
+}
+
+ColoredPiece Move::getSpecial()
+{
+	return special;
+}
+
+ColoredPiece Move::getPiece()
+{
+	return piece;
+}
+
+ColoredPiece Move::getContent()
+{
+	return content;
+}
+
+int Move::getHasMoved() {
+	return hasMoved;
+}
+		
+int Move::getEnPassantPosition() {
+	return enPassantPosition;
+}
+
+
+
 /**
  * Makes a general check on the validity of the move. 
  * Be advised though that this function does not check the actual board
  * for the legality. Does not check for checkmate, mate, stalemate, and blocking pieces
  * only validity of positions.
  */
-bool Move::isValid(Move &move) {
+/*bool Move::isValid(Move &move) {
 	//position validity
 	if (!IS_VALID_POSITION(move.from)) {
 		return false;
@@ -262,34 +299,8 @@ bool Move::isValid(Move &move) {
 		/*if (move.piece & PAWN) {				
 			if (GET_ROW(from) == )
 		}*/
-	}		
+/*	}		
 	return true;
-}
-
-//accessors
-int Move::getOldPosition(void)
-{
-	return from;
-}
-
-int Move::getNewPosition(void)
-{
-	return to;
-}
-
-ColoredPiece Move::getSpecial(void)
-{
-	return special;
-}
-
-ColoredPiece Move::getPiece(void)
-{
-	return piece;
-}
-
-ColoredPiece Move::getContent(void)
-{
-	return content;
-}
+}*/
 
 #endif
