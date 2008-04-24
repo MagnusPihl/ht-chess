@@ -12,7 +12,6 @@
 
 int main(int argc, char *argv[])
 {
-	printf("true: %i, false: %i", true, false);
 	/* initialize SDL */
 	if ( SDL_Init( SDL_INIT_VIDEO ) < 0 )
 	{
