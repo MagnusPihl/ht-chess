@@ -210,6 +210,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\Evaluator.h"
+				>
+			</File>
+			<File
 				RelativePath=".\src\MouseHandler.h"
 				>
 			</File>
@@ -231,10 +235,6 @@
 			</File>
 			<File
 				RelativePath=".\src\Position.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\Validator.h"
 				>
 			</File>
 		</Filter>
