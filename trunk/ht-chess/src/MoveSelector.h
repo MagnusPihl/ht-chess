@@ -142,10 +142,11 @@ private:
 		{
 			moveGen.generateMoves(board, WHITE, moveList);
 			int numMoves = moveList.size() - offset;
-			for(int i=offset; i < offset+numMoves && alpha < beta; i++)
+			int endOffset = offset+numMoves;
+			for(int i=offset; i < endOffset && alpha < beta; i++)
 			{
 				moveList[i].execute(board);
-				int V = alphaBeta(board, path, false, curDepth+1, maxDepth, alpha, beta, offset+numMoves);
+				int V = alphaBeta(board, path, false, curDepth+1, maxDepth, alpha, beta, endOffset);
 				if(V > alpha)
 				{
 					alpha = V;
@@ -153,7 +154,7 @@ private:
 						path = moveList[i];
 				}
 				moveList[i].unexecute(board);
-				moveList.erase(moveList.begin()+offset+numMoves, moveList.end());
+				moveList.erase(moveList.begin()+endOffset, moveList.end());
 			}
 			return alpha;
 		}
@@ -161,10 +162,11 @@ private:
 		{
 			moveGen.generateMoves(board, BLACK, moveList);
 			int numMoves = moveList.size() - offset;
-			for(int i=offset; i < offset+numMoves && alpha < beta; i++)
+			int endOffset = offset+numMoves;
+			for(int i=offset; i < endOffset && alpha < beta; i++)
 			{
 				moveList[i].execute(board);
-				int V = alphaBeta(board, path, true, curDepth+1, maxDepth, alpha, beta, offset+numMoves);
+				int V = alphaBeta(board, path, true, curDepth+1, maxDepth, alpha, beta, endOffset);
 				if(V < beta)
 				{
 					beta = V;
@@ -172,7 +174,7 @@ private:
 						path = moveList[i];
 				}
 				moveList[i].unexecute(board);
-				moveList.erase(moveList.begin()+offset+numMoves, moveList.end());
+				moveList.erase(moveList.begin()+endOffset, moveList.end());
 			}
 			return beta;
 		}
