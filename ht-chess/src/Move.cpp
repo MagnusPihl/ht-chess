@@ -25,6 +25,7 @@ void Move::execute(Board &board)
 	Piece type = GET_PIECE_TYPE(piece);
 	Color color = GET_PIECE_COLOR(piece);
 	board.reversableMoves++;		
+	int colorIndex = (color == WHITE);
 
 	//black top 8
 	//white bottom 1
@@ -35,44 +36,32 @@ void Move::execute(Board &board)
 
 	switch (type) {
 		case PAWN:
-			board.reversableMoves = 0;
+			board.reversableMoves = 0;			
 			
-			if (color == WHITE) {
-				if (GET_ROW(to) - GET_ROW(from) == 2) {
-					board.enPassantPosition = COMBINE_TO_POSITION(GET_COLUMN(to), ROW_3);
-				}
-			} else {
-				if (GET_ROW(from) - GET_ROW(to) == 2) {
-					board.enPassantPosition = COMBINE_TO_POSITION(GET_COLUMN(to), ROW_6);
-				}
-			}
+			if (((GET_ROW(to) - GET_ROW(from))*PAWN_DIRECTION[colorIndex]) == 2) {				
+				board.enPassantPosition = COMBINE_TO_POSITION(GET_COLUMN(to), PAWN_ENPASSANT_TAKE_ROW[(colorIndex ^ 0x01)]);
+			}			
+			
 			break;			
 	
 		case KING:					
-			if (color == WHITE) {
-				board.setPositionOfKing(to, color);
-				board.hasMoved |= HAS_MOVED_KING_WHITE;
-			} else {
-				board.setPositionOfKing(to, color);
-				board.hasMoved |= HAS_MOVED_KING_BLACK;				
-			}
+			board.setPositionOfKing(to, color);
+			board.hasMoved[colorIndex] |= KING_MOVED;
 			break;
 			
 		case ROOK:
 			//set rook moved
-			if (color == WHITE) {
-				if (((board.hasMoved & HAS_MOVED_ROOKA_WHITE) != 0)&&(from == A1)) {
-					board.hasMoved |= HAS_MOVED_ROOKA_WHITE;
-				} else if (((board.hasMoved & HAS_MOVED_ROOKH_WHITE) != 0)&&(from == H1)) {
-					board.hasMoved |= HAS_MOVED_ROOKH_WHITE;
-				}
-			} else {
-				if (((board.hasMoved & HAS_MOVED_ROOKA_BLACK) != 0)&&(from == A8)) {
-					board.hasMoved |= HAS_MOVED_ROOKA_BLACK;
-				} else if (((board.hasMoved & HAS_MOVED_ROOKH_BLACK) != 0)&&(from == H8)) {
-					board.hasMoved |= HAS_MOVED_ROOKH_BLACK;
-				}
+			if ((!HAS_ROOK_A_MOVED(board, colorIndex)) && 
+				(from == COMBINE_TO_POSITION(COLUMN_A, CASTLING_ROW[colorIndex]))) {
+				
+				board.hasMoved[colorIndex] |= ROOK_A_MOVED;					
+				
+			} else if ((!HAS_ROOK_H_MOVED(board, colorIndex)) && 
+				(from == COMBINE_TO_POSITION(COLUMN_H, CASTLING_ROW[colorIndex]))) {
+				
+				board.hasMoved[colorIndex] |= ROOK_H_MOVED;
 			}
+			
 			break;
 			
 	}
@@ -80,132 +69,80 @@ void Move::execute(Board &board)
 	//special moves
 	switch (GET_PIECE_TYPE(special)) { 
 	
-		case PAWN: //en-passant or promotion
-			if (color == BLACK) { //black
+		case PAWN: //en-passant or promotion			
 
-				if (GET_ROW(to) == ROW_3) { //en-passant
-					board[COMBINE_TO_POSITION(GET_COLUMN(to), ROW_4)] = NO_PIECE;					
-				} else {					
-					board.materialValue[BLACK_INDEX] += PIECE_VALUE[QUEEN] - PIECE_VALUE[PAWN];
-				}
-
-			} else { //white
-				
-				if (GET_ROW(to) == ROW_6) { //en-passant
-					board[COMBINE_TO_POSITION(GET_COLUMN(to), ROW_5)] = NO_PIECE;					
-				} else {
-					board.materialValue[WHITE_INDEX] += PIECE_VALUE[QUEEN] - PIECE_VALUE[PAWN];
-				}
+				//changed
+			if (GET_ROW(to) == PAWN_ENPASSANT_TAKE_ROW[colorIndex]) { //en-passant
+				board[COMBINE_TO_POSITION(GET_COLUMN(to), PAWN_ENPASSANT_CONTENT_ROW[colorIndex])] = NO_PIECE;					
+			} else {					
+				board.materialValue[colorIndex] += (PIECE_VALUE[QUEEN] - PIECE_VALUE[PAWN]);
 			}
 			break;
 			
 		case KING: //castling
-
-			if (color == BLACK) { //black
-				board.hasCastled[BLACK_INDEX] = true;
-
-				if (GET_COLUMN(to) == COLUMN_G) { //kingside castling
-					board[F8] = ROOK_BLACK;
-					board[H8] = NO_PIECE;
-					board.hasMoved |= HAS_MOVED_ROOKH_BLACK;
-				} else { //queenside castling
-					board[D8] = ROOK_BLACK;
-					board[A8] = NO_PIECE;
-					board.hasMoved |= HAS_MOVED_ROOKA_BLACK;
-				}
-
-			} else { //white
-				board.hasCastled[WHITE_INDEX] = true;
-
-				if (GET_COLUMN(to) == COLUMN_G) { //kingside castling
-					board[F1] = ROOK_WHITE;
-					board[H1] = NO_PIECE;
-					board.hasMoved |= HAS_MOVED_ROOKH_WHITE;
-				} else { //queenside castling
-					board[D1] = ROOK_WHITE;
-					board[A1] = NO_PIECE;
-					board.hasMoved |= HAS_MOVED_ROOKH_WHITE;
-				}							
+			
+			board.hasCastled[colorIndex] = true;
+			
+			if (GET_COLUMN(to) == COLUMN_G) { //kingside castling
+				board[COMBINE_TO_POSITION(COLUMN_F, CASTLING_ROW[colorIndex])] = GET_COLORED_PIECE(ROOK,color);
+				board[COMBINE_TO_POSITION(COLUMN_H, CASTLING_ROW[colorIndex])] = NO_PIECE;
+				board.hasMoved[colorIndex] |= ROOK_H_MOVED;
+			} else { //queenside castling										
+				board[COMBINE_TO_POSITION(COLUMN_D, CASTLING_ROW[colorIndex])] = GET_COLORED_PIECE(ROOK,color);
+				board[COMBINE_TO_POSITION(COLUMN_A, CASTLING_ROW[colorIndex])] = NO_PIECE;
+				board.hasMoved[colorIndex] |= ROOK_A_MOVED;
 			}
 			break;			
 	}			
 }
 
 void Move::unexecute(Board &board)
-{
-	board.hasMoved = hasMoved;
+{		
+	Color color = GET_PIECE_COLOR(piece);
+	int colorIndex = (color == WHITE);
 	board.enPassantPosition = enPassantPosition;
 	board.reversableMoves = reversableMoves;
-	Color color = GET_PIECE_COLOR(piece);
+	board.hasMoved[colorIndex] = hasMoved;		
+	board.materialValue[(GET_PIECE_COLOR(content) == WHITE)] += PIECE_VALUE[GET_PIECE_TYPE(content)];	
 	
-	if (content != NO_PIECE) {
-		board.materialValue[(GET_PIECE_COLOR(content) == WHITE)] += PIECE_VALUE[GET_PIECE_TYPE(content)];
-	}
 	
 	if (GET_PIECE_TYPE(piece) == KING) {		
 		board.setPositionOfKing(from, color);
 	}
 	
-	if (special == NO_PIECE) {
-		board[from] = piece;
-		board[to] = content;
-	} else if (GET_PIECE_TYPE(special) == PAWN) { //promotion and en-passant
+	switch (GET_PIECE_TYPE(special)) {
+		case NO_PIECE:
+			board[from] = piece;
+			board[to] = content;
+			break;
+			
+		case PAWN: //promotion and en-passant
 					
-		if (color == BLACK) { //black
-
-			if (GET_ROW(to) == ROW_1) { //promotion
-				board.materialValue[BLACK_INDEX] += PIECE_VALUE[PAWN] - PIECE_VALUE[QUEEN];
+					//changed
+			if (GET_ROW(to) == PAWN_ENPASSANT_TAKE_ROW[colorIndex]) { //en-passant
+				board[COMBINE_TO_POSITION(GET_COLUMN(to), PAWN_ENPASSANT_CONTENT_ROW[colorIndex])] = content;					
+				board[to] = NO_PIECE;
+				board[from] = piece;	
+			} else { //promotion
+				board.materialValue[colorIndex] += (PIECE_VALUE[PAWN] - PIECE_VALUE[QUEEN]);
 				board[from] = special;
 				board[to] = content;
-
-			} else { //en-passant
-				board[COMBINE_TO_POSITION(GET_COLUMN(to), ROW_4)] = content;				
-				board[to] = NO_PIECE;
-				board[from] = piece;					
 			}
+			break;
 
-		} else { //white
-
-			if (GET_ROW(to) == ROW_8) { //promotion
-				board.materialValue[WHITE_INDEX] += PIECE_VALUE[PAWN] - PIECE_VALUE[QUEEN];
-				board[from] = special;
-				board[to] = content;
-
-			} else { //en-passant
-				board[COMBINE_TO_POSITION(GET_COLUMN(to), ROW_5)] = content;
-				board[to] = NO_PIECE;
-				board[from] = piece;					
-			}
-		}
-
-	} else if (GET_PIECE_TYPE(special) == KING) { //castling
-		board[from] = piece;
-		board[to] = NO_PIECE;		
-
-		if (color == BLACK) { //black				
-		
-			board.hasCastled[BLACK_INDEX] = false;
+		case KING: //castling
+			board[from] = piece;
+			board[to] = NO_PIECE;		
+			board.hasCastled[colorIndex] = false;
 			
 			if (GET_COLUMN(to) == COLUMN_G) { //kingside castling					
-				board[F8] = NO_PIECE;
-				board[H8] = ROOK_BLACK;
+				board[COMBINE_TO_POSITION(COLUMN_F, CASTLING_ROW[colorIndex])] = NO_PIECE;
+				board[COMBINE_TO_POSITION(COLUMN_H, CASTLING_ROW[colorIndex])] = GET_COLORED_PIECE(ROOK,color);
 			} else { //queenside castling
-				board[D8] = NO_PIECE;
-				board[A8] = ROOK_BLACK;
+				board[COMBINE_TO_POSITION(COLUMN_D, CASTLING_ROW[colorIndex])] = NO_PIECE;
+				board[COMBINE_TO_POSITION(COLUMN_A, CASTLING_ROW[colorIndex])] = GET_COLORED_PIECE(ROOK,color);
 			}
-
-		} else { //white
-			
-			board.hasCastled[WHITE_INDEX] = false;
-
-			if (GET_COLUMN(to) == COLUMN_G) { //kingside castling
-				board[F1] = NO_PIECE;
-				board[H1] = ROOK_WHITE;
-			} else { //queenside castling
-				board[D1] = NO_PIECE;
-				board[A1] = ROOK_WHITE;
-			}							
-		}
+			break;	
 	}
 }
 

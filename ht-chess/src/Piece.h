@@ -41,6 +41,11 @@
 */
 #define GET_PIECE_TYPE(x) ((Piece)((x) & PIECE_TYPE))
 
+/**
+* Returns the combined ColoredPiece
+*/
+#define GET_COLORED_PIECE(type, color) ((ColoredPiece)((type) | (color)))
+
 static const int PIECE_VALUE[7] = {
 	10000,	//konge
 	900,	//dronning
