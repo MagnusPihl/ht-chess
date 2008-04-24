@@ -533,70 +533,69 @@ void Board::getKingMovesFrom(Position position, vector<Move> &moves) {
 	int colorIndex = (color == WHITE); 
 		
 	//castling	
-	if ((!HAS_KING_MOVED(*this, colorIndex)) && (position == COMBINE_TO_POSITION(COLUMN_E, CASTLING_ROW[colorIndex]))) { 	
-						
-		if (NO_PIECE == getThreatOf(COMBINE_TO_POSITION(COLUMN_E, CASTLING_ROW[colorIndex]), color)) {
+	if ((!HAS_KING_MOVED(*this, colorIndex)) && 
+		(position == COMBINE_TO_POSITION(COLUMN_E, CASTLING_ROW[colorIndex])) &&
+		(NO_PIECE == getThreatOf(COMBINE_TO_POSITION(COLUMN_E, CASTLING_ROW[colorIndex]), color))) {
 					
-			//kingside
-			if ((!HAS_ROOK_H_MOVED(*this, colorIndex)) &&
-				(content[COMBINE_TO_POSITION(COLUMN_F, CASTLING_ROW[colorIndex])] == NO_PIECE) &&
-				(content[COMBINE_TO_POSITION(COLUMN_G, CASTLING_ROW[colorIndex])] == NO_PIECE) &&
-				(content[COMBINE_TO_POSITION(COLUMN_H, CASTLING_ROW[colorIndex])] == GET_COLORED_PIECE(ROOK, color)) &&
-				(NO_PIECE == getThreatOf(COMBINE_TO_POSITION(COLUMN_F, CASTLING_ROW[colorIndex]), color)) &&
-				(NO_PIECE == getThreatOf(COMBINE_TO_POSITION(COLUMN_G, CASTLING_ROW[colorIndex]), color))) {
-					
-				moves.push_back(Move(
-					COMBINE_TO_POSITION(COLUMN_E, CASTLING_ROW[colorIndex]), 
-					COMBINE_TO_POSITION(COLUMN_G, CASTLING_ROW[colorIndex]), 
-					piece, 
-					piece, 
-					NO_PIECE, 
-					hasMoved[colorIndex], 
-					enPassantPosition, 
-					reversableMoves));
-					
-			//queenside
-			} else if ((!HAS_ROOK_A_MOVED(*this, colorIndex)) && 
-				(content[COMBINE_TO_POSITION(COLUMN_A, CASTLING_ROW[colorIndex])] == ROOK_WHITE) &&
-				(content[COMBINE_TO_POSITION(COLUMN_B, CASTLING_ROW[colorIndex])] == NO_PIECE) &&
-				(content[COMBINE_TO_POSITION(COLUMN_C, CASTLING_ROW[colorIndex])] == NO_PIECE) &&
-				(content[COMBINE_TO_POSITION(COLUMN_D, CASTLING_ROW[colorIndex])] == NO_PIECE) &&
-				(NO_PIECE == getThreatOf(COMBINE_TO_POSITION(COLUMN_C, CASTLING_ROW[colorIndex]), color)) &&
-				(NO_PIECE == getThreatOf(COMBINE_TO_POSITION(COLUMN_D, CASTLING_ROW[colorIndex]), color))) {
-					
-				moves.push_back(Move(
-					COMBINE_TO_POSITION(COLUMN_E, CASTLING_ROW[colorIndex]),
-					COMBINE_TO_POSITION(COLUMN_C, CASTLING_ROW[colorIndex]), 
-					piece, 
-					piece, 
-					NO_PIECE, 
-					hasMoved[colorIndex], 
-					enPassantPosition, 
-					reversableMoves));
-			}
+		//kingside
+		if ((!HAS_ROOK_H_MOVED(*this, colorIndex)) &&
+			(content[COMBINE_TO_POSITION(COLUMN_F, CASTLING_ROW[colorIndex])] == NO_PIECE) &&
+			(content[COMBINE_TO_POSITION(COLUMN_G, CASTLING_ROW[colorIndex])] == NO_PIECE) &&
+			(content[COMBINE_TO_POSITION(COLUMN_H, CASTLING_ROW[colorIndex])] == GET_COLORED_PIECE(ROOK, color)) &&
+			(NO_PIECE == getThreatOf(COMBINE_TO_POSITION(COLUMN_F, CASTLING_ROW[colorIndex]), color)) &&
+			(NO_PIECE == getThreatOf(COMBINE_TO_POSITION(COLUMN_G, CASTLING_ROW[colorIndex]), color))) {
+				
+			moves.push_back(Move(
+				COMBINE_TO_POSITION(COLUMN_E, CASTLING_ROW[colorIndex]), 
+				COMBINE_TO_POSITION(COLUMN_G, CASTLING_ROW[colorIndex]), 
+				piece, 
+				piece, 
+				NO_PIECE, 
+				hasMoved[colorIndex], 
+				enPassantPosition, 
+				reversableMoves));
+				
+		//queenside
+		} else if ((!HAS_ROOK_A_MOVED(*this, colorIndex)) && 
+			(content[COMBINE_TO_POSITION(COLUMN_A, CASTLING_ROW[colorIndex])] == ROOK_WHITE) &&
+			(content[COMBINE_TO_POSITION(COLUMN_B, CASTLING_ROW[colorIndex])] == NO_PIECE) &&
+			(content[COMBINE_TO_POSITION(COLUMN_C, CASTLING_ROW[colorIndex])] == NO_PIECE) &&
+			(content[COMBINE_TO_POSITION(COLUMN_D, CASTLING_ROW[colorIndex])] == NO_PIECE) &&
+			(NO_PIECE == getThreatOf(COMBINE_TO_POSITION(COLUMN_C, CASTLING_ROW[colorIndex]), color)) &&
+			(NO_PIECE == getThreatOf(COMBINE_TO_POSITION(COLUMN_D, CASTLING_ROW[colorIndex]), color))) {
+				
+			moves.push_back(Move(
+				COMBINE_TO_POSITION(COLUMN_E, CASTLING_ROW[colorIndex]),
+				COMBINE_TO_POSITION(COLUMN_C, CASTLING_ROW[colorIndex]), 
+				piece, 
+				piece, 
+				NO_PIECE, 
+				hasMoved[colorIndex], 
+				enPassantPosition, 
+				reversableMoves));
 		}
 	}			
 			
 	//normal moves
 	for (int i = 0; i < 16; i += 2) {
-		to = GET_POSITION(column + availableMoves[i], row + availableMoves[i+1]);			
+		to = GET_POSITION(column + availableMoves[i], row + availableMoves[i+1]);	
+				
 		if (IS_VALID_POSITION(to)) {
 			piece = content[to];			
 		
 			if (GET_PIECE_COLOR(piece) != color) {				
-				if (NO_PIECE == getThreatOf(to, color)) {
-					Move move = Move(
-								position, 
-								to, 
-								NO_PIECE, 
-								content[position], 
-								piece,
-								hasMoved[colorIndex], 
-								enPassantPosition,
-								reversableMoves);
-								
-					testAndAddMove(color, move, moves);
-				}
+				
+				Move move = Move(
+							position, 
+							to, 
+							NO_PIECE, 
+							content[position], 
+							piece,
+							hasMoved[colorIndex], 
+							enPassantPosition,
+							reversableMoves);
+							
+				testAndAddMove(color, move, moves);
 			}	
 		}		
 	}		
@@ -637,53 +636,50 @@ ColoredPiece Board::getThreatOf(Position position, Color color) {
 			
 			piece = content[to];
 		
-			if ((piece != NO_PIECE) && (GET_PIECE_COLOR(piece) != color)) {
+			if ((GET_PIECE_COLOR(piece) != color) && ((piece > threat) || (threat == NO_PIECE))) {
 				
-				if ((piece > threat)||(threat == NO_PIECE)) {
+				if ((0 <= i)&&(i < 8)) {
 				
-					if ((0 <= i)&&(i < 8)) {
-					
-						switch (GET_PIECE_TYPE(piece)) {
-							case PAWN:
-								if (distance == 1) {								
-									if (color == BLACK) { //threatening piece must be black							
-										if (i >= 4) {
-											return piece;
-										}		
-																
-									} else {
-									
-										if (i < 4) {
-											return piece;
-										}
+					switch (GET_PIECE_TYPE(piece)) {
+						case PAWN:
+							if (distance == 1) {								
+								if (color == BLACK) { //threatening piece must be black							
+									if (i >= 4) {
+										return piece;
+									}		
+															
+								} else {
+								
+									if (i < 4) {
+										return piece;
 									}
 								}
-								break;
-							case QUEEN:
-							case BISHOP:		
+							}
+							break;
+						case QUEEN:
+						case BISHOP:		
+							threat = piece;
+							break;								
+						case KING:
+							if (distance == 1) {									
 								threat = piece;
-								break;								
-							case KING:
-								if (distance == 1) {									
-									threat = piece;
-								}
-								break;
-						}	
-					} else {
-					
-						switch (GET_PIECE_TYPE(piece)) {							
-							case QUEEN:
-							case ROOK:		
+							}
+							break;
+					}	
+				} else {
+				
+					switch (GET_PIECE_TYPE(piece)) {							
+						case QUEEN:
+						case ROOK:		
+							threat = piece;
+							break;
+						case KING:
+							if (distance == 1) {									
 								threat = piece;
-								break;
-							case KING:
-								if (distance == 1) {									
-									threat = piece;
-								}
-								break;
-						}
-					}										
-				}
+							}
+							break;
+					}
+				}										
 			}
 			
 			if (piece != NO_PIECE) {
@@ -702,7 +698,7 @@ ColoredPiece Board::getThreatOf(Position position, Color color) {
 		if (IS_VALID_POSITION(to)) {
 			piece = content[to];
 			
-			if ((piece != NO_PIECE) && (GET_PIECE_COLOR(piece) != color) && (GET_PIECE_TYPE(piece) == KNIGHT)) {
+			if ((GET_PIECE_COLOR(piece) != color) && (GET_PIECE_TYPE(piece) == KNIGHT)) {
 				return piece;
 			}			
 		}
