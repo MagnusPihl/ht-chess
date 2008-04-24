@@ -533,21 +533,19 @@ void Board::getKingMovesFrom(Position position, vector<Move> &moves) {
 	int colorIndex = (color == WHITE); 
 		
 	//castling	
-	if ((!HAS_KING_MOVED(*this, colorIndex)) && 
-		(position == COMBINE_TO_POSITION(COLUMN_E, CASTLING_ROW[colorIndex])) &&
-		(NO_PIECE == getThreatOf(COMBINE_TO_POSITION(COLUMN_E, CASTLING_ROW[colorIndex]), color))) {
+	if ((!HAS_KING_MOVED(*this, colorIndex)) && 		
+		(NO_PIECE == getThreatOf(CASTLING_COLUMN_E[colorIndex], color))) {
 					
 		//kingside
 		if ((!HAS_ROOK_H_MOVED(*this, colorIndex)) &&
-			(content[COMBINE_TO_POSITION(COLUMN_F, CASTLING_ROW[colorIndex])] == NO_PIECE) &&
-			(content[COMBINE_TO_POSITION(COLUMN_G, CASTLING_ROW[colorIndex])] == NO_PIECE) &&
-			(content[COMBINE_TO_POSITION(COLUMN_H, CASTLING_ROW[colorIndex])] == GET_COLORED_PIECE(ROOK, color)) &&
-			(NO_PIECE == getThreatOf(COMBINE_TO_POSITION(COLUMN_F, CASTLING_ROW[colorIndex]), color)) &&
-			(NO_PIECE == getThreatOf(COMBINE_TO_POSITION(COLUMN_G, CASTLING_ROW[colorIndex]), color))) {
+			(content[CASTLING_COLUMN_F[colorIndex]] == NO_PIECE) &&
+			(content[CASTLING_COLUMN_H[colorIndex]] == NO_PIECE) &&
+			(NO_PIECE == getThreatOf(CASTLING_COLUMN_F[colorIndex], color)) &&
+			(NO_PIECE == getThreatOf(CASTLING_COLUMN_G[colorIndex], color))) {
 				
 			moves.push_back(Move(
-				COMBINE_TO_POSITION(COLUMN_E, CASTLING_ROW[colorIndex]), 
-				COMBINE_TO_POSITION(COLUMN_G, CASTLING_ROW[colorIndex]), 
+				position, 
+				CASTLING_COLUMN_G[colorIndex], 
 				piece, 
 				piece, 
 				NO_PIECE, 
@@ -556,17 +554,16 @@ void Board::getKingMovesFrom(Position position, vector<Move> &moves) {
 				reversableMoves));
 				
 		//queenside
-		} else if ((!HAS_ROOK_A_MOVED(*this, colorIndex)) && 
-			(content[COMBINE_TO_POSITION(COLUMN_A, CASTLING_ROW[colorIndex])] == ROOK_WHITE) &&
-			(content[COMBINE_TO_POSITION(COLUMN_B, CASTLING_ROW[colorIndex])] == NO_PIECE) &&
-			(content[COMBINE_TO_POSITION(COLUMN_C, CASTLING_ROW[colorIndex])] == NO_PIECE) &&
-			(content[COMBINE_TO_POSITION(COLUMN_D, CASTLING_ROW[colorIndex])] == NO_PIECE) &&
-			(NO_PIECE == getThreatOf(COMBINE_TO_POSITION(COLUMN_C, CASTLING_ROW[colorIndex]), color)) &&
-			(NO_PIECE == getThreatOf(COMBINE_TO_POSITION(COLUMN_D, CASTLING_ROW[colorIndex]), color))) {
+		} else if ((!HAS_ROOK_A_MOVED(*this, colorIndex)) && 			
+			(content[CASTLING_COLUMN_B[colorIndex]] == NO_PIECE) &&
+			(content[CASTLING_COLUMN_C[colorIndex]] == NO_PIECE) &&
+			(content[CASTLING_COLUMN_D[colorIndex]] == NO_PIECE) &&
+			(NO_PIECE == getThreatOf(CASTLING_COLUMN_C[colorIndex], color)) &&
+			(NO_PIECE == getThreatOf(CASTLING_COLUMN_D[colorIndex], color))) {
 				
 			moves.push_back(Move(
-				COMBINE_TO_POSITION(COLUMN_E, CASTLING_ROW[colorIndex]),
-				COMBINE_TO_POSITION(COLUMN_C, CASTLING_ROW[colorIndex]), 
+				position,
+				CASTLING_COLUMN_C[colorIndex], 
 				piece, 
 				piece, 
 				NO_PIECE, 

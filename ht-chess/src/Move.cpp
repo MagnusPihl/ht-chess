@@ -52,12 +52,12 @@ void Move::execute(Board &board)
 		case ROOK:
 			//set rook moved
 			if ((!HAS_ROOK_A_MOVED(board, colorIndex)) && 
-				(from == COMBINE_TO_POSITION(COLUMN_A, CASTLING_ROW[colorIndex]))) {
+				(from == CASTLING_COLUMN_A[colorIndex])) {
 				
 				board.hasMoved[colorIndex] |= ROOK_A_MOVED;					
 				
 			} else if ((!HAS_ROOK_H_MOVED(board, colorIndex)) && 
-				(from == COMBINE_TO_POSITION(COLUMN_H, CASTLING_ROW[colorIndex]))) {
+				(from == CASTLING_COLUMN_H[colorIndex])) {
 				
 				board.hasMoved[colorIndex] |= ROOK_H_MOVED;
 			}
@@ -84,12 +84,12 @@ void Move::execute(Board &board)
 			board.hasCastled[colorIndex] = true;
 			
 			if (GET_COLUMN(to) == COLUMN_G) { //kingside castling
-				board[COMBINE_TO_POSITION(COLUMN_F, CASTLING_ROW[colorIndex])] = GET_COLORED_PIECE(ROOK,color);
-				board[COMBINE_TO_POSITION(COLUMN_H, CASTLING_ROW[colorIndex])] = NO_PIECE;
+				board[CASTLING_COLUMN_F[colorIndex]] = GET_COLORED_PIECE(ROOK,color);
+				board[CASTLING_COLUMN_H[colorIndex]] = NO_PIECE;
 				board.hasMoved[colorIndex] |= ROOK_H_MOVED;
 			} else { //queenside castling										
-				board[COMBINE_TO_POSITION(COLUMN_D, CASTLING_ROW[colorIndex])] = GET_COLORED_PIECE(ROOK,color);
-				board[COMBINE_TO_POSITION(COLUMN_A, CASTLING_ROW[colorIndex])] = NO_PIECE;
+				board[CASTLING_COLUMN_D[colorIndex]] = GET_COLORED_PIECE(ROOK,color);
+				board[CASTLING_COLUMN_A[colorIndex]] = NO_PIECE;
 				board.hasMoved[colorIndex] |= ROOK_A_MOVED;
 			}
 			break;			
@@ -136,11 +136,11 @@ void Move::unexecute(Board &board)
 			board.hasCastled[colorIndex] = false;
 			
 			if (GET_COLUMN(to) == COLUMN_G) { //kingside castling					
-				board[COMBINE_TO_POSITION(COLUMN_F, CASTLING_ROW[colorIndex])] = NO_PIECE;
-				board[COMBINE_TO_POSITION(COLUMN_H, CASTLING_ROW[colorIndex])] = GET_COLORED_PIECE(ROOK,color);
+				board[CASTLING_COLUMN_F[colorIndex]] = NO_PIECE;
+				board[CASTLING_COLUMN_H[colorIndex]] = GET_COLORED_PIECE(ROOK,color);
 			} else { //queenside castling
-				board[COMBINE_TO_POSITION(COLUMN_D, CASTLING_ROW[colorIndex])] = NO_PIECE;
-				board[COMBINE_TO_POSITION(COLUMN_A, CASTLING_ROW[colorIndex])] = GET_COLORED_PIECE(ROOK,color);
+				board[CASTLING_COLUMN_D[colorIndex]] = NO_PIECE;
+				board[CASTLING_COLUMN_A[colorIndex]] = GET_COLORED_PIECE(ROOK,color);
 			}
 			break;	
 	}

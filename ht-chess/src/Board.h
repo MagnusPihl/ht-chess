@@ -24,6 +24,16 @@
 static int PAWN_OUT_OF_BOUNDS[2] = {ROW_1 - 1, ROW_8 + 1};
 static int PAWN_START_ROW[2] = {ROW_7, ROW_2};
 
+static int CASTLING_ROW[2] = {ROW_8, ROW_1}; //the start row for each color
+static Position CASTLING_COLUMN_A[2] = {A8, A1}; 
+static Position CASTLING_COLUMN_B[2] = {B8, B1}; 
+static Position CASTLING_COLUMN_C[2] = {C8, C1}; 
+static Position CASTLING_COLUMN_D[2] = {D8, D1}; 
+static Position CASTLING_COLUMN_E[2] = {E8, E1}; 
+static Position CASTLING_COLUMN_F[2] = {F8, F1}; 
+static Position CASTLING_COLUMN_G[2] = {G8, G1}; 
+static Position CASTLING_COLUMN_H[2] = {H8, H1}; 
+
 #define BLACK_INDEX 0
 #define WHITE_INDEX 1
 
