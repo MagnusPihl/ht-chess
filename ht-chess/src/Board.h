@@ -32,7 +32,10 @@ class Move;
 
 class Board
 {
+friend class Move;
+
 private:
+
 	/**
 	* 0x88 representation of board contents	
 	*/
@@ -74,10 +77,17 @@ private:
 	* List of moves used to calculate stale- and checkmate.
 	*/
 	std::vector<Move> moveList;
+	
+	/**
+	* Checks that the move does not endanger the king of the specified color
+	* If it doesn't the move is add to the supplied vector
+	* param: Color, color - player color
+	* param: Move&, move - the move to be evaluated
+	* param: vector<Move>&, moves - list of moves to add move to when evaluated
+	*/
+	void testAndAddMove(Color color, Move &move, std::vector<Move> &moves);					
 
-public:
-
-	friend class Move;
+public:	
 
 	/**
 	* Constructor. Create new board with initial positions. 	
@@ -133,7 +143,8 @@ public:
 	* The detects piece type and color from position. If no piece is present at
 	* the specified position nothing is added.	
 	* param: Position, position - position of piece
-	* param: vector<Move>, move - vector to add moves to
+	* param: vector<Move>&, moves - vector to add moves to
+	* param: vector<Move>&, moves - vector to add moves to
 	*/		
 	void getMovesFromPosition(Position position, vector<Move> &moves);
 	
@@ -148,7 +159,7 @@ public:
 	* is derived from the position.
 	* 
 	* param: Position, position - position of the pawn
-	* param: vector<Move>, move - vector to add moves to
+	* param: vector<Move>&, move - vector to add moves to
 	*/
 	void getPawnMovesFrom(Position position, vector<Move> &moves);
 		
@@ -190,7 +201,7 @@ public:
 	* The rook must be present at the specified position. The color of the piece
 	* is derived from the position.
 	* param: Position, position - position of the rook
-	* param: vector<Move>, move - vector to add moves to
+	* param: vector<Move>&, move - vector to add moves to
 	*/	
 	void getRookMovesFrom(Position position, vector<Move> &moves);
 	
@@ -203,7 +214,7 @@ public:
 	* The queen must be present at the specified position. The color of the piece
 	* is derived from the position.
 	* param: Position, position - position of the queen
-	* param: vector<Move>, move - vector to add moves to
+	* param: vector<Move>&, move - vector to add moves to
 	*/	
 	void getQueenMovesFrom(Position position, vector<Move> &moves);
 	

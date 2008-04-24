@@ -70,6 +70,19 @@ Board::~Board() {
 
 /*****************************************************************************/
 
+void Board::testAndAddMove(Color color, Move &move, std::vector<Move> &moves) {
+	move.execute(*this);
+		
+	if (!isCheck(color)) {
+		moves.push_back(move);
+	}
+	
+	move.unexecute(*this);
+}
+
+
+/*****************************************************************************/
+
 ColoredPiece Board::getItemAt(Position position) 
 {
 	#ifdef CHECK_OVERFLOW
@@ -238,13 +251,7 @@ void Board::getPawnMovesFrom(Position position, vector<Move> &moves) {
 						hasMoved,
 						enPassantPosition);
 										
-				move.execute(*this);
-				
-				if (NO_PIECE == getThreatOf(getPositionOfKing(color),color)) {
-					moves.push_back(move);
-				}
-									
-				move.unexecute(*this);
+				testAndAddMove(color, move, moves);
 			}	
 			
 			if ((row == ROW_5)&&(GET_ROW(enPassantPosition) == ROW_6)) { //en-passant
@@ -261,13 +268,7 @@ void Board::getPawnMovesFrom(Position position, vector<Move> &moves) {
 						hasMoved,
 						enPassantPosition);
 						
-					move.execute(*this);
-						
-					if (NO_PIECE == getThreatOf(getPositionOfKing(color),color)) {
-						moves.push_back(move);
-					}
-					
-					move.unexecute(*this);
+					testAndAddMove(color, move, moves);
 				}
 			}
 		
@@ -289,13 +290,7 @@ void Board::getPawnMovesFrom(Position position, vector<Move> &moves) {
 						hasMoved,
 						enPassantPosition);
 																
-				move.execute(*this);
-				
-				if (NO_PIECE == getThreatOf(getPositionOfKing(color),color)) {
-					moves.push_back(move);
-				}
-									
-				move.unexecute(*this);
+				testAndAddMove(color, move, moves);
 			}		
 						
 			//right capture	
@@ -310,13 +305,7 @@ void Board::getPawnMovesFrom(Position position, vector<Move> &moves) {
 						hasMoved,
 						enPassantPosition);
 																
-				move.execute(*this);
-				
-				if (NO_PIECE == getThreatOf(getPositionOfKing(color),color)) {
-					moves.push_back(move);
-				}
-									
-				move.unexecute(*this);
+				testAndAddMove(color, move, moves);
 			}
 			
 			//normal advance
@@ -331,13 +320,7 @@ void Board::getPawnMovesFrom(Position position, vector<Move> &moves) {
 						hasMoved,
 						enPassantPosition);												
 				
-				move.execute(*this);
-				
-				if (NO_PIECE == getThreatOf(getPositionOfKing(color),color)) {
-					moves.push_back(move);
-				}
-									
-				move.unexecute(*this);
+				testAndAddMove(color, move, moves);
 			}
 		}
 	} else { //black
@@ -355,13 +338,7 @@ void Board::getPawnMovesFrom(Position position, vector<Move> &moves) {
 						hasMoved,
 						enPassantPosition);
 										
-				move.execute(*this);
-				
-				if (NO_PIECE == getThreatOf(getPositionOfKing(color),color)) {
-					moves.push_back(move);
-				}
-									
-				move.unexecute(*this);
+				testAndAddMove(color, move, moves);
 			}
 			
 			if ((row == ROW_4)&&(GET_ROW(enPassantPosition) == ROW_3)) { //en-passant
@@ -378,13 +355,7 @@ void Board::getPawnMovesFrom(Position position, vector<Move> &moves) {
 						hasMoved,
 						enPassantPosition);
 						
-					move.execute(*this);
-						
-					if (NO_PIECE == getThreatOf(getPositionOfKing(color),color)) {
-						moves.push_back(move);
-					}
-					
-					move.unexecute(*this);
+					testAndAddMove(color, move, moves);
 				}
 			}						
 			ColoredPiece special = NO_PIECE;
@@ -405,13 +376,7 @@ void Board::getPawnMovesFrom(Position position, vector<Move> &moves) {
 						hasMoved,
 						enPassantPosition);						
 				
-				move.execute(*this);
-				
-				if (NO_PIECE == getThreatOf(getPositionOfKing(color),color)) {
-					moves.push_back(move);
-				}
-									
-				move.unexecute(*this);
+				testAndAddMove(color, move, moves);
 			}		
 						
 			//right capture	
@@ -426,13 +391,7 @@ void Board::getPawnMovesFrom(Position position, vector<Move> &moves) {
 						hasMoved,
 						enPassantPosition);
 										
-				move.execute(*this);
-				
-				if (NO_PIECE == getThreatOf(getPositionOfKing(color),color)) {
-					moves.push_back(move);
-				}
-									
-				move.unexecute(*this);
+				testAndAddMove(color, move, moves);
 			}
 			
 			//normal advance
@@ -447,13 +406,7 @@ void Board::getPawnMovesFrom(Position position, vector<Move> &moves) {
 						hasMoved,
 						enPassantPosition);						
 										
-				move.execute(*this);
-				
-				if (NO_PIECE == getThreatOf(getPositionOfKing(color),color)) {
-					moves.push_back(move);
-				}
-									
-				move.unexecute(*this);
+				testAndAddMove(color, move, moves);
 			}
 		}
 	}	
@@ -486,13 +439,7 @@ void Board::getKnightMovesFrom(Position position, vector<Move> &moves) {
 							hasMoved,
 							enPassantPosition);	
 				
-				move.execute(*this);
-				
-				if (NO_PIECE == getThreatOf(getPositionOfKing(color),color)) {
-					moves.push_back(move);
-				}
-									
-				move.unexecute(*this);
+				testAndAddMove(color, move, moves);
 			}
 		}
 	}		
@@ -536,13 +483,7 @@ void Board::getBishopMovesFrom(Position position, vector<Move> &moves) {
 							hasMoved,
 							enPassantPosition);							
 				
-				move.execute(*this);
-				
-				if (NO_PIECE == getThreatOf(getPositionOfKing(color),color)) {
-					moves.push_back(move);
-				}
-									
-				move.unexecute(*this);
+				testAndAddMove(color, move, moves);
 			}
 			
 			if (piece != NO_PIECE) {
@@ -590,13 +531,7 @@ void Board::getRookMovesFrom(Position position, vector<Move> &moves) {
 							hasMoved,
 							enPassantPosition);							
 				
-				move.execute(*this);
-				
-				if (NO_PIECE == getThreatOf(getPositionOfKing(color),color)) {
-					moves.push_back(move);
-				}
-									
-				move.unexecute(*this);
+				testAndAddMove(color, move, moves);
 			}
 			
 			if (piece != NO_PIECE) {
@@ -644,13 +579,7 @@ void Board::getQueenMovesFrom(Position position, vector<Move> &moves) {
 							hasMoved,
 							enPassantPosition);
 				
-				move.execute(*this);
-				
-				if (NO_PIECE == getThreatOf(getPositionOfKing(color),color)) {
-					moves.push_back(move);
-				}
-									
-				move.unexecute(*this);
+				testAndAddMove(color, move, moves);
 			}
 			
 			if (piece != NO_PIECE) {
@@ -754,13 +683,7 @@ void Board::getKingMovesFrom(Position position, vector<Move> &moves) {
 								hasMoved, 
 								enPassantPosition);
 								
-					move.execute(*this);
-					
-					if (NO_PIECE == getThreatOf(getPositionOfKing(color),color)) {
-						moves.push_back(move);
-					}
-										
-					move.unexecute(*this);
+					testAndAddMove(color, move, moves);
 				}
 			}	
 		}		
