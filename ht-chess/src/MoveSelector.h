@@ -6,7 +6,7 @@
 #include <vector>
 #include "Move.h"
 #include "Piece.h"
-#include "Validator.h"
+#include "Evaluator.h"
 
 class MiniMax
 {
@@ -71,14 +71,14 @@ class AlphaBeta
 {
 private:
 	MoveGenerator moveGen;
-	Validator validator;
+	Evaluator evaluator;
 
 	int alphaBeta(Board &board, Move &path, bool isMaximizer=true, int curDepth=0,
 		int maxDepth=100, int alpha=-100000, int beta=100000)
 	{
 		if(curDepth == maxDepth || board.isCheckmate() || board.isStalemate())		//if leaf
 		{
-			return validator(board, curDepth);
+			return evaluator(board, curDepth);
 		}
 		else if(isMaximizer)	//if maximizer
 		{
@@ -128,7 +128,7 @@ class AlphaBetaOptimized
 {
 private:
 	MoveGenerator moveGen;
-	Validator validator;
+	Evaluator evaluator;
 	std::vector<Move> moveList;
 
 	int alphaBeta(Board &board, Move &path, bool isMaximizer=true, int curDepth=0,
@@ -136,7 +136,7 @@ private:
 	{
 		if(curDepth == maxDepth || board.isCheckmate() || board.isStalemate())		//if leaf
 		{
-			return validator(board, curDepth);
+			return evaluator(board, curDepth);
 		}
 		else if(isMaximizer)	//if maximizer
 		{
@@ -180,6 +180,11 @@ private:
 		}
 	}
 public:
+	AlphaBetaOptimized()
+	{
+		moveList.resize(100*DEFAULT_PLY);
+	}
+
 	Move operator()(Board &board, bool isMaximizer=true, int maxDepth=DEFAULT_PLY)
 	{
 		Move path;
