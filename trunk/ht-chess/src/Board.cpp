@@ -18,12 +18,12 @@ Board::Board(const Board& rhs) : content(std::vector<ColoredPiece>(CONTENT_SIZE)
 	{
 		content[i] = rhs.content[i];		
 	}
-	
-	hasMoved = rhs.hasMoved;
+
 	enPassantPosition = rhs.enPassantPosition;
 	reversableMoves = rhs.reversableMoves;
 	
 	for (int i = 0; i < 2; i++) {
+		hasMoved[i] = rhs.hasMoved[i];
 		kingPosition[i] = rhs.kingPosition[i];	
 		materialValue[i] = rhs.materialValue[i];			
 		hasCastled[i] = rhs.hasCastled[i];
@@ -41,11 +41,11 @@ Board& Board::operator= (Board& rhs) {
 			content[i] = rhs.content[i];
 		}
 			
-		hasMoved = rhs.hasMoved;
 		enPassantPosition = rhs.enPassantPosition;
 		reversableMoves = rhs.reversableMoves;
 		
 		for (int i = 0; i < 2; i++) {
+		hasMoved[i] = rhs.hasMoved[i];
 			kingPosition[i] = rhs.kingPosition[i];	
 			materialValue[i] = rhs.materialValue[i];			
 			hasCastled[i] = rhs.hasCastled[i];
@@ -205,7 +205,7 @@ bool Board::hasPerformedCastling(Color color) {
 /*****************************************************************************/
 
 bool Board::hasKingMoved(Color color) {
-	return (color == WHITE) ? WHITE_KING_MOVED : BLACK_KING_MOVED;
+	return HAS_KING_MOVED(*this, color == WHITE);
 }
 
 
@@ -239,191 +239,99 @@ void Board::getPawnMovesFrom(Position position, vector<Move> &moves) {
 	int column = GET_REAL_COLUMN(position);
 	Color color = GET_PIECE_COLOR(content[position]);
 	ColoredPiece piece = content[position];
+	int colorIndex = (color == WHITE);
+	int direction = PAWN_DIRECTION[colorIndex];
+	int doubleDirection = PAWN_DIRECTION[colorIndex]*2;
 	
-	if (color == WHITE) {			
-		if ((row + 1) < ROW_COUNT) { //single advances							
+	//en-passant	//changed
+	if ((row == PAWN_ENPASSANT_CONTENT_ROW[colorIndex]) && (GET_ROW(enPassantPosition) == PAWN_ENPASSANT_TAKE_ROW[colorIndex])) { //en-passant
+		int x = GET_REAL_COLUMN(enPassantPosition);
 		
-			if ((row == ROW_2) && //double advance
-				(content[ GET_POSITION( column, row + 1) ] == NO_PIECE) &&
-				(content[ GET_POSITION( column, row + 2) ] == NO_PIECE)) {
-				
-				Move move = Move(
-						position, 
-						GET_POSITION(column, row + 2), 
-						NO_PIECE, 
-						piece, 
-						NO_PIECE,
-						hasMoved,
-						enPassantPosition,
-						reversableMoves);
-										
-				testAndAddMove(color, move, moves);
-			}	
-			
-			if ((row == ROW_5)&&(GET_ROW(enPassantPosition) == ROW_6)) { //en-passant
-				int x = GET_REAL_COLUMN(enPassantPosition);
-				
-				if (((column + 1) == x) || ((column - 1) == x)) {
-				
-					Move move = Move(
-						position, 
-						enPassantPosition, 
-						piece, 
-						piece, 
-						PAWN_BLACK,
-						hasMoved,
-						enPassantPosition,
-						reversableMoves);
-						
-					testAndAddMove(color, move, moves);
-				}
-			}
+		if (((column + 1) == x) || ((column - 1) == x)) {
 		
-			ColoredPiece special = NO_PIECE;
-			
-			if ((row + 1) == (ROW_COUNT - 1)) { //promotion
-				special = piece;
-				piece = QUEEN_WHITE; //could be changed to let user choose					
-			}
-			
-			//left capture
-			if ((column > 0) && (GET_PIECE_COLOR(content[GET_POSITION(column - 1, row + 1)]) == BLACK)) {
-				Move move = Move(
-						position, 
-						GET_POSITION(column - 1, row + 1), 
-						special, 
-						piece, 
-						content[GET_POSITION(column - 1, row + 1)],
-						hasMoved,
-						enPassantPosition,
-						reversableMoves);
-																
-				testAndAddMove(color, move, moves);
-			}		
-						
-			//right capture	
-			if ((column < (COLUMN_COUNT - 1)) && (GET_PIECE_COLOR(content[ GET_POSITION( column + 1 , row + 1) ]) == BLACK)) {
+			Move move = Move(
+				position, 
+				enPassantPosition, 
+				piece, 
+				piece, 
+				GET_COLORED_PIECE(PAWN, GET_OPPOSITE_COLOR(color)),
+				hasMoved[colorIndex],
+				enPassantPosition,
+				reversableMoves);
 				
-				Move move = Move(
-						position, 
-						GET_POSITION(column + 1, row + 1), 
-						special, 
-						piece, 
-						content[GET_POSITION(column + 1, row + 1)],
-						hasMoved,
-						enPassantPosition,
-						reversableMoves);
-																
-				testAndAddMove(color, move, moves);
-			}
-			
-			//normal advance
-			if (content[GET_POSITION(column, row + 1)] == NO_PIECE) {
-				
-				 Move move = Move(
-						position, 
-						GET_POSITION(column, row + 1), 
-						special, 
-						piece, 
-						NO_PIECE,
-						hasMoved,
-						enPassantPosition,
-						reversableMoves);												
-				
-				testAndAddMove(color, move, moves);
-			}
+			testAndAddMove(color, move, moves);
 		}
-	} else { //black
-		if (row > 0) { //single advances			
-			if ((row == ROW_7) && //double advance
-				(content[ GET_POSITION( column, row - 1) ] == NO_PIECE) &&
-				(content[ GET_POSITION( column, row - 2) ] == NO_PIECE)) {
+	}
+
+	ColoredPiece special = NO_PIECE;
+	
+	//promotion
+	if ((row + direction) == CASTLING_ROW[colorIndex]) {
+		special = piece;
+		piece = QUEEN_WHITE; //could be changed to let user choose					
+	}
+	
+	//left capture
+	if ((column > 0) && (GET_PIECE_COLOR(content[GET_POSITION(column - 1, row + direction)]) == GET_OPPOSITE_COLOR(color))) {
+		Move move = Move(
+				position, 
+				GET_POSITION(column - 1, row + direction), 
+				special, 
+				piece, 
+				content[GET_POSITION(column - 1, row + direction)],
+				hasMoved[colorIndex],
+				enPassantPosition,
+				reversableMoves);
+														
+		testAndAddMove(color, move, moves);
+	}		
 				
-				Move move = Move(
-						position, 
-						GET_POSITION(column, row - 2), 
-						NO_PIECE, 
-						piece, 
-						NO_PIECE,
-						hasMoved,
-						enPassantPosition,
-						reversableMoves);
-										
-				testAndAddMove(color, move, moves);
-			}
+	//right capture	
+	if ((column < (COLUMN_COUNT - 1)) && (GET_PIECE_COLOR(content[ GET_POSITION( column + 1 , row + direction) ]) == GET_OPPOSITE_COLOR(color))) {
+		
+		Move move = Move(
+				position, 
+				GET_POSITION(column + 1, row + direction), 
+				special, 
+				piece, 
+				content[GET_POSITION(column + 1, row + direction)],
+				hasMoved[colorIndex],
+				enPassantPosition,
+				reversableMoves);
+														
+		testAndAddMove(color, move, moves);
+	}
+	
+	//normal advance
+	if (content[GET_POSITION(column, row + direction)] == NO_PIECE) {
+		
+		 Move move = Move(
+				position, 
+				GET_POSITION(column, row + direction), 
+				special, 
+				piece, 
+				NO_PIECE,
+				hasMoved[colorIndex],
+				enPassantPosition,
+				reversableMoves);												
+		
+		testAndAddMove(color, move, moves);
+		
+		if ((row == PAWN_START_ROW[colorIndex]) && //double advance
+			(content[ GET_POSITION( column, row + doubleDirection)] == NO_PIECE)) {
 			
-			if ((row == ROW_4)&&(GET_ROW(enPassantPosition) == ROW_3)) { //en-passant
-				int x = GET_REAL_COLUMN(enPassantPosition);
-				
-				if (((column + 1) == x) || ((column - 1) == x)) {
-				
-					Move move = Move(
-						position, 
-						enPassantPosition, 
-						piece, 
-						piece, 
-						PAWN_WHITE,
-						hasMoved,
-						enPassantPosition,
-						reversableMoves);
-						
-					testAndAddMove(color, move, moves);
-				}
-			}						
-			ColoredPiece special = NO_PIECE;
-			
-			if ((row - 1) == 0) { //promotion
-				special = piece;
-				piece = QUEEN_BLACK; //could be changed to let user choose
-			}
-			
-			//left capture
-			if ((column > 0) && (GET_PIECE_COLOR(content[GET_POSITION(column - 1, row - 1)]) == WHITE)) {
-				Move move =	Move(
-						position, 
-						GET_POSITION(column - 1, row - 1), 
-						special, 
-						piece, 
-						content[GET_POSITION(column-1, row - 1)],
-						hasMoved,
-						enPassantPosition,
-						reversableMoves);						
-				
-				testAndAddMove(color, move, moves);
-			}		
-						
-			//right capture	
-			if ((column < (COLUMN_COUNT - 1)) && (GET_PIECE_COLOR( content[ GET_POSITION( column + 1 , row - 1) ] ) == WHITE)) {
-				
-				Move move = Move(
-						position, 
-						GET_POSITION(column + 1, row - 1), 
-						special, 
-						piece, 
-						content[GET_POSITION(column + 1, row - 1)],
-						hasMoved,
-						enPassantPosition,
-						reversableMoves);
-										
-				testAndAddMove(color, move, moves);
-			}
-			
-			//normal advance
-			if (content[GET_POSITION(column, row - 1)] == NO_PIECE) {
-				
-				Move move = Move(
-						position, 
-						GET_POSITION(column, row - 1), 
-						special, 
-						piece, 
-						NO_PIECE,
-						hasMoved,
-						enPassantPosition,
-						reversableMoves);						
-										
-				testAndAddMove(color, move, moves);
-			}
-		}
+			Move move = Move(
+					position, 
+					GET_POSITION(column, row + doubleDirection), 
+					NO_PIECE, 
+					piece, 
+					NO_PIECE,
+					hasMoved[colorIndex],
+					enPassantPosition,
+					reversableMoves);
+									
+			testAndAddMove(color, move, moves);
+		}	
 	}	
 }
 	
@@ -437,6 +345,7 @@ void Board::getKnightMovesFrom(Position position, vector<Move> &moves) {
 	static int availableMoves[16] = {1,2, 2,1, 2,-1, 1,-2, -1,-2, -2,-1, -2,1, -1,2};
 	Position to;
 	ColoredPiece piece;
+	int colorIndex = (color == WHITE); 
 	
 	for (int i = 0; i < 16; i += 2) {
 		to = GET_POSITION(column + availableMoves[i], row + availableMoves[i+1]);			
@@ -444,14 +353,14 @@ void Board::getKnightMovesFrom(Position position, vector<Move> &moves) {
 		if (IS_VALID_POSITION(to)) {
 			piece = content[to];
 			
-			if ((piece == NO_PIECE) || (GET_PIECE_COLOR(piece) != color)) {
+			if (GET_PIECE_COLOR(piece) != color) {
 				Move move = Move(
 							position, 
 							to, 
 							NO_PIECE, 
 							content[position], 
 							piece,
-							hasMoved,
+							hasMoved[colorIndex],
 							enPassantPosition,
 							reversableMoves);	
 				
@@ -472,6 +381,7 @@ void Board::getBishopMovesFrom(Position position, vector<Move> &moves) {
 	Position to;
 	bool blocked;
 	ColoredPiece piece;
+	int colorIndex = (color == WHITE); 
 	
 	for (int i = 0; i < 8; i += 2) {
 		blocked = false;
@@ -489,14 +399,14 @@ void Board::getBishopMovesFrom(Position position, vector<Move> &moves) {
 			
 			piece = content[to];
 		
-			if ((piece == NO_PIECE) || (GET_PIECE_COLOR(piece) != color)) {
+			if (GET_PIECE_COLOR(piece) != color) {
 				Move move = Move(
 							position, 
 							to, 
 							NO_PIECE, 
 							content[position], 
 							piece,
-							hasMoved,
+							hasMoved[colorIndex],
 							enPassantPosition,
 							reversableMoves);							
 					
@@ -520,7 +430,8 @@ void Board::getRookMovesFrom(Position position, vector<Move> &moves) {
 	static int availableMoves[8] = {0,1, 1,0, 0,-1, -1,0};
 	Position to;
 	bool blocked;
-	ColoredPiece piece;
+	ColoredPiece piece;	
+	int colorIndex = (color == WHITE); 
 	
 	for (int i = 0; i < 8; i += 2) {
 		blocked = false;
@@ -538,14 +449,14 @@ void Board::getRookMovesFrom(Position position, vector<Move> &moves) {
 			
 			piece = content[to];
 		
-			if ((piece == NO_PIECE) || (GET_PIECE_COLOR(piece) != color)) {
+			if (GET_PIECE_COLOR(piece) != color) {
 				Move move = Move(
 							position, 
 							to, 
 							NO_PIECE, 
 							content[position], 
 							piece,
-							hasMoved,
+							hasMoved[colorIndex],
 							enPassantPosition,
 							reversableMoves);							
 				
@@ -569,7 +480,8 @@ void Board::getQueenMovesFrom(Position position, vector<Move> &moves) {
 	static int availableMoves[16] = {1,1, 1,-1, -1,-1, -1,1, 0,1, 1,0, 0,-1, -1,0};
 	Position to;
 	bool blocked;
-	ColoredPiece piece;
+	ColoredPiece piece;	
+	int colorIndex = (color == WHITE); 
 	
 	for (int i = 0; i < 16; i += 2) {
 		blocked = false;
@@ -587,14 +499,14 @@ void Board::getQueenMovesFrom(Position position, vector<Move> &moves) {
 			
 			piece = content[to];
 		
-			if ((piece == NO_PIECE) || (GET_PIECE_COLOR(piece) != color)) {
+			if (GET_PIECE_COLOR(piece) != color) {
 				Move move = Move(
 							position, 
 							to, 
 							NO_PIECE, 
 							content[position], 
 							piece,
-							hasMoved,
+							hasMoved[colorIndex],
 							enPassantPosition,
 							reversableMoves);
 				
@@ -617,73 +529,53 @@ void Board::getKingMovesFrom(Position position, vector<Move> &moves) {
 	Color color = GET_PIECE_COLOR(content[position]);
 	static int availableMoves[16] = {1,1, 1,-1, -1,-1, -1,1, 0,1, 1,0, 0,-1, -1,0};
 	Position to;
-	ColoredPiece piece;
-	
-	//castling	
-	if ((!WHITE_KING_MOVED) && (position == E1) && (content[position] == KING_WHITE)) { 	
-						
-		if (NO_PIECE == getThreatOf(E1, color)) {
-					
-			//kingside
-			if ((!WHITE_ROOKH_MOVED) &&
-				(content[F1] == NO_PIECE) &&
-				(content[G1] == NO_PIECE) &&
-				(content[H1] == ROOK_WHITE)) {
-				
-				if ((NO_PIECE == getThreatOf(F1, color)) &&
-					(NO_PIECE == getThreatOf(G1, color))) {
-					
-					moves.push_back(Move(E1, G1, KING_WHITE, KING_WHITE, NO_PIECE, hasMoved, enPassantPosition, reversableMoves));
-				}
-			}
-			
-			//queenside
-			if ((!WHITE_ROOKA_MOVED) &&
-				(content[A1] == ROOK_WHITE) &&
-				(content[B1] == NO_PIECE) &&
-				(content[C1] == NO_PIECE) &&
-				(content[D1] == NO_PIECE)) {
-				
-				if ((NO_PIECE == getThreatOf(C1, color)) &&
-					(NO_PIECE == getThreatOf(D1, color))) {
-					
-					moves.push_back(Move(E1, C1, KING_WHITE, KING_WHITE, NO_PIECE, hasMoved, enPassantPosition, reversableMoves));
-				}
-			}
-		}
-	}	
-	
-	if ((!BLACK_KING_MOVED) && (position == E8) && (content[position] == KING_BLACK)) {
+	ColoredPiece piece = content[position];
+	int colorIndex = (color == WHITE); 
 		
-		if (NO_PIECE == getThreatOf(position, color)) {
+	//castling	
+	if ((!HAS_KING_MOVED(*this, colorIndex)) && (position == COMBINE_TO_POSITION(COLUMN_E, CASTLING_ROW[colorIndex]))) { 	
+						
+		if (NO_PIECE == getThreatOf(COMBINE_TO_POSITION(COLUMN_E, CASTLING_ROW[colorIndex]), color)) {
+					
 			//kingside
-			if ((!BLACK_ROOKH_MOVED) &&
-				(content[F8] == NO_PIECE) &&
-				(content[G8] == NO_PIECE) &&
-				(content[H8] == ROOK_BLACK)) {
-				
-				if ((NO_PIECE == getThreatOf(F8, color)) &&
-					(NO_PIECE == getThreatOf(G8, color))) {
-				
-					moves.push_back(Move(E8, G8, KING_BLACK, KING_BLACK, NO_PIECE, hasMoved, enPassantPosition, reversableMoves));
-				}
-			}
-			
+			if ((!HAS_ROOK_H_MOVED(*this, colorIndex)) &&
+				(content[COMBINE_TO_POSITION(COLUMN_F, CASTLING_ROW[colorIndex])] == NO_PIECE) &&
+				(content[COMBINE_TO_POSITION(COLUMN_G, CASTLING_ROW[colorIndex])] == NO_PIECE) &&
+				(content[COMBINE_TO_POSITION(COLUMN_H, CASTLING_ROW[colorIndex])] == GET_COLORED_PIECE(ROOK, color)) &&
+				(NO_PIECE == getThreatOf(COMBINE_TO_POSITION(COLUMN_F, CASTLING_ROW[colorIndex]), color)) &&
+				(NO_PIECE == getThreatOf(COMBINE_TO_POSITION(COLUMN_G, CASTLING_ROW[colorIndex]), color))) {
+					
+				moves.push_back(Move(
+					COMBINE_TO_POSITION(COLUMN_E, CASTLING_ROW[colorIndex]), 
+					COMBINE_TO_POSITION(COLUMN_G, CASTLING_ROW[colorIndex]), 
+					piece, 
+					piece, 
+					NO_PIECE, 
+					hasMoved[colorIndex], 
+					enPassantPosition, 
+					reversableMoves));
+					
 			//queenside
-			if ((!BLACK_ROOKA_MOVED) &&
-				(content[A8] == ROOK_BLACK) &&
-				(content[B8] == NO_PIECE) &&
-				(content[C8] == NO_PIECE) &&
-				(content[D8] == NO_PIECE)) {
-				
-				if ((NO_PIECE == getThreatOf(D8, color)) &&
-					(NO_PIECE == getThreatOf(C8, color))) {
-								
-					moves.push_back(Move(E8, C8, KING_BLACK, KING_BLACK, NO_PIECE, hasMoved, enPassantPosition, reversableMoves));					
-				}
+			} else if ((!HAS_ROOK_A_MOVED(*this, colorIndex)) && 
+				(content[COMBINE_TO_POSITION(COLUMN_A, CASTLING_ROW[colorIndex])] == ROOK_WHITE) &&
+				(content[COMBINE_TO_POSITION(COLUMN_B, CASTLING_ROW[colorIndex])] == NO_PIECE) &&
+				(content[COMBINE_TO_POSITION(COLUMN_C, CASTLING_ROW[colorIndex])] == NO_PIECE) &&
+				(content[COMBINE_TO_POSITION(COLUMN_D, CASTLING_ROW[colorIndex])] == NO_PIECE) &&
+				(NO_PIECE == getThreatOf(COMBINE_TO_POSITION(COLUMN_C, CASTLING_ROW[colorIndex]), color)) &&
+				(NO_PIECE == getThreatOf(COMBINE_TO_POSITION(COLUMN_D, CASTLING_ROW[colorIndex]), color))) {
+					
+				moves.push_back(Move(
+					COMBINE_TO_POSITION(COLUMN_E, CASTLING_ROW[colorIndex]),
+					COMBINE_TO_POSITION(COLUMN_C, CASTLING_ROW[colorIndex]), 
+					piece, 
+					piece, 
+					NO_PIECE, 
+					hasMoved[colorIndex], 
+					enPassantPosition, 
+					reversableMoves));
 			}
 		}
-	}
+	}			
 			
 	//normal moves
 	for (int i = 0; i < 16; i += 2) {
@@ -691,7 +583,7 @@ void Board::getKingMovesFrom(Position position, vector<Move> &moves) {
 		if (IS_VALID_POSITION(to)) {
 			piece = content[to];			
 		
-			if ((piece == NO_PIECE) || (GET_PIECE_COLOR(piece) != color)) {				
+			if (GET_PIECE_COLOR(piece) != color) {				
 				if (NO_PIECE == getThreatOf(to, color)) {
 					Move move = Move(
 								position, 
@@ -699,7 +591,7 @@ void Board::getKingMovesFrom(Position position, vector<Move> &moves) {
 								NO_PIECE, 
 								content[position], 
 								piece,
-								hasMoved, 
+								hasMoved[colorIndex], 
 								enPassantPosition,
 								reversableMoves);
 								
@@ -868,7 +760,8 @@ void Board::resetBoard() {
 	
 	kingPosition[BLACK_INDEX] = E8;	
 	kingPosition[WHITE_INDEX] = E1;
-	hasMoved = 0;	
+	hasMoved[BLACK_INDEX] = 0;	
+	hasMoved[WHITE_INDEX] = 0;	
 	
 	materialValue[WHITE_INDEX] = PIECE_VALUE[QUEEN] + (PIECE_VALUE[ROOK] * 2) + (PIECE_VALUE[BISHOP] * 2) + (PIECE_VALUE[KNIGHT] * 2) + (PIECE_VALUE[PAWN] * 8);
 	materialValue[BLACK_INDEX] = materialValue[WHITE_INDEX];

@@ -7,9 +7,15 @@
 
 class Board;
 
+static int PAWN_DIRECTION[2] = {-1, 1}; //0 = black, 1 = white
+static int PAWN_ENPASSANT_TAKE_ROW[2] = {ROW_3, ROW_6}; //0 = black, 1 = white
+static int PAWN_ENPASSANT_CONTENT_ROW[2] = {ROW_4, ROW_5}; //0 = black, 1 = white
+static int CASTLING_ROW[2] = {ROW_8, ROW_1}; //the start row for each color
+
 class Move
 {
 private:
+	
 	/**
 	* To and from defines the postion the piece moved from and to
 	*/	

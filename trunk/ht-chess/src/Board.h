@@ -10,19 +10,19 @@
 #define CHECK_OVERFLOW true
 #define CONTENT_SIZE 256
 
-#define HAS_MOVED_KING_BLACK 0x01
-#define HAS_MOVED_ROOKA_BLACK 0x02
-#define HAS_MOVED_ROOKH_BLACK 0x04
-#define HAS_MOVED_KING_WHITE 0x10
-#define HAS_MOVED_ROOKA_WHITE 0x20
-#define HAS_MOVED_ROOKH_WHITE 0x40
+#define KING_MOVED 0x01
+#define ROOK_A_MOVED 0x02
+#define ROOK_H_MOVED 0x04
 
-#define WHITE_KING_MOVED ((hasMoved & HAS_MOVED_KING_WHITE) == HAS_MOVED_KING_WHITE)
-#define BLACK_KING_MOVED ((hasMoved & HAS_MOVED_KING_BLACK) == HAS_MOVED_KING_BLACK)
-#define BLACK_ROOKA_MOVED ((hasMoved & HAS_MOVED_ROOKA_BLACK) == HAS_MOVED_ROOKA_BLACK)
-#define BLACK_ROOKH_MOVED ((hasMoved & HAS_MOVED_ROOKH_BLACK) == HAS_MOVED_ROOKH_BLACK)
-#define WHITE_ROOKA_MOVED ((hasMoved & HAS_MOVED_ROOKA_WHITE) == HAS_MOVED_ROOKA_WHITE)
-#define WHITE_ROOKH_MOVED ((hasMoved & HAS_MOVED_ROOKH_WHITE) == HAS_MOVED_ROOKH_WHITE)
+/*#define HAS_KING_MOVED(colorIndex) ((hasMoved[(colorIndex)] & KING_MOVED) == KING_MOVED)
+#define HAS_ROOK_A_MOVED(colorIndex) ((hasMoved[(colorIndex)] & ROOK_A_MOVED) == ROOK_A_MOVED)
+#define HAS_ROOK_H_MOVED(colorIndex) ((hasMoved[(colorIndex)] & ROOK_H_MOVED) == ROOK_H_MOVED)*/
+
+#define HAS_KING_MOVED(board, colorIndex) (((board).hasMoved[(colorIndex)] & KING_MOVED) == KING_MOVED)
+#define HAS_ROOK_A_MOVED(board, colorIndex) (((board).hasMoved[(colorIndex)] & ROOK_A_MOVED) == ROOK_A_MOVED)
+#define HAS_ROOK_H_MOVED(board, colorIndex) (((board).hasMoved[(colorIndex)] & ROOK_H_MOVED) == ROOK_H_MOVED)
+static int PAWN_OUT_OF_BOUNDS[2] = {ROW_1 - 1, ROW_8 + 1};
+static int PAWN_START_ROW[2] = {ROW_7, ROW_2};
 
 #define BLACK_INDEX 0
 #define WHITE_INDEX 1
@@ -45,8 +45,10 @@ private:
 	
 	/**
 	* Has moved keeps track of whether the white and black, rooks and kings have moved
+	* Use BLACK_INDEX and WHITE_INDEX to index the array. 
+	* 0 = black, 1 = white	
 	*/
-	int hasMoved;
+	int hasMoved[2];
 	
 	/**
 	* Not finished yet
