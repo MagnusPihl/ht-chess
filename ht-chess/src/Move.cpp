@@ -5,8 +5,9 @@
 
 Move::Move() {}
 
-Move::Move(Position _from, Position _to, ColoredPiece _special, ColoredPiece _piece, ColoredPiece _content, int _hasMoved, Position _enPassantPosition) :
-	from(_from), to(_to), special(_special), piece(_piece), content(_content), hasMoved(_hasMoved), enPassantPosition(_enPassantPosition)
+Move::Move(
+	Position _from, Position _to, ColoredPiece _special, ColoredPiece _piece, ColoredPiece _content, int _hasMoved, Position _enPassantPosition, int _reversableMoves) :
+		from(_from), to(_to), special(_special), piece(_piece), content(_content), hasMoved(_hasMoved), enPassantPosition(_enPassantPosition), reversableMoves(_reversableMoves)
 {
 	#ifdef TEST_MOVE_VALIDITY 
 		if (isValid(*this)) {
@@ -23,15 +24,19 @@ void Move::execute(Board &board)
 	board.enPassantPosition = INVALID_POSITION;
 	Piece type = GET_PIECE_TYPE(piece);
 	Color color = GET_PIECE_COLOR(piece);
+	board.reversableMoves++;		
 
 	//black top 8
 	//white bottom 1
 	if (content != NO_PIECE) {
+		board.reversableMoves = 0;
 		board.materialValue[(GET_PIECE_COLOR(content) == WHITE)] -= PIECE_VALUE[GET_PIECE_TYPE(content)];
 	}
 
 	switch (type) {
 		case PAWN:
+			board.reversableMoves = 0;
+			
 			if (color == WHITE) {
 				if (GET_ROW(to) - GET_ROW(from) == 2) {
 					board.enPassantPosition = COMBINE_TO_POSITION(GET_COLUMN(to), ROW_3);
@@ -130,6 +135,7 @@ void Move::unexecute(Board &board)
 {
 	board.hasMoved = hasMoved;
 	board.enPassantPosition = enPassantPosition;
+	board.reversableMoves = reversableMoves;
 	Color color = GET_PIECE_COLOR(piece);
 	
 	if (content != NO_PIECE) {
@@ -237,7 +243,9 @@ Position Move::getEnPassantPosition() {
 	return enPassantPosition;
 }
 
-
+int Move::getReversableMoves() {
+	return reversableMoves;
+}
 
 /**
  * Makes a general check on the validity of the move. 

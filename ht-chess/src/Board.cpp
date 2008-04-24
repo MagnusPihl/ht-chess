@@ -21,6 +21,7 @@ Board::Board(const Board& rhs) : content(std::vector<ColoredPiece>(CONTENT_SIZE)
 	
 	hasMoved = rhs.hasMoved;
 	enPassantPosition = rhs.enPassantPosition;
+	reversableMoves = rhs.reversableMoves;
 	
 	for (int i = 0; i < 2; i++) {
 		kingPosition[i] = rhs.kingPosition[i];	
@@ -42,6 +43,7 @@ Board& Board::operator= (Board& rhs) {
 			
 		hasMoved = rhs.hasMoved;
 		enPassantPosition = rhs.enPassantPosition;
+		reversableMoves = rhs.reversableMoves;
 		
 		for (int i = 0; i < 2; i++) {
 			kingPosition[i] = rhs.kingPosition[i];	
@@ -119,6 +121,9 @@ Position Board::getPositionOfKing(Color color) {
 /*****************************************************************************/
 
 bool Board::isStalemate(Color color) {
+	if (reversableMoves >= MAX_TURNS) {
+		return true;
+	}
 	if ((materialValue[BLACK_INDEX] == 0) && (materialValue[WHITE_INDEX] == 0)) {
 		return true;
 	}
@@ -249,7 +254,8 @@ void Board::getPawnMovesFrom(Position position, vector<Move> &moves) {
 						piece, 
 						NO_PIECE,
 						hasMoved,
-						enPassantPosition);
+						enPassantPosition,
+						reversableMoves);
 										
 				testAndAddMove(color, move, moves);
 			}	
@@ -266,7 +272,8 @@ void Board::getPawnMovesFrom(Position position, vector<Move> &moves) {
 						piece, 
 						PAWN_BLACK,
 						hasMoved,
-						enPassantPosition);
+						enPassantPosition,
+						reversableMoves);
 						
 					testAndAddMove(color, move, moves);
 				}
@@ -288,7 +295,8 @@ void Board::getPawnMovesFrom(Position position, vector<Move> &moves) {
 						piece, 
 						content[GET_POSITION(column - 1, row + 1)],
 						hasMoved,
-						enPassantPosition);
+						enPassantPosition,
+						reversableMoves);
 																
 				testAndAddMove(color, move, moves);
 			}		
@@ -303,7 +311,8 @@ void Board::getPawnMovesFrom(Position position, vector<Move> &moves) {
 						piece, 
 						content[GET_POSITION(column + 1, row + 1)],
 						hasMoved,
-						enPassantPosition);
+						enPassantPosition,
+						reversableMoves);
 																
 				testAndAddMove(color, move, moves);
 			}
@@ -318,7 +327,8 @@ void Board::getPawnMovesFrom(Position position, vector<Move> &moves) {
 						piece, 
 						NO_PIECE,
 						hasMoved,
-						enPassantPosition);												
+						enPassantPosition,
+						reversableMoves);												
 				
 				testAndAddMove(color, move, moves);
 			}
@@ -336,7 +346,8 @@ void Board::getPawnMovesFrom(Position position, vector<Move> &moves) {
 						piece, 
 						NO_PIECE,
 						hasMoved,
-						enPassantPosition);
+						enPassantPosition,
+						reversableMoves);
 										
 				testAndAddMove(color, move, moves);
 			}
@@ -353,7 +364,8 @@ void Board::getPawnMovesFrom(Position position, vector<Move> &moves) {
 						piece, 
 						PAWN_WHITE,
 						hasMoved,
-						enPassantPosition);
+						enPassantPosition,
+						reversableMoves);
 						
 					testAndAddMove(color, move, moves);
 				}
@@ -374,7 +386,8 @@ void Board::getPawnMovesFrom(Position position, vector<Move> &moves) {
 						piece, 
 						content[GET_POSITION(column-1, row - 1)],
 						hasMoved,
-						enPassantPosition);						
+						enPassantPosition,
+						reversableMoves);						
 				
 				testAndAddMove(color, move, moves);
 			}		
@@ -389,7 +402,8 @@ void Board::getPawnMovesFrom(Position position, vector<Move> &moves) {
 						piece, 
 						content[GET_POSITION(column + 1, row - 1)],
 						hasMoved,
-						enPassantPosition);
+						enPassantPosition,
+						reversableMoves);
 										
 				testAndAddMove(color, move, moves);
 			}
@@ -404,7 +418,8 @@ void Board::getPawnMovesFrom(Position position, vector<Move> &moves) {
 						piece, 
 						NO_PIECE,
 						hasMoved,
-						enPassantPosition);						
+						enPassantPosition,
+						reversableMoves);						
 										
 				testAndAddMove(color, move, moves);
 			}
@@ -437,7 +452,8 @@ void Board::getKnightMovesFrom(Position position, vector<Move> &moves) {
 							content[position], 
 							piece,
 							hasMoved,
-							enPassantPosition);	
+							enPassantPosition,
+							reversableMoves);	
 				
 				testAndAddMove(color, move, moves);
 			}
@@ -481,8 +497,9 @@ void Board::getBishopMovesFrom(Position position, vector<Move> &moves) {
 							content[position], 
 							piece,
 							hasMoved,
-							enPassantPosition);							
-				
+							enPassantPosition,
+							reversableMoves);							
+					
 				testAndAddMove(color, move, moves);
 			}
 			
@@ -529,7 +546,8 @@ void Board::getRookMovesFrom(Position position, vector<Move> &moves) {
 							content[position], 
 							piece,
 							hasMoved,
-							enPassantPosition);							
+							enPassantPosition,
+							reversableMoves);							
 				
 				testAndAddMove(color, move, moves);
 			}
@@ -577,7 +595,8 @@ void Board::getQueenMovesFrom(Position position, vector<Move> &moves) {
 							content[position], 
 							piece,
 							hasMoved,
-							enPassantPosition);
+							enPassantPosition,
+							reversableMoves);
 				
 				testAndAddMove(color, move, moves);
 			}
@@ -614,7 +633,7 @@ void Board::getKingMovesFrom(Position position, vector<Move> &moves) {
 				if ((NO_PIECE == getThreatOf(F1, color)) &&
 					(NO_PIECE == getThreatOf(G1, color))) {
 					
-					moves.push_back(Move(E1, G1, KING_WHITE, KING_WHITE, NO_PIECE, hasMoved, enPassantPosition));
+					moves.push_back(Move(E1, G1, KING_WHITE, KING_WHITE, NO_PIECE, hasMoved, enPassantPosition, reversableMoves));
 				}
 			}
 			
@@ -628,7 +647,7 @@ void Board::getKingMovesFrom(Position position, vector<Move> &moves) {
 				if ((NO_PIECE == getThreatOf(C1, color)) &&
 					(NO_PIECE == getThreatOf(D1, color))) {
 					
-					moves.push_back(Move(E1, C1, KING_WHITE, KING_WHITE, NO_PIECE, hasMoved, enPassantPosition));
+					moves.push_back(Move(E1, C1, KING_WHITE, KING_WHITE, NO_PIECE, hasMoved, enPassantPosition, reversableMoves));
 				}
 			}
 		}
@@ -646,7 +665,7 @@ void Board::getKingMovesFrom(Position position, vector<Move> &moves) {
 				if ((NO_PIECE == getThreatOf(F8, color)) &&
 					(NO_PIECE == getThreatOf(G8, color))) {
 				
-					moves.push_back(Move(E8, G8, KING_BLACK, KING_BLACK, NO_PIECE, hasMoved, enPassantPosition));
+					moves.push_back(Move(E8, G8, KING_BLACK, KING_BLACK, NO_PIECE, hasMoved, enPassantPosition, reversableMoves));
 				}
 			}
 			
@@ -660,7 +679,7 @@ void Board::getKingMovesFrom(Position position, vector<Move> &moves) {
 				if ((NO_PIECE == getThreatOf(D8, color)) &&
 					(NO_PIECE == getThreatOf(C8, color))) {
 								
-					moves.push_back(Move(E8, C8, KING_BLACK, KING_BLACK, NO_PIECE, hasMoved, enPassantPosition));					
+					moves.push_back(Move(E8, C8, KING_BLACK, KING_BLACK, NO_PIECE, hasMoved, enPassantPosition, reversableMoves));					
 				}
 			}
 		}
@@ -681,7 +700,8 @@ void Board::getKingMovesFrom(Position position, vector<Move> &moves) {
 								content[position], 
 								piece,
 								hasMoved, 
-								enPassantPosition);
+								enPassantPosition,
+								reversableMoves);
 								
 					testAndAddMove(color, move, moves);
 				}
@@ -852,6 +872,8 @@ void Board::resetBoard() {
 	
 	materialValue[WHITE_INDEX] = PIECE_VALUE[QUEEN] + (PIECE_VALUE[ROOK] * 2) + (PIECE_VALUE[BISHOP] * 2) + (PIECE_VALUE[KNIGHT] * 2) + (PIECE_VALUE[PAWN] * 8);
 	materialValue[BLACK_INDEX] = materialValue[WHITE_INDEX];
+	
+	reversableMoves = 0;
 }
 
 #endif

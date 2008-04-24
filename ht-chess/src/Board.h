@@ -27,6 +27,8 @@
 #define BLACK_INDEX 0
 #define WHITE_INDEX 1
 
+#define MAX_TURNS 100
+
 using namespace std;
 class Move;
 
@@ -77,6 +79,13 @@ private:
 	* List of moves used to calculate stale- and checkmate.
 	*/
 	std::vector<Move> moveList;
+	
+	/**
+	* The number of plys from last pawn move, or capture allowed is 50 before draw occurs.
+	* This field keeps track of how many moves has been done since the last ireversible move.
+	* 2 moves equals 1 ply, therefore the game should be a drawn once this field increments to 100.
+	*/
+	int reversableMoves;
 	
 	/**
 	* Checks that the move does not endanger the king of the specified color
