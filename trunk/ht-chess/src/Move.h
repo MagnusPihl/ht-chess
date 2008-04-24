@@ -50,6 +50,12 @@ private:
 	* When creating a move just pass in the corresponding field in board.
 	*/
 	Position enPassantPosition;
+	
+	/**
+	* Defines how many turns were executed since the last ireversable move
+	* Whene creating a move just pass in the corresponding field in board.
+	*/
+	int reversableMoves;
 
 public:
 
@@ -77,8 +83,16 @@ public:
 	* param: int, _hasMoved - bit mask keeping track of whether the rooks and kings were moved before.
 	*	helps in calculating castling.
 	* param: Position, enPassantPosition - position where en-passant was available before the move.	
+	* param: Defines how many turns were executed since the last ireversable move.
 	*/
-	Move(Position _from, Position _to, ColoredPiece _special, ColoredPiece _piece, ColoredPiece _content, int _hasMoved, Position _enPassantPosition);
+	Move(Position _from, 
+		Position _to, 
+		ColoredPiece _special, 
+		ColoredPiece _piece, 
+		ColoredPiece _content, 
+		int _hasMoved, 
+		Position _enPassantPosition,
+		int reversableMoves);
 
 	/**
 	* Executes updating the board accordingly
@@ -148,6 +162,12 @@ public:
 	* return: Position - position.
 	*/	
 	Position getEnPassantPosition();
+	
+	/**
+	* Get the amount of moves since last ireversable
+	* return: int - reversable move count
+	*/
+	int getReversableMoves();
 };
 
 #endif

@@ -14,7 +14,7 @@ struct Fixture
 
     Fixture() 
     {
-		m1 = Move(A2, A3, NO_PIECE, KNIGHT_BLACK, PAWN_WHITE, 0, INVALID_POSITION);
+		m1 = Move(A2, A3, NO_PIECE, KNIGHT_BLACK, PAWN_WHITE, 0, INVALID_POSITION, 0);
     } 
 };
 
