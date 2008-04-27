@@ -328,7 +328,7 @@ public:
 	int isCheckmate();
 	
 	/**
-	* Returns true if castling has performed på specified player
+	* Returns true if castling has been performed by the specified player
 	* param: Color, color - Player color
 	* return: bool
 	*/
