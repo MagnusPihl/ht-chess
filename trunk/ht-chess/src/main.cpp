@@ -3,6 +3,7 @@
 #pragma comment(lib, "SDLmain.lib")
 #endif
 
+#include "SDL_thread.h"
 #include "Core.h"
 #include "HttpTest.h"
 
@@ -10,6 +11,13 @@
 #define HEIGHT 600
 
 #define PITCH (screen->pitch / 4)
+
+int threadfunc(void *unused)
+{
+    HttpTest http;
+	http.getIncoming();
+	return 0;
+}
 
 int main(int argc, char *argv[])
 {
@@ -26,9 +34,11 @@ int main(int argc, char *argv[])
 	}
 	atexit(SDL_Quit);
 
-	//HttpTest http;
-	//http.getIncoming();
+	
+	SDL_Thread *thread;
+	thread = SDL_CreateThread(threadfunc, NULL);
 	Core core;
 	core.run();
+	SDL_WaitThread(thread, NULL);
 	return 0;
 }
