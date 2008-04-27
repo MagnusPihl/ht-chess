@@ -25,7 +25,7 @@ public:
 		SDLNet_Quit();
 	}
 
-	void getIncoming()
+	int getIncoming()
 	{
 		IPaddress ip;
 		TCPsocket tcpsock;
@@ -61,6 +61,8 @@ public:
 		result = SDLNet_TCP_Send(clientSocket, msg2, len);
 		if( result < len )
 			printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+
+		return 0;
 	}
 };
 
