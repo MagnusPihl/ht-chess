@@ -4,6 +4,7 @@
 #endif
 
 #include "Core.h"
+#include "HttpTest.h"
 
 #define WIDTH 800
 #define HEIGHT 600
@@ -25,6 +26,8 @@ int main(int argc, char *argv[])
 	}
 	atexit(SDL_Quit);
 
+	//HttpTest http;
+	//http.getIncoming();
 	Core core;
 	core.run();
 	return 0;

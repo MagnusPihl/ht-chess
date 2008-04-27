@@ -134,7 +134,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="SDL_ttf.lib"
+				AdditionalDependencies="SDL_ttf.lib SDL_net.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="true"
@@ -211,6 +211,10 @@
 			</File>
 			<File
 				RelativePath=".\src\Evaluator.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\HttpTest.h"
 				>
 			</File>
 			<File
