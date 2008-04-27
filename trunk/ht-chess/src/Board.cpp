@@ -266,9 +266,9 @@ void Board::getPawnMovesFrom(Position position, vector<Move> &moves) {
 	ColoredPiece special = NO_PIECE;
 	
 	//promotion
-	if ((row + direction) == CASTLING_ROW[colorIndex]) {
+	if ((row + direction) == CASTLING_ROW[colorIndex ^ 0x01]) {
 		special = piece;
-		piece = QUEEN_WHITE; //could be changed to let user choose					
+		piece = GET_COLORED_PIECE(QUEEN, color); //could be changed to let user choose					
 	}
 	
 	//left capture

@@ -56,7 +56,7 @@ public:
 		screen = SDL_SetVideoMode(WIDTH, HEIGHT, 0, SDL_HWSURFACE | SDL_DOUBLEBUF); // | SDL_FULLSCREEN);
 		colorWhite.r = 255; colorWhite.g = 255; colorWhite.b = 255;
 		colorBlack.r = 0; colorBlack.g = 0; colorBlack.b = 0;
-		font = TTF_OpenFont("verdana.ttf", 20);
+		font = TTF_OpenFont("verdana.ttf", 20);		
 		whiteText = TTF_RenderText_Shaded(font, "White", colorWhite, colorBlack);
 		whiteTextRect.x = 620; whiteTextRect.y = 20;
 		blackText = TTF_RenderText_Shaded(font, "Black", colorWhite, colorBlack);
