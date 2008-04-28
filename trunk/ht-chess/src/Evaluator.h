@@ -39,10 +39,10 @@ private:
     int threatsWhite;
     Color currentColor;
     int gamePhase;
+    vector<Move> moves;
+    vector<Move> killerMoves;
     
-    
-    int evaluate(Board &board, int ply) {
-        vector<Move> moves;
+    int evaluate(Board &board, int ply) {        
         Position pos;
         materialValueBlack = board.getMaterialValue(BLACK);
         materialValueWhite = board.getMaterialValue(WHITE);
@@ -89,24 +89,32 @@ private:
                             else
                                 tempValue += GLOBAL_pawRow[GET_ROW(pos)] + GLOBAL_pawColumn[GET_REAL_COLUMN(pos)]*(GET_ROW(pos)/2);
                             break;
+                            
                         case KNIGHT:
                             tempValue += 3 * GLOBAL_distance[pos];
                             break;
+                            
                         case BISHOP:
-                            board.getMovesFromPosition(pos,  moves);
-                            tempValue += (int)(2.5 * moves.size());
+                            board.getMovesFromPosition(pos, killerMoves, moves);
+                            tempValue += (int)(2.5 * (moves.size() + killerMoves.size()));
                             moves.clear();
+                            killerMoves.clear();
                             break;
+                            
                         case ROOK:
-                            board.getMovesFromPosition(pos,  moves);
-                            tempValue += (int)(1.5 * moves.size());
-                            moves.clear();
+                            board.getMovesFromPosition(pos, killerMoves, moves);
+                            tempValue += (int)(1.5 * (moves.size() + killerMoves.size()));
+                            moves.clear();    
+                            killerMoves.clear();                        
                             break;
+                            
                         case QUEEN:
-                            board.getMovesFromPosition(pos,  moves);
-                            tempValue += moves.size();
-                            moves.clear();
+                            board.getMovesFromPosition(pos, killerMoves, moves);
+                            tempValue += (moves.size() + killerMoves.size());
+                            moves.clear();  
+                            killerMoves.clear();                          
                             break;
+                            
                         case KING:
                             //antal trÃ¦k fra MATE!
                             if(board.isCheckmate(currentColor)) {

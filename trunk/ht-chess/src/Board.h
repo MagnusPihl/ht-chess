@@ -14,10 +14,6 @@
 #define ROOK_A_MOVED 0x02
 #define ROOK_H_MOVED 0x04
 
-/*#define HAS_KING_MOVED(colorIndex) ((hasMoved[(colorIndex)] & KING_MOVED) == KING_MOVED)
-#define HAS_ROOK_A_MOVED(colorIndex) ((hasMoved[(colorIndex)] & ROOK_A_MOVED) == ROOK_A_MOVED)
-#define HAS_ROOK_H_MOVED(colorIndex) ((hasMoved[(colorIndex)] & ROOK_H_MOVED) == ROOK_H_MOVED)*/
-
 #define HAS_KING_MOVED(board, colorIndex) (((board).hasMoved[(colorIndex)] & KING_MOVED) == KING_MOVED)
 #define HAS_ROOK_A_MOVED(board, colorIndex) (((board).hasMoved[(colorIndex)] & ROOK_A_MOVED) == ROOK_A_MOVED)
 #define HAS_ROOK_H_MOVED(board, colorIndex) (((board).hasMoved[(colorIndex)] & ROOK_H_MOVED) == ROOK_H_MOVED)
@@ -91,6 +87,10 @@ private:
 	* List of moves used to calculate stale- and checkmate.
 	*/
 	std::vector<Move> moveList;
+	/**
+	* List of moves used to calculate stale- and checkmate.
+	*/
+	std::vector<Move> killerMoveList;
 	
 	/**
 	* The number of plys from last pawn move, or capture allowed is 50 before draw occurs.
@@ -167,7 +167,7 @@ public:
 	* param: vector<Move>&, moves - vector to add moves to
 	* param: vector<Move>&, moves - vector to add moves to
 	*/		
-	void getMovesFromPosition(Position position, vector<Move> &moves);
+	void getMovesFromPosition(Position position, vector<Move> &killerMoves, vector<Move> &moves);
 	
 	
 	/**	
@@ -182,7 +182,7 @@ public:
 	* param: Position, position - position of the pawn
 	* param: vector<Move>&, move - vector to add moves to
 	*/
-	void getPawnMovesFrom(Position position, vector<Move> &moves);
+	void getPawnMovesFrom(Position position, vector<Move> &killerMoves, vector<Move> &moves);
 		
 		
 	/**
@@ -198,7 +198,7 @@ public:
 	* param: Position, position - position of the knight
 	* param: vector<Move>, move - vector to add moves to
 	*/	
-	void getKnightMovesFrom(Position position, vector<Move> &moves);
+	void getKnightMovesFrom(Position position, vector<Move> &killerMoves, vector<Move> &moves);
 	
 	/**
 	* x x
@@ -211,7 +211,7 @@ public:
 	* param: Position, position - position of the bishop
 	* param: vector<Move>, move - vector to add moves to
 	*/	
-	void getBishopMovesFrom(Position position, vector<Move> &moves);
+	void getBishopMovesFrom(Position position, vector<Move> &killerMoves, vector<Move> &moves);
 	
 	/**
 	*  x
@@ -224,7 +224,7 @@ public:
 	* param: Position, position - position of the rook
 	* param: vector<Move>&, move - vector to add moves to
 	*/	
-	void getRookMovesFrom(Position position, vector<Move> &moves);
+	void getRookMovesFrom(Position position, vector<Move> &killerMoves, vector<Move> &moves);
 	
 	/**
 	* xxx
@@ -237,7 +237,7 @@ public:
 	* param: Position, position - position of the queen
 	* param: vector<Move>&, move - vector to add moves to
 	*/	
-	void getQueenMovesFrom(Position position, vector<Move> &moves);
+	void getQueenMovesFrom(Position position, vector<Move> &killerMoves, vector<Move> &moves);
 	
 	/**
 	* xxx
@@ -251,7 +251,7 @@ public:
 	* param: Position, position - position of the king
 	* param: vector<Move>, move - vector to add moves to
 	*/	
-	void getKingMovesFrom(Position position, vector<Move> &moves);	
+	void getKingMovesFrom(Position position, vector<Move> &killerMoves, vector<Move> &moves);	
 		
 	/**
 	* Reset board to initial start position. Black pieces in row 7 and 8.

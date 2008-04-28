@@ -47,6 +47,7 @@ private:
 	
 	AI_TYPE moveSelector;
 	std::vector<Move> moveList;
+	std::vector<Move> killerMoveList;
 	BoardRenderer renderer;
 	Board board;
 
@@ -177,7 +178,8 @@ public:
 								&& ((gameTurn==WHITE && player1IsHuman) || (gameTurn==BLACK && player2IsHuman)))
 							{
 								moveList.clear();
-								board.getMovesFromPosition(pos, moveList);
+								killerMoveList.clear();
+								board.getMovesFromPosition(pos, killerMoveList, moveList);								
 								/*if(!moveList.empty())		//If this is enabled, players can't choose pieces with no valid moves.
 								{*/
 									SDL_FillRect(fullOverlay, NULL, SDL_MapRGB(screen->format, 255, 0, 255));
@@ -188,17 +190,23 @@ public:
 										overlayRect.y = (ROW_COUNT-1-GET_ROW((*itr).getNewPosition())) * 70 + 20;
 										SDL_BlitSurface(overlay, NULL, fullOverlay, &overlayRect);
 									}
+									for(itr = killerMoveList.begin(); itr != killerMoveList.end(); itr++)
+									{
+										overlayRect.x = GET_REAL_COLUMN((*itr).getNewPosition()) * 70 + 20;
+										overlayRect.y = (ROW_COUNT-1-GET_ROW((*itr).getNewPosition())) * 70 + 20;
+										SDL_BlitSurface(overlay, NULL, fullOverlay, &overlayRect);
+									}
 								
 									selectedPiece = pos;
 									cursorRect.x = GET_REAL_COLUMN(pos) * 70 + 20;
 									cursorRect.y = (ROW_COUNT-1-GET_ROW(pos)) * 70 + 20;
-								//}
+								//}																
 							}
 							else if(selectedPiece != -1)
 							{
 								//Check if valid move!
 								std::vector<Move>::iterator itr;
-								for(itr = moveList.begin(); itr != moveList.end(); itr++)
+								for(itr = killerMoveList.begin(); itr != killerMoveList.end(); itr++)
 								{
 									if((*itr).getNewPosition() == pos)
 									{
@@ -209,6 +217,18 @@ public:
 										break;
 									}
 								}
+								
+								for(itr = moveList.begin(); itr != moveList.end(); itr++)
+								{
+									if((*itr).getNewPosition() == pos)
+									{
+										selectedPiece = -1;
+										turnDone = true;
+										(*itr).execute(board);
+										//printf("The material value of white: %i, and black: %i\n", board.getMaterialValue(WHITE), board.getMaterialValue(BLACK));
+										break;
+									}
+								}								
 							}
 						}
 					}

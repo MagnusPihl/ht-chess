@@ -21,6 +21,7 @@ int threadfunc(void *unused)
 
 int main(int argc, char *argv[])
 {
+	
 	/* initialize SDL */
 	if ( SDL_Init( SDL_INIT_VIDEO ) < 0 )
 	{
