@@ -17,3 +17,10 @@ Tilføj "include" og "lib" foldere til Visual Studio ligesom i skridt 1.
 
 7. ht_chess project -> Properties -> Configuration Properties -> Linker -> Input
 Sørg for at "Additional Dependencies" inkluderer "SDL_ttf.lib".
+
+8. Hent og udpak SDL_ttf fra 
+http://www.libsdl.org/projects/SDL_net/release/SDL_net-devel-1.2.7-VC8.zip
+Tilføj "include" og "lib" foldere til Visual Studio ligesom i skridt 1.
+
+9. ht_chess project -> Properties -> Configuration Properties -> Linker -> Input
+Sørg for at "Additional Dependencies" inkluderer "SDL_net.lib".
