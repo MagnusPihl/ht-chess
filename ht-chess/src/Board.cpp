@@ -4,7 +4,7 @@
 #include "Board.h"
 
 
-Board::Board() : content(std::vector<ColoredPiece>(CONTENT_SIZE)), moveList(std::vector<Move>())
+Board::Board() : content(std::vector<ColoredPiece>(CONTENT_SIZE)), moveList(std::vector<Move>()), killerMoveList(std::vector<Move>())
 {
 	resetBoard();
 }
@@ -12,7 +12,7 @@ Board::Board() : content(std::vector<ColoredPiece>(CONTENT_SIZE)), moveList(std:
 
 /*****************************************************************************/
 
-Board::Board(const Board& rhs) : content(std::vector<ColoredPiece>(CONTENT_SIZE)), moveList(std::vector<Move>())
+Board::Board(const Board& rhs) : content(std::vector<ColoredPiece>(CONTENT_SIZE)), moveList(std::vector<Move>()), killerMoveList(std::vector<Move>())
 {
 	for (int i = 0; i < CONTENT_SIZE; ++i)
 	{
@@ -129,8 +129,9 @@ bool Board::isStalemate(Color color) {
 	}
 	if (!isCheck(color)) {
 		moveList.clear();	
-		MoveGenerator::generateMoves(*this, color, moveList);		
-		if (moveList.empty()) {
+		killerMoveList.clear();	
+		MoveGenerator::generateMoves(*this, color, killerMoveList, moveList);		
+		if (moveList.empty() && killerMoveList.empty()) {
 			return true;
 		}
 	}
@@ -152,9 +153,10 @@ bool Board::isCheck(Color color) {
 
 bool Board::isCheckmate(Color color) {
 	if (isCheck(color)) {
-		moveList.clear();	
-		MoveGenerator::generateMoves(*this, color, moveList);		
-		if (moveList.empty()) {
+		moveList.clear();			
+		killerMoveList.clear();	
+		MoveGenerator::generateMoves(*this, color, killerMoveList, moveList);		
+		if (moveList.empty() && killerMoveList.empty()) {
 			return true;
 		}
 	}
@@ -211,7 +213,7 @@ bool Board::hasKingMoved(Color color) {
 
 /*****************************************************************************/
 
-void Board::getMovesFromPosition(Position position, vector<Move> &moves) {
+void Board::getMovesFromPosition(Position position, vector<Move> &killerMoves, vector<Move> &moves) {
 	#ifdef CHECK_OVERFLOW
 		if (!IS_VALID_POSITION(position)) 
 		{
@@ -222,19 +224,19 @@ void Board::getMovesFromPosition(Position position, vector<Move> &moves) {
 	ColoredPiece piece = content[position];
 	
 	switch (GET_PIECE_TYPE(piece)) {
-		case PAWN: return getPawnMovesFrom(position, moves);
-		case KNIGHT: return getKnightMovesFrom(position, moves);
-		case BISHOP: return getBishopMovesFrom(position, moves);
-		case ROOK: return getRookMovesFrom(position, moves);
-		case QUEEN: return getQueenMovesFrom(position, moves);
-		case KING: return getKingMovesFrom(position, moves);
+		case PAWN: return getPawnMovesFrom(position, killerMoves, moves);
+		case KNIGHT: return getKnightMovesFrom(position, killerMoves, moves);
+		case BISHOP: return getBishopMovesFrom(position, killerMoves, moves);
+		case ROOK: return getRookMovesFrom(position, killerMoves, moves);
+		case QUEEN: return getQueenMovesFrom(position, killerMoves, moves);
+		case KING: return getKingMovesFrom(position, killerMoves, moves);
 	}
 }	
 
 
 /*****************************************************************************/
 
-void Board::getPawnMovesFrom(Position position, vector<Move> &moves) {
+void Board::getPawnMovesFrom(Position position, vector<Move> &killerMoves, vector<Move> &moves) {
 	int row = GET_ROW(position);
 	int column = GET_REAL_COLUMN(position);
 	Color color = GET_PIECE_COLOR(content[position]);
@@ -259,7 +261,7 @@ void Board::getPawnMovesFrom(Position position, vector<Move> &moves) {
 				enPassantPosition,
 				reversableMoves);
 				
-			testAndAddMove(color, move, moves);
+			testAndAddMove(color, move, killerMoves);
 		}
 	}
 
@@ -283,7 +285,7 @@ void Board::getPawnMovesFrom(Position position, vector<Move> &moves) {
 				enPassantPosition,
 				reversableMoves);
 														
-		testAndAddMove(color, move, moves);
+		testAndAddMove(color, move, killerMoves);
 	}		
 				
 	//right capture	
@@ -299,7 +301,7 @@ void Board::getPawnMovesFrom(Position position, vector<Move> &moves) {
 				enPassantPosition,
 				reversableMoves);
 														
-		testAndAddMove(color, move, moves);
+		testAndAddMove(color, move, killerMoves);
 	}
 	
 	//normal advance
@@ -338,7 +340,7 @@ void Board::getPawnMovesFrom(Position position, vector<Move> &moves) {
 
 /*****************************************************************************/		
 
-void Board::getKnightMovesFrom(Position position, vector<Move> &moves) {
+void Board::getKnightMovesFrom(Position position, vector<Move> &killerMoves, vector<Move> &moves) {
 	int row = GET_ROW(position);
 	int column = GET_REAL_COLUMN(position);
 	Color color = GET_PIECE_COLOR(content[position]);
@@ -364,7 +366,11 @@ void Board::getKnightMovesFrom(Position position, vector<Move> &moves) {
 							enPassantPosition,
 							reversableMoves);	
 				
-				testAndAddMove(color, move, moves);
+				if (piece != NO_PIECE) {
+					testAndAddMove(color, move, killerMoves);
+				} else {
+					testAndAddMove(color, move, moves);
+				}
 			}
 		}
 	}		
@@ -373,7 +379,7 @@ void Board::getKnightMovesFrom(Position position, vector<Move> &moves) {
 
 /*****************************************************************************/
 
-void Board::getBishopMovesFrom(Position position, vector<Move> &moves) {
+void Board::getBishopMovesFrom(Position position, vector<Move> &killerMoves, vector<Move> &moves) {
 	int row = GET_ROW(position);
 	int column = GET_REAL_COLUMN(position);
 	Color color = GET_PIECE_COLOR(content[position]);
@@ -410,7 +416,11 @@ void Board::getBishopMovesFrom(Position position, vector<Move> &moves) {
 							enPassantPosition,
 							reversableMoves);							
 					
-				testAndAddMove(color, move, moves);
+				if (piece != NO_PIECE) {
+					testAndAddMove(color, move, killerMoves);
+				} else {
+					testAndAddMove(color, move, moves);
+				}
 			}
 			
 			if (piece != NO_PIECE) {
@@ -423,7 +433,7 @@ void Board::getBishopMovesFrom(Position position, vector<Move> &moves) {
 
 /*****************************************************************************/
 
-void Board::getRookMovesFrom(Position position, vector<Move> &moves) {
+void Board::getRookMovesFrom(Position position, vector<Move> &killerMoves, vector<Move> &moves) {
 	int row = GET_ROW(position);
 	int column = GET_REAL_COLUMN(position);
 	Color color = GET_PIECE_COLOR(content[position]);
@@ -460,7 +470,11 @@ void Board::getRookMovesFrom(Position position, vector<Move> &moves) {
 							enPassantPosition,
 							reversableMoves);							
 				
-				testAndAddMove(color, move, moves);
+				if (piece != NO_PIECE) {
+					testAndAddMove(color, move, killerMoves);
+				} else {
+					testAndAddMove(color, move, moves);
+				}
 			}
 			
 			if (piece != NO_PIECE) {
@@ -473,7 +487,7 @@ void Board::getRookMovesFrom(Position position, vector<Move> &moves) {
 
 /*****************************************************************************/
 
-void Board::getQueenMovesFrom(Position position, vector<Move> &moves) {
+void Board::getQueenMovesFrom(Position position, vector<Move> &killerMoves, vector<Move> &moves) {
 	int row = GET_ROW(position);
 	int column = GET_REAL_COLUMN(position);
 	Color color = GET_PIECE_COLOR(content[position]);
@@ -510,7 +524,11 @@ void Board::getQueenMovesFrom(Position position, vector<Move> &moves) {
 							enPassantPosition,
 							reversableMoves);
 				
-				testAndAddMove(color, move, moves);
+				if (piece != NO_PIECE) {
+					testAndAddMove(color, move, killerMoves);
+				} else {
+					testAndAddMove(color, move, moves);
+				}
 			}
 			
 			if (piece != NO_PIECE) {
@@ -523,7 +541,7 @@ void Board::getQueenMovesFrom(Position position, vector<Move> &moves) {
 
 /*****************************************************************************/
 	
-void Board::getKingMovesFrom(Position position, vector<Move> &moves) {
+void Board::getKingMovesFrom(Position position, vector<Move> &killerMoves, vector<Move> &moves) {
 	int row = GET_ROW(position);
 	int column = GET_REAL_COLUMN(position);
 	Color color = GET_PIECE_COLOR(content[position]);
@@ -592,7 +610,11 @@ void Board::getKingMovesFrom(Position position, vector<Move> &moves) {
 							enPassantPosition,
 							reversableMoves);
 							
-				testAndAddMove(color, move, moves);
+				if (piece != NO_PIECE) {
+					testAndAddMove(color, move, killerMoves);
+				} else {
+					testAndAddMove(color, move, moves);
+				}
 			}	
 		}		
 	}		
