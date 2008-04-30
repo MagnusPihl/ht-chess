@@ -214,6 +214,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\HttpResponse.h"
+				>
+			</File>
+			<File
 				RelativePath=".\src\HttpTest.h"
 				>
 			</File>

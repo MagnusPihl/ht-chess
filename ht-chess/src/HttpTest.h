@@ -2,6 +2,7 @@
 #define HTTPTEST_H
 
 #include "SDL_net.h"
+#include "HttpResponse.h"
 
 class HttpTest
 {
@@ -52,16 +53,20 @@ public:
 
 		char msg[4096];
 		SDLNet_TCP_Recv(clientSocket, msg, 4095);
-		printf(msg, "\n");
+		printf(msg);
 
 		int len, result;
-		char* msg2=  "HTTP/1.1 200 OK\nConnection: close\nContent-Length: 7\nContent-Type: text/html\n\nHello!";
+		HttpResponse resp("Hello!");
+		
 
-		len = strlen(msg2) + 1; // add one for the terminating NULL
-		result = SDLNet_TCP_Send(clientSocket, msg2, len);
-		if( result < len )
+		printf("\nSending message:\n");
+		printf(resp());
+
+		len = strlen(resp()) + 1; // add one for the terminating NULL
+		result = SDLNet_TCP_Send(clientSocket, resp(), resp.getLength());
+		if( result < resp.getLength() )
 			printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
-
+		printf("\n\nMessage sent!\n");
 		return 0;
 	}
 };
