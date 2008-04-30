@@ -180,6 +180,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\LayeredStack.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\main.cpp"
 				>
 			</File>
@@ -219,6 +223,10 @@
 			</File>
 			<File
 				RelativePath=".\src\HttpTest.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\LayeredStack.h"
 				>
 			</File>
 			<File
