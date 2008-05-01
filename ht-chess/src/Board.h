@@ -91,6 +91,14 @@ private:
 	* List of moves used to calculate stale- and checkmate.
 	*/
 	std::vector<Move> killerMoveList;
+
+	/**
+	* Tables holding random (static) values to generate hash values.
+	*/
+	int hashToPositionMap[64];
+	int hashToPieceMap[12];
+	int hashKeyComponents[128][128];
+	int hashLockComponents[128][128];
 	
 	/**
 	* The number of plys from last pawn move, or capture allowed is 50 before draw occurs.
@@ -341,6 +349,12 @@ public:
 	* return: int, material value - Positive value of all piece except the king
 	*/
 	int getMaterialValue(Color color);
+
+	/**
+	* Get Hash values for the current board instance.
+	*/
+	int getHashKey();
+	int getHashLock();
 };
 
 #endif

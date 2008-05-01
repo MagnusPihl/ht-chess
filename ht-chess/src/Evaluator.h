@@ -8,6 +8,7 @@
 #define EVALUATOR_H
 
 #include <vector>
+#include <hash_map>
 #include "Move.h"
 
 #define PHASE_1 0x01
@@ -41,6 +42,7 @@ private:
     int gamePhase;
     vector<Move> moves;
     vector<Move> killerMoves;
+	stdext::hash_map<int, int> hm;
     
     int evaluate(Board &board, int ply) {        
         Position pos;
