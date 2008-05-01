@@ -112,6 +112,7 @@ public:
 		{
 			if(turnDone)
 			{
+				printf("Hash: %i\tLock: %i\n", board.getHashKey(), board.getHashLock());
 				gameTurn = GET_OPPOSITE_COLOR(gameTurn);
 				turnDone = false;
 			}
