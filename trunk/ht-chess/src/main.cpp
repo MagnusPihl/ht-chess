@@ -64,10 +64,10 @@ int main(int argc, char *argv[])
 	atexit(SDL_Quit);
 
 	
-	SDL_Thread *thread;
-	thread = SDL_CreateThread(threadfunc, NULL);
+	/*SDL_Thread *thread;
+	thread = SDL_CreateThread(threadfunc, NULL);*/
 	Core core;
 	core.run();
-	SDL_WaitThread(thread, NULL);
+	//SDL_WaitThread(thread, NULL);
 	return 0;
 }

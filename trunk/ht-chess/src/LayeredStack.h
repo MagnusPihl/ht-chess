@@ -11,7 +11,7 @@ template<typename CONTENT_TYPE, int STACK_COUNT> class LayeredStack {
 private:	
 	
 	std::vector<CONTENT_TYPE> stack[STACK_COUNT];
-	std::vector<int*> stackPointer;			
+	std::vector<int> stackPointer;			
 	
 public:
 
@@ -72,10 +72,10 @@ public:
 	int size();*/
 		
 	bool empty() {
-		int *pointer = stackPointer.back();
+		int index = stackPointer.size() - STACK_COUNT;
 		
 		for (int i = 0; i < STACK_COUNT; i++) {
-			if (stack[i].size() != pointer[i]) {
+			if (stack[i].size() != stackPointer[index + i]) {
 				return false;
 			}
 		}		
@@ -84,11 +84,11 @@ public:
 	}
 
 	int size() {
-		int *pointer = stackPointer.back();
+		int index = stackPointer.size() - STACK_COUNT;
 		int size = 0;
 		
 		for (int i = 0; i < STACK_COUNT; i++) {
-			size += (stack[i].size() - pointer[i]);
+			size += (stack[i].size() - stackPointer[index + i]);
 		}		
 		
 		return size;

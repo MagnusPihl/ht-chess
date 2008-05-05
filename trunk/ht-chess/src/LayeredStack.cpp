@@ -5,14 +5,8 @@
 
 //constructors	
 template <typename CONTENT_TYPE, int STACK_COUNT> 
-LayeredStack<CONTENT_TYPE, STACK_COUNT>::LayeredStack() {
-	int *pointer = new int[STACK_COUNT];
-	
-	for (int i = 0; i < STACK_COUNT; i++) {
-		pointer[i] = 0;
-	}
-	
-	stackPointer.push_back(pointer);
+LayeredStack<CONTENT_TYPE, STACK_COUNT>::LayeredStack() {		
+	stackPointer.resize(STACK_COUNT, 0);	
 }	
 
 template <typename CONTENT_TYPE, int STACK_COUNT> 
@@ -22,17 +16,7 @@ LayeredStack<CONTENT_TYPE, STACK_COUNT>::LayeredStack(LayeredStack &rhs) {
 		stack[i] = rhs.stack[i];
 	}
 	
-	std::vector<int*>::iterator itr;	
-	
-	for (itr = rhs.stackPointer.begin(); itr != rhs.stackPointer.end(); ++itr) {
-		int *pointer = new int[STACK_COUNT];
-	
-		for (int i = 0; i < STACK_COUNT; i++) {
-			pointer[i] = (*itr)[i];
-		}
-		
-		stackPointer.push_back(pointer);
-	}
+	stackPointer = rhs.stackPointer;
 }
 
 template <typename CONTENT_TYPE, int STACK_COUNT> 
@@ -42,17 +26,7 @@ LayeredStack<CONTENT_TYPE, STACK_COUNT> & LayeredStack<CONTENT_TYPE, STACK_COUNT
 		stack[i] = rhs.stack[i];
 	}
 	
-	std::vector<int*>::iterator itr;	
-	
-	for (itr = rhs.stackPointer.begin(); itr != rhs.stackPointer.end(); ++itr) {
-		int *pointer = new int[STACK_COUNT];
-	
-		for (int i = 0; i < STACK_COUNT; i++) {
-			pointer[i] = (*itr)[i];
-		}
-		
-		stackPointer.push_back(pointer);
-	}
+	stackPointer = rhs.stackPointer;	
 }
 
 
@@ -62,11 +36,11 @@ LayeredStack<CONTENT_TYPE, STACK_COUNT> & LayeredStack<CONTENT_TYPE, STACK_COUNT
 template <typename CONTENT_TYPE, int STACK_COUNT> 
 LayeredStack<CONTENT_TYPE, STACK_COUNT>::~LayeredStack() {			
 	
-	std::vector<int*>::iterator itr;	
+	/*std::vector<int*>::iterator itr;	
 	
 	for (itr = stackPointer.begin(); itr != stackPointer.end(); ++itr) {
 		delete [] (*itr);
-	}
+	}*/
 }
 
 
@@ -79,31 +53,24 @@ void LayeredStack<CONTENT_TYPE, STACK_COUNT>::add(int layerIndex, CONTENT_TYPE &
 }*/
 	
 template <typename CONTENT_TYPE, int STACK_COUNT> 
-void LayeredStack<CONTENT_TYPE, STACK_COUNT>::setReturnPoint() {
-	//create new layer end pointer bundle
-	int *pointer = new int[STACK_COUNT];
-	
+void LayeredStack<CONTENT_TYPE, STACK_COUNT>::setReturnPoint() {		
 	//insert end points
 	for (int i = 0; i < STACK_COUNT; ++i) {
-		pointer[i] = stack[i].size();
-	}
-	
-	//store
-	stackPointer.push_back(pointer);
+		stackPointer.push_back(stack[i].size());
+	}	
 }
 	
 template <typename CONTENT_TYPE, int STACK_COUNT> 
-void LayeredStack<CONTENT_TYPE, STACK_COUNT>::rollBack() {
-	//retrieve points
-	int *pointer = stackPointer.back();
-	stackPointer.pop_back();
+void LayeredStack<CONTENT_TYPE, STACK_COUNT>::rollBack() {	
+	int index = stackPointer.size() - STACK_COUNT;	
 	
 	//erase from each layer
 	for (int i = 0; i < STACK_COUNT; ++i) {
-		stack[i].erase(stack[i].begin() + pointer[i], stack[i].end());
+		stack[i].erase(stack[i].begin() + stackPointer[index + i], stack[i].end());
 	}
 	
-	delete [] pointer;
+	//remove rollBack pointer information
+	stackPointer.erase(stackPointer.begin() + index, stackPointer.end());
 }
 
 template <typename CONTENT_TYPE, int STACK_COUNT> 
@@ -112,12 +79,12 @@ void LayeredStack<CONTENT_TYPE, STACK_COUNT>::clear() {
 		stack[i].erase(stack[i].begin(), stack[i].end());
 	}
 	
-	stackPointer.erase(stackPointer.begin()+1, stackPointer.end());
+	stackPointer.erase(stackPointer.begin() + STACK_COUNT, stackPointer.end());
 }
 	
 template <typename CONTENT_TYPE, int STACK_COUNT> 
 typename LayeredStack<CONTENT_TYPE, STACK_COUNT>::iterator LayeredStack<CONTENT_TYPE, STACK_COUNT>::begin() {
-	return iterator(this, 0, stackPointer.back()[0]);
+	return iterator(this, 0, stackPointer[stackPointer.size() - STACK_COUNT]);
 }
 
 template <typename CONTENT_TYPE, int STACK_COUNT> 
@@ -179,7 +146,7 @@ void LayeredStack<CONTENT_TYPE, STACK_COUNT>::iterator::operator++() {
 		while (stackIndex == parent->stack[layerIndex].size()) {
 			layerIndex++;
 			if (layerIndex < STACK_COUNT) {
-				stackIndex = parent->stackPointer.back()[layerIndex];
+				stackIndex = parent->stackPointer[parent->stackPointer.size() - STACK_COUNT + layerIndex];
 			} else {				
 				stackIndex = 0;
 				return;

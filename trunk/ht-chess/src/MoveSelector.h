@@ -1,7 +1,7 @@
 #ifndef MOVESELECTOR_H
 #define MOVESELECTOR_H
 
-#define DEFAULT_PLY 4
+#define DEFAULT_PLY 3
 
 #include <vector>
 #include "Move.h"
