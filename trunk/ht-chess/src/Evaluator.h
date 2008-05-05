@@ -7,7 +7,7 @@
 #ifndef EVALUATOR_H
 #define EVALUATOR_H
 
-#include <vector>
+#include "LayeredStack.h"
 #include <hash_map>
 #include "Move.h"
 
@@ -40,8 +40,7 @@ private:
     int threatsWhite;
     Color currentColor;
     int gamePhase;
-    vector<Move> moves;
-    vector<Move> killerMoves;
+    LayeredStack<Move, STACK_SIZE> moves;
 	stdext::hash_map<int, int> hm;
     
     int evaluate(Board &board, int ply) {        
@@ -97,24 +96,21 @@ private:
                             break;
                             
                         case BISHOP:
-                            board.getMovesFromPosition(pos, killerMoves, moves);
-                            tempValue += (int)(2.5 * (moves.size() + killerMoves.size()));
+                            board.getMovesFromPosition(pos, moves);
+                            tempValue += (int)(2.5 * moves.size());
                             moves.clear();
-                            killerMoves.clear();
                             break;
                             
                         case ROOK:
-                            board.getMovesFromPosition(pos, killerMoves, moves);
-                            tempValue += (int)(1.5 * (moves.size() + killerMoves.size()));
-                            moves.clear();    
-                            killerMoves.clear();                        
+                            board.getMovesFromPosition(pos, moves);
+                            tempValue += (int)(1.5 * moves.size());
+                            moves.clear();                        
                             break;
                             
                         case QUEEN:
-                            board.getMovesFromPosition(pos, killerMoves, moves);
-                            tempValue += (moves.size() + killerMoves.size());
-                            moves.clear();  
-                            killerMoves.clear();                          
+                            board.getMovesFromPosition(pos, moves);
+                            tempValue += moves.size();
+                            moves.clear();                          
                             break;
                             
                         case KING:

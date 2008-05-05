@@ -5,6 +5,7 @@
 #include "Position.h"
 #include "Move.h"
 #include "MoveGenerator.h"
+#include "LayeredStack.h"
 #include <vector>
 
 #define CHECK_OVERFLOW true
@@ -86,11 +87,7 @@ private:
 	/**
 	* List of moves used to calculate stale- and checkmate.
 	*/
-	std::vector<Move> moveList;
-	/**
-	* List of moves used to calculate stale- and checkmate.
-	*/
-	std::vector<Move> killerMoveList;
+	LayeredStack<Move, STACK_SIZE> moveList;
 
 	/**
 	* Tables holding random (static) values to generate hash values.
@@ -112,9 +109,9 @@ private:
 	* If it doesn't the move is add to the supplied vector
 	* param: Color, color - player color
 	* param: Move&, move - the move to be evaluated
-	* param: vector<Move>&, moves - list of moves to add move to when evaluated
+	* param: LayeredStack<Move, STACK_SIZE>&, moves - list of moves to add move to when evaluated
 	*/
-	void testAndAddMove(Color color, Move &move, std::vector<Move> &moves);					
+	void testAndAddMove(Color color, Move &move, LayeredStack<Move, STACK_SIZE> &moves, int layerIndex);					
 
 public:	
 
@@ -172,10 +169,9 @@ public:
 	* The detects piece type and color from position. If no piece is present at
 	* the specified position nothing is added.	
 	* param: Position, position - position of piece
-	* param: vector<Move>&, moves - vector to add moves to
-	* param: vector<Move>&, moves - vector to add moves to
+	* param: LayeredStack<Move, STACK_SIZE>&, moves - vector to add moves to
 	*/		
-	void getMovesFromPosition(Position position, vector<Move> &killerMoves, vector<Move> &moves);
+	void getMovesFromPosition(Position position, LayeredStack<Move, STACK_SIZE> &moves);
 	
 	
 	/**	
@@ -188,9 +184,9 @@ public:
 	* is derived from the position.
 	* 
 	* param: Position, position - position of the pawn
-	* param: vector<Move>&, move - vector to add moves to
+	* param: LayeredStack<Move, STACK_SIZE>&, moves - vector to add moves to
 	*/
-	void getPawnMovesFrom(Position position, vector<Move> &killerMoves, vector<Move> &moves);
+	void getPawnMovesFrom(Position position, LayeredStack<Move, STACK_SIZE> &moves);
 		
 		
 	/**
@@ -204,9 +200,9 @@ public:
 	* The knight must be present at the specified position. The color of the piece
 	* is derived from the position.
 	* param: Position, position - position of the knight
-	* param: vector<Move>, move - vector to add moves to
+	* param: LayeredStack<Move, STACK_SIZE>&, moves - vector to add moves to
 	*/	
-	void getKnightMovesFrom(Position position, vector<Move> &killerMoves, vector<Move> &moves);
+	void getKnightMovesFrom(Position position, LayeredStack<Move, STACK_SIZE> &moves);
 	
 	/**
 	* x x
@@ -217,9 +213,9 @@ public:
 	* The bishop must be present at the specified position. The color of the piece
 	* is derived from the position.
 	* param: Position, position - position of the bishop
-	* param: vector<Move>, move - vector to add moves to
+	* param: LayeredStack<Move, STACK_SIZE>&, moves - vector to add moves to
 	*/	
-	void getBishopMovesFrom(Position position, vector<Move> &killerMoves, vector<Move> &moves);
+	void getBishopMovesFrom(Position position, LayeredStack<Move, STACK_SIZE> &moves);
 	
 	/**
 	*  x
@@ -230,9 +226,9 @@ public:
 	* The rook must be present at the specified position. The color of the piece
 	* is derived from the position.
 	* param: Position, position - position of the rook
-	* param: vector<Move>&, move - vector to add moves to
+	* param: LayeredStack<Move, STACK_SIZE>&, moves - vector to add moves to
 	*/	
-	void getRookMovesFrom(Position position, vector<Move> &killerMoves, vector<Move> &moves);
+	void getRookMovesFrom(Position position, LayeredStack<Move, STACK_SIZE> &moves);
 	
 	/**
 	* xxx
@@ -243,9 +239,9 @@ public:
 	* The queen must be present at the specified position. The color of the piece
 	* is derived from the position.
 	* param: Position, position - position of the queen
-	* param: vector<Move>&, move - vector to add moves to
+	* param: LayeredStack<Move, STACK_SIZE>&, move - vector to add moves to
 	*/	
-	void getQueenMovesFrom(Position position, vector<Move> &killerMoves, vector<Move> &moves);
+	void getQueenMovesFrom(Position position, LayeredStack<Move, STACK_SIZE> &moves);
 	
 	/**
 	* xxx
@@ -257,9 +253,9 @@ public:
 	* is derived from the position.
 	* This function also creates king and queenside castling moves
 	* param: Position, position - position of the king
-	* param: vector<Move>, move - vector to add moves to
+	* param: LayeredStack<Move, STACK_SIZE>&, move - vector to add moves to
 	*/	
-	void getKingMovesFrom(Position position, vector<Move> &killerMoves, vector<Move> &moves);	
+	void getKingMovesFrom(Position position, LayeredStack<Move, STACK_SIZE> &moves);	
 		
 	/**
 	* Reset board to initial start position. Black pieces in row 7 and 8.

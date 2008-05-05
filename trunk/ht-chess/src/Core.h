@@ -8,8 +8,8 @@
 #include "BoardRenderer.h"
 #include "MoveGenerator.h"
 #include "MoveSelector.h"
+#include "LayeredStack.h"
 #include <math.h>
-#include <vector>
 
 #define AI_TYPE AlphaBetaOptimized
 
@@ -46,8 +46,7 @@ private:
 	SDL_Surface *fullOverlay;
 	
 	AI_TYPE moveSelector;
-	std::vector<Move> moveList;
-	std::vector<Move> killerMoveList;
+	LayeredStack<Move, STACK_SIZE> moveList;
 	BoardRenderer renderer;
 	Board board;
 
@@ -116,7 +115,7 @@ public:
 				gameTurn = GET_OPPOSITE_COLOR(gameTurn);
 				turnDone = false;
 			}
-			if(board.isCheckmate(gameTurn) && gameTurn!=0)
+			/*if(board.isCheckmate(gameTurn) && gameTurn!=0)
 			{
 				printf("Checkmate!\n");
 				gameTurn=NO_COLOR;
@@ -125,7 +124,7 @@ public:
 			{
 				printf("Stalemate!\n");
 				gameTurn=NO_COLOR;
-			}
+			}*/
 			if(gameTurn == WHITE && !player1IsHuman)
 			{
 				moveSelector(board, true).execute(board);
@@ -179,19 +178,13 @@ public:
 								&& ((gameTurn==WHITE && player1IsHuman) || (gameTurn==BLACK && player2IsHuman)))
 							{
 								moveList.clear();
-								killerMoveList.clear();
-								board.getMovesFromPosition(pos, killerMoveList, moveList);								
+								board.getMovesFromPosition(pos, moveList);								
 								/*if(!moveList.empty())		//If this is enabled, players can't choose pieces with no valid moves.
 								{*/
 									SDL_FillRect(fullOverlay, NULL, SDL_MapRGB(screen->format, 255, 0, 255));
-									std::vector<Move>::iterator itr;
-									for(itr = moveList.begin(); itr != moveList.end(); itr++)
-									{
-										overlayRect.x = GET_REAL_COLUMN((*itr).getNewPosition()) * 70 + 20;
-										overlayRect.y = (ROW_COUNT-1-GET_ROW((*itr).getNewPosition())) * 70 + 20;
-										SDL_BlitSurface(overlay, NULL, fullOverlay, &overlayRect);
-									}
-									for(itr = killerMoveList.begin(); itr != killerMoveList.end(); itr++)
+									LayeredStack<Move, STACK_SIZE>::iterator itr;
+									
+									for(itr = moveList.begin(); itr != moveList.end(); ++itr)
 									{
 										overlayRect.x = GET_REAL_COLUMN((*itr).getNewPosition()) * 70 + 20;
 										overlayRect.y = (ROW_COUNT-1-GET_ROW((*itr).getNewPosition())) * 70 + 20;
@@ -206,20 +199,9 @@ public:
 							else if(selectedPiece != -1)
 							{
 								//Check if valid move!
-								std::vector<Move>::iterator itr;
-								for(itr = killerMoveList.begin(); itr != killerMoveList.end(); itr++)
-								{
-									if((*itr).getNewPosition() == pos)
-									{
-										selectedPiece = -1;
-										turnDone = true;
-										(*itr).execute(board);
-										//printf("The material value of white: %i, and black: %i\n", board.getMaterialValue(WHITE), board.getMaterialValue(BLACK));
-										break;
-									}
-								}
+								LayeredStack<Move, STACK_SIZE>::iterator itr;								
 								
-								for(itr = moveList.begin(); itr != moveList.end(); itr++)
+								for(itr = moveList.begin(); itr != moveList.end(); ++itr)
 								{
 									if((*itr).getNewPosition() == pos)
 									{

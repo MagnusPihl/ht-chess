@@ -1,6 +1,10 @@
 #ifndef LAYERED_STACK_H
 #define LAYERED_STACK_H
 
+#define STACK_SIZE 2
+#define STACK_CAPTURES 0
+#define STACK_NORMAL_MOVES 0
+
 #include <vector>
 
 template<typename CONTENT_TYPE, int STACK_COUNT> class LayeredStack {
@@ -49,7 +53,7 @@ public:
 	
 	LayeredStack & operator=(LayeredStack &rhs);		
 
-	void add(int layerIndex, CONTENT_TYPE &content);
+	//void add(int layerIndex, CONTENT_TYPE &content);
 	
 	void setReturnPoint();
 	
@@ -62,6 +66,38 @@ public:
 	iterator begin();
 	
 	iterator end();
+	
+	/*bool empty();
+	
+	int size();*/
+		
+	bool empty() {
+		int *pointer = stackPointer.back();
+		
+		for (int i = 0; i < STACK_COUNT; i++) {
+			if (stack[i].size() != pointer[i]) {
+				return false;
+			}
+		}		
+		
+		return true;
+	}
+
+	int size() {
+		int *pointer = stackPointer.back();
+		int size = 0;
+		
+		for (int i = 0; i < STACK_COUNT; i++) {
+			size += (stack[i].size() - pointer[i]);
+		}		
+		
+		return size;
+	}
+		
+	void add(int layerIndex, CONTENT_TYPE &content) {		
+		stack[layerIndex].push_back(content);
+	}
+
 };
 
 #endif
