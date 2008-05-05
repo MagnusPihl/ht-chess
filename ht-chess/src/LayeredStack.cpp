@@ -72,11 +72,11 @@ LayeredStack<CONTENT_TYPE, STACK_COUNT>::~LayeredStack() {
 
 
 //
-template <typename CONTENT_TYPE, int STACK_COUNT> 
+/*template <typename CONTENT_TYPE, int STACK_COUNT> 
 void LayeredStack<CONTENT_TYPE, STACK_COUNT>::add(int layerIndex, CONTENT_TYPE &content) {
 	//index check??
 	stack[layerIndex].push_back(content);
-}
+}*/
 	
 template <typename CONTENT_TYPE, int STACK_COUNT> 
 void LayeredStack<CONTENT_TYPE, STACK_COUNT>::setReturnPoint() {
@@ -112,7 +112,7 @@ void LayeredStack<CONTENT_TYPE, STACK_COUNT>::clear() {
 		stack[i].erase(stack[i].begin(), stack[i].end());
 	}
 	
-	stackPointer.erase(stackPointer.begin(), stackPointer.end());
+	stackPointer.erase(stackPointer.begin()+1, stackPointer.end());
 }
 	
 template <typename CONTENT_TYPE, int STACK_COUNT> 
@@ -125,6 +125,30 @@ typename LayeredStack<CONTENT_TYPE, STACK_COUNT>::iterator LayeredStack<CONTENT_
 	return iterator(this, STACK_COUNT, 0);
 }
 
+/*template <typename CONTENT_TYPE, int STACK_COUNT> 
+bool LayeredStack<CONTENT_TYPE, STACK_COUNT>::empty() {
+	int *pointer = stackPointer.back();
+	
+	for (int i = 0; i < STACK_COUNT; i++) {
+		if (stack[i].size() != pointer[i]) {
+			return false;
+		}
+	}		
+	
+	return true;
+}
+
+template <typename CONTENT_TYPE, int STACK_COUNT> 
+int LayeredStack<CONTENT_TYPE, STACK_COUNT>::size() {
+	int *pointer = stackPointer.back();
+	int size = 0;
+	
+	for (int i = 0; i < STACK_COUNT; i++) {
+		size += (stack[i].size() - pointer[i]);
+	}		
+	
+	return size;
+}*/
 
 
 //iterator
@@ -150,13 +174,16 @@ CONTENT_TYPE & LayeredStack<CONTENT_TYPE, STACK_COUNT>::iterator::operator*() {
 */
 template <typename CONTENT_TYPE, int STACK_COUNT> 
 void LayeredStack<CONTENT_TYPE, STACK_COUNT>::iterator::operator++() {
-	stackIndex++;
-	if (stackIndex == parent->stack[layerIndex].size()) {
-		layerIndex++;
-		if (layerIndex < STACK_COUNT) { 
-			stackIndex = parent->stackPointer.back()[layerIndex];
-		} else {
-			stackIndex = 0;
+	if (layerIndex < STACK_COUNT) { 
+		stackIndex++;
+		while (stackIndex == parent->stack[layerIndex].size()) {
+			layerIndex++;
+			if (layerIndex < STACK_COUNT) {
+				stackIndex = parent->stackPointer.back()[layerIndex];
+			} else {				
+				stackIndex = 0;
+				return;
+			}
 		}
 	}
 }		

@@ -23,8 +23,9 @@ int threadfunc(void *unused)
 
 int main(int argc, char *argv[])
 {
-	
+		
 	LayeredStack<Move, 3> stack;
+	stack.clear();
 
     stack.add(0, Move(A1, A1, NO_PIECE, KNIGHT_BLACK, PAWN_WHITE, 0, INVALID_POSITION, 0));
 	stack.add(1, Move(A2, A2, NO_PIECE, KNIGHT_BLACK, PAWN_WHITE, 0, INVALID_POSITION, 0));

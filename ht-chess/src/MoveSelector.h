@@ -129,11 +129,10 @@ class AlphaBetaOptimized
 private:
 	MoveGenerator moveGen;
 	Evaluator evaluator;
-	std::vector<Move> killerMoveList;
-	std::vector<Move> moveList;
+	LayeredStack<Move, STACK_SIZE> moveList;
 
 	int alphaBeta(Board &board, Move &path, bool isMaximizer=true, int curDepth=0,
-		int maxDepth=100, int alpha=-100000, int beta=100000, int offset=0, int killerOffset=0)
+		int maxDepth=100, int alpha=-100000, int beta=100000)
 	{
 		//printf("før\n");
 		if(curDepth == maxDepth || board.isCheckmate() || board.isStalemate())		//if leaf
@@ -143,121 +142,66 @@ private:
 		}
 		else if(isMaximizer)	//if maximizer
 		{
-			moveGen.generateMoves(board, WHITE, killerMoveList, moveList);
-			//moveGen.generateMoves(board, WHITE, moveList, moveList);
-						
-			//printf("%i\n", killerMoveList.size());
-			//int killerEndOffset = killerMoveList.size();						
-			int endOffset = moveList.size();			
-			//killer			
+			moveGen.generateMoves(board, WHITE, moveList);						
 			
-			for(int i=0; i < endOffset && alpha < beta; i++)
-			{
-				killerMoveList.push_back(moveList[i]);
-			}
-			moveList.clear();
+			LayeredStack<Move, STACK_SIZE>::iterator itr;									
 			
-			int killerEndOffset = killerMoveList.size();	
+			for(itr = moveList.begin(); (itr != moveList.end()) && (alpha < beta); ++itr)
+			{	
+				moveList.setReturnPoint();
 			
-			if (killerOffset != killerEndOffset) {
-				for(int i=killerOffset; i < killerEndOffset && alpha < beta; i++)
-				{
-					killerMoveList[i].execute(board);
-					int V = alphaBeta(board, path, false, curDepth+1, maxDepth, alpha, beta, endOffset, killerEndOffset);
-					if(V > alpha)
-					{
-						alpha = V;
-						if(curDepth==0)
-							path = killerMoveList[i];
-					}
-					killerMoveList[i].unexecute(board);
-					//printf("%i - %i\n", killerEndOffset, killerMoveList.size());
-					killerMoveList.erase(killerMoveList.begin()+killerEndOffset, killerMoveList.end());
-				}
-			}								
-			
-			//normal
-			/*for(int i=offset; i	< endOffset && alpha < beta; i++)
-			{
-				moveList[i].execute(board);
-				int V = alphaBeta(board, path, false, curDepth+1, maxDepth, alpha, beta, endOffset, killerEndOffset);
+				(*itr).execute(board);				
+				int V = alphaBeta(board, path, false, curDepth+1, maxDepth, alpha, beta);
 				if(V > alpha)
 				{
 					alpha = V;
 					if(curDepth==0)
-						path = moveList[i];
+						path = (*itr);
 				}
-				moveList[i].unexecute(board);
-				moveList.erase(moveList.begin()+endOffset, moveList.end());
-			}	*/		
+				(*itr).unexecute(board);
+				
+				moveList.rollBack();
+			}	
 			return alpha;
 		}
 		else	//if minimizer
 		{
-			moveGen.generateMoves(board, BLACK, killerMoveList, moveList);
-			//moveGen.generateMoves(board, BLACK, moveList, moveList);
-											
-			int endOffset = moveList.size();	
+			moveGen.generateMoves(board, BLACK, moveList);
 			
-			for(int i=0; i < endOffset && alpha < beta; i++)
+			LayeredStack<Move, STACK_SIZE>::iterator itr;									
+			
+			for(itr = moveList.begin(); (itr != moveList.end()) && (alpha < beta); ++itr)
 			{
-				killerMoveList.push_back(moveList[i]);
+				moveList.setReturnPoint();
+				
+				(*itr).execute(board);
+				int V = alphaBeta(board, path, true, curDepth+1, maxDepth, alpha, beta);
+				if(V < beta)
+				{
+					beta = V;
+					if(curDepth==0)
+						path = (*itr);
+				}
+				(*itr).unexecute(board);
+				
+				moveList.rollBack();
 			}
-			moveList.clear();
 			
-			int killerEndOffset = killerMoveList.size();												
-			
-			//printf("min før		%i\n", killerMoveList.size());
-			//killer						
-			for(int i=killerOffset; i < killerEndOffset && alpha < beta; i++)
-			{
-				killerMoveList[i].execute(board);
-				int V = alphaBeta(board, path, true, curDepth+1, maxDepth, alpha, beta, endOffset, killerEndOffset);
-				if(V < beta)
-				{
-					beta = V;
-					if(curDepth==0)
-						path = killerMoveList[i];
-				}
-				killerMoveList[i].unexecute(board);
-				killerMoveList.erase(killerMoveList.begin()+killerEndOffset, killerMoveList.end());
-			}											
-			
-			//normal
-			/*for(int i=offset; i < endOffset && alpha < beta; i++)
-			{
-				moveList[i].execute(board);
-				int V = alphaBeta(board, path, true, curDepth+1, maxDepth, alpha, beta, endOffset, killerEndOffset);
-				if(V < beta)
-				{
-					beta = V;
-					if(curDepth==0)
-						path = moveList[i];
-				}
-				moveList[i].unexecute(board);
-				moveList.erase(moveList.begin()+endOffset, moveList.end());
-			}*/
-			//printf("efter\n");
 			return beta;
 		}
 	}
 public:
 	AlphaBetaOptimized()
 	{
-		moveList.resize(100*DEFAULT_PLY);
-		killerMoveList.resize(50*DEFAULT_PLY);
+		/*moveList.resize(100*DEFAULT_PLY);
+		killerMoveList.resize(50*DEFAULT_PLY);*/
 	}
 
 	Move operator()(Board &board, bool isMaximizer=true, int maxDepth=DEFAULT_PLY)
 	{
 		Move path;
-		killerMoveList.clear();
 		moveList.clear();
-		/*printf("k før:		%i\n", killerMoveList.size());
-		printf("m før:		%i\n", moveList.size());*/
 		alphaBeta(board, path, isMaximizer, 0, maxDepth);
-		/*printf("k efter:	%i\n", killerMoveList.size());
-		printf("m efter:	%i\n", moveList.size());*/
 		return path;
 	}
 };

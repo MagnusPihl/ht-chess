@@ -3,6 +3,7 @@
 
 #include "Board.h"
 #include "Move.h"
+#include "LayeredStack.h"
 #include <vector>
 
 class Board;
@@ -11,7 +12,7 @@ class Move;
 class MoveGenerator {
 	
 public:
-	static void generateMoves(Board &board, Color color, std::vector<Move> &killerMoves, std::vector<Move> &moves);
+	static void generateMoves(Board &board, Color color, LayeredStack<Move, STACK_SIZE> &moves);
 	
 };
 
