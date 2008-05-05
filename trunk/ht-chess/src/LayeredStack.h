@@ -3,7 +3,7 @@
 
 #define STACK_SIZE 2
 #define STACK_CAPTURES 0
-#define STACK_NORMAL_MOVES 0
+#define STACK_NORMAL_MOVES 1
 
 #include <vector>
 
@@ -43,6 +43,8 @@ public:
 			bool operator== (iterator &rhs);
 			
 			bool operator!= (iterator &rhs);
+			
+			void erase();						
 	};			
 	
 	LayeredStack();
@@ -96,8 +98,9 @@ public:
 		
 	void add(int layerIndex, CONTENT_TYPE &content) {		
 		stack[layerIndex].push_back(content);
-	}
-
+	}	
+	
+	void erase(iterator &itr);
 };
 
 #endif
