@@ -84,7 +84,9 @@ void LayeredStack<CONTENT_TYPE, STACK_COUNT>::clear() {
 	
 template <typename CONTENT_TYPE, int STACK_COUNT> 
 typename LayeredStack<CONTENT_TYPE, STACK_COUNT>::iterator LayeredStack<CONTENT_TYPE, STACK_COUNT>::begin() {
-	return iterator(this, 0, stackPointer[stackPointer.size() - STACK_COUNT]);
+	typename LayeredStack<CONTENT_TYPE, STACK_COUNT>::iterator itr = iterator(this, 0, stackPointer[stackPointer.size() - STACK_COUNT] - 1);
+	++itr;
+	return itr;	
 }
 
 template <typename CONTENT_TYPE, int STACK_COUNT> 
@@ -179,5 +181,15 @@ template <typename CONTENT_TYPE, int STACK_COUNT>
 bool LayeredStack<CONTENT_TYPE, STACK_COUNT>::iterator::operator!= (typename LayeredStack<CONTENT_TYPE, STACK_COUNT>::iterator &rhs) {
 	return !(*this == rhs);
 }
+
+template <typename CONTENT_TYPE, int STACK_COUNT> 
+void LayeredStack<CONTENT_TYPE, STACK_COUNT>::iterator::erase() {	
+	parent->stack[layerIndex].erase(parent->stack[layerIndex].begin() + stackIndex);
+}
+
+template <typename CONTENT_TYPE, int STACK_COUNT> 
+void LayeredStack<CONTENT_TYPE, STACK_COUNT>::erase(typename LayeredStack<CONTENT_TYPE, STACK_COUNT>::iterator &itr) {
+	stack[itr.layerIndex].erase(parent->stack[itr.layerIndex].begin() + itr.stackIndex);
+}				
 
 #endif
