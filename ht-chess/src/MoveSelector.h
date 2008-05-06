@@ -7,6 +7,7 @@
 #include "Move.h"
 #include "Piece.h"
 #include "Evaluator.h"
+//#include <fstream>
 
 /*class MiniMax
 {
@@ -191,10 +192,13 @@ private:
 		}
 	}
 public:
+	//ofstream moveFile;
+
 	AlphaBetaOptimized()
 	{
 		/*moveList.resize(100*DEFAULT_PLY);
 		killerMoveList.resize(50*DEFAULT_PLY);*/
+		//moveFile.open("moves.txt");
 	}
 
 	Move operator()(Board &board, bool isMaximizer=true, int maxDepth=DEFAULT_PLY)
@@ -202,7 +206,38 @@ public:
 		Move path;
 		moveList.clear();
 		alphaBeta(board, path, isMaximizer, 0, maxDepth);
+		if(path.getContent() != NO_PIECE)
+			evaluator.clearCache();
+		/*printf("k efter:	%i\n", killerMoveList.size());
+		printf("m efter:	%i\n", moveList.size());*/
+		/*moveFile << "moveList.push_back(Move(" << path.getOldPosition() << ", " << path.getNewPosition() << ", " << path.getSpecial();
+		moveFile << ", " << path.getPiece() << ", " << path.getContent() << ", " << path.getHasMoved() << ", " << path.getEnPassantPosition();
+		moveFile << ", " << path.getReversableMoves() << "));\n";*/
 		return path;
+	}
+};
+
+class StaticMoveSelector
+{
+private:
+	std::vector<Move> moveList;
+	int listPos;
+public:
+	StaticMoveSelector()
+	{
+		listPos = 0;
+		//Insert some moves
+	}
+
+	void setMoveList(std::vector<Move> moves)
+	{
+		moveList = moves;
+		listPos = 0;
+	}
+
+	Move operator()()
+	{
+		return moveList[listPos++];
 	}
 };
 

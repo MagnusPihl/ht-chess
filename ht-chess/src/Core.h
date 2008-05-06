@@ -1,6 +1,9 @@
 #ifndef CORE_H
 #define CORE_H
 
+//#define TEST_PERFORMANCE
+#define AI_TYPE AlphaBetaOptimized
+
 #include "SDL.h"
 #include "SDL_ttf.h"
 #include "MouseHandler.h"
@@ -11,7 +14,9 @@
 #include "LayeredStack.h"
 #include <math.h>
 
-#define AI_TYPE AlphaBetaOptimized
+#ifdef TEST_PERFORMANCE
+	#include <fstream>
+#endif
 
 #define WIDTH 800
 #define HEIGHT 600
@@ -49,6 +54,11 @@ private:
 	LayeredStack<Move, STACK_SIZE> moveList;
 	BoardRenderer renderer;
 	Board board;
+#ifdef TEST_PERFORMANCE
+	int performanceTimer;
+	int turnCounter;
+	ofstream performanceFile;
+#endif
 
 public:
 	Core()
@@ -79,6 +89,12 @@ public:
 		fullOverlay = SDL_CreateRGBSurface(SDL_HWSURFACE, 600, 600, 32, 0, 0, 0, 100);
 		//SDL_SetAlpha(fullOverlay, SDL_SRCALPHA, 128);
 		SDL_SetColorKey(fullOverlay, SDL_SRCCOLORKEY, SDL_MapRGB(fullOverlay->format, 255, 0, 255));
+#ifdef TEST_PERFORMANCE
+		turnCounter=0;
+		performanceFile.open ("TestPerformance.m");
+		performanceFile << "timeUsed = [];\n";
+		performanceFile << "turnNumber = [];\n";
+#endif
 	}
 
 	~Core()
@@ -98,6 +114,9 @@ public:
 
 	void run()
 	{
+#ifdef TEST_PERFORMANCE
+		performanceTimer = SDL_GetTicks();
+#endif
 		Color gameTurn = WHITE;
 		bool turnDone = false;
 		int selectedPiece = -1;
@@ -243,6 +262,15 @@ public:
 			SDL_BlitSurface(restartText, NULL, screen, &restartTextRect);
 			SDL_BlitSurface(quitText, NULL, screen, &quitTextRect);
 			SDL_Flip(screen);	//Update screen
+#ifdef TEST_PERFORMANCE
+			if(turnDone)
+			{
+				int timeSpent = SDL_GetTicks() - performanceTimer;
+				performanceFile << "timeUsed = [timeUsed " << timeSpent << "];\n";
+				performanceFile << "turnNumber = [turnNumber " << turnCounter << "];\n";
+				turnCounter++;
+			}
+#endif
 		}
 	}
 };
