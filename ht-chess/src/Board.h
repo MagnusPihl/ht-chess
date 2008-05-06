@@ -34,7 +34,7 @@ static Position CASTLING_COLUMN_H[2] = {H8, H1};
 #define BLACK_INDEX 0
 #define WHITE_INDEX 1
 
-#define MAX_TURNS 50
+#define MAX_TURNS 100
 
 using namespace std;
 class Move;
@@ -98,9 +98,9 @@ private:
 	int hashLockComponents[128][128];
 	
 	/**
-	* The number of plys from last pawn move, or capture allowed is 50 before draw occurs.
+	* The number of moves from last pawn move, or capture allowed is 50 before draw occurs.
 	* This field keeps track of how many moves has been done since the last ireversible move.
-	*  the game should be stalemate once this field increments to 50. (2 ply is one move)
+	*  the game should be stalemate once this field increments to 100. (2 ply is one move)
 	*/
 	int reversableMoves;
 	
