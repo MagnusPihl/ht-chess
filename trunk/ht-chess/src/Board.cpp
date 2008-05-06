@@ -320,8 +320,12 @@ void Board::getPawnMovesFrom(Position position, LayeredStack<Move, STACK_SIZE> &
 				hasMoved[colorIndex],
 				enPassantPosition,
 				reversableMoves);
-														
-		testAndAddMove(color, move, moves, STACK_CAPTURES);
+										
+		if (special != NO_PIECE) {
+			testAndAddMove(color, move, moves, STACK_PAWN_RROMOTIONS);
+		} else {
+			testAndAddMove(color, move, moves, STACK_CAPTURES);
+		}
 	}		
 				
 	//right capture	
@@ -337,7 +341,11 @@ void Board::getPawnMovesFrom(Position position, LayeredStack<Move, STACK_SIZE> &
 				enPassantPosition,
 				reversableMoves);
 														
-		testAndAddMove(color, move, moves, STACK_CAPTURES);
+		if (special != NO_PIECE) {
+			testAndAddMove(color, move, moves, STACK_PAWN_RROMOTIONS);
+		} else {
+			testAndAddMove(color, move, moves, STACK_CAPTURES);
+		}
 	}
 	
 	//normal advance
@@ -353,7 +361,11 @@ void Board::getPawnMovesFrom(Position position, LayeredStack<Move, STACK_SIZE> &
 				enPassantPosition,
 				reversableMoves);												
 		
-		testAndAddMove(color, move, moves, STACK_NORMAL_MOVES);
+		if (special != NO_PIECE) {
+			testAndAddMove(color, move, moves, STACK_PAWN_RROMOTIONS);
+		} else {
+			testAndAddMove(color, move, moves, STACK_NORMAL_MOVES);
+		}
 		
 		if ((row == PAWN_START_ROW[colorIndex]) && //double advance
 			(content[ GET_POSITION( column, row + doubleDirection)] == NO_PIECE)) {
@@ -597,7 +609,7 @@ void Board::getKingMovesFrom(Position position, LayeredStack<Move, STACK_SIZE> &
 			(NO_PIECE == getThreatOf(CASTLING_COLUMN_F[colorIndex], color)) &&
 			(NO_PIECE == getThreatOf(CASTLING_COLUMN_G[colorIndex], color))) {
 				
-			moves.add(STACK_NORMAL_MOVES, Move(
+			moves.add(STACK_CASTLING, Move(
 				position, 
 				CASTLING_COLUMN_G[colorIndex], 
 				piece, 
@@ -615,7 +627,7 @@ void Board::getKingMovesFrom(Position position, LayeredStack<Move, STACK_SIZE> &
 			(NO_PIECE == getThreatOf(CASTLING_COLUMN_C[colorIndex], color)) &&
 			(NO_PIECE == getThreatOf(CASTLING_COLUMN_D[colorIndex], color))) {
 				
-			moves.add(STACK_NORMAL_MOVES, Move(
+			moves.add(STACK_CASTLING, Move(
 				position,
 				CASTLING_COLUMN_C[colorIndex], 
 				piece, 
