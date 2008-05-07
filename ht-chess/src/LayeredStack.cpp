@@ -192,4 +192,14 @@ void LayeredStack<CONTENT_TYPE, STACK_COUNT>::erase(typename LayeredStack<CONTEN
 	stack[itr.layerIndex].erase(parent->stack[itr.layerIndex].begin() + itr.stackIndex);
 }				
 
+template <typename CONTENT_TYPE, int STACK_COUNT> 
+void LayeredStack<CONTENT_TYPE, STACK_COUNT>::sort() {
+	;
+}
+	
+template <typename CONTENT_TYPE, int STACK_COUNT> 
+void LayeredStack<CONTENT_TYPE, STACK_COUNT>::setValue(typename LayeredStack<CONTENT_TYPE, STACK_COUNT>::iterator &itr, int value) {	
+	valueStack[itr.layerIndex][itr.stackIndex] = value;
+}
+
 #endif
