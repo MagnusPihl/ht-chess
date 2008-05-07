@@ -18,7 +18,7 @@ class MoveGenerator
 public:
 	MoveGenerator();
 	static void generateMoves(Board &board, Color color, LayeredStack<Move, STACK_SIZE> &moves);
-	static void generateMoves(Board &board, Color color, LayeredStack<Move, STACK_SIZE> &moves, Position pos)
+	static void generateMoves(Board &board, Color color, LayeredStack<Move, STACK_SIZE> &moves, Position pos);
 	void setNextMove(Move move);
 };
 

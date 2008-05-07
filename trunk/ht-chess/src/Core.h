@@ -91,7 +91,7 @@ public:
 		fullOverlay = SDL_CreateRGBSurface(SDL_HWSURFACE, 600, 600, 32, 0, 0, 0, 100);
 		//SDL_SetAlpha(fullOverlay, SDL_SRCALPHA, 128);
 		SDL_SetColorKey(fullOverlay, SDL_SRCCOLORKEY, SDL_MapRGB(fullOverlay->format, 255, 0, 255));
-                cappedPos = -1;
+                cappedPos = INVALID_POSITION;
 #ifdef TEST_PERFORMANCE
 		turnCounter=0;
 		performanceFile.open ("TestPerformance.m");
@@ -154,7 +154,7 @@ public:
                                     cappedPos = curMove.getNewPosition();
                                 }
                                 else {
-                                    cappedPos = -1;
+                                    cappedPos = INVALID_POSITION;
                                 }
 				curMove.execute(board);
 				turnDone = true;
@@ -166,7 +166,7 @@ public:
                                     cappedPos = curMove.getNewPosition();
                                 }
                                 else {
-                                    cappedPos = -1;
+                                    cappedPos = INVALID_POSITION;
                                 }
 				curMove.execute(board);
 				turnDone = true;
@@ -250,7 +250,7 @@ public:
                                                                                 }
                                                                                 else
                                                                                 {
-                                                                                    cappedPos = -1;
+                                                                                    cappedPos = INVALID_POSITION;
                                                                                 }
 										//printf("The material value of white: %i, and black: %i\n", board.getMaterialValue(WHITE), board.getMaterialValue(BLACK));
 										break;

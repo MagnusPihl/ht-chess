@@ -135,8 +135,7 @@ private:
 	Move nextMove[2];	//0 == WHITE, 1 == BLACK
 	int timeStarted;
 
-	int alphaBeta(Board &board, Move &path, bool isMaximizer=true, int curDepth=0,
-		int maxDepth=100, int alpha=-100000, int beta=100000)
+	int alphaBeta(Board &board, Move &path, bool isMaximizer=true, int curDepth=0, int maxDepth=100, int alpha=-100000, int beta=100000)
 	{
 		//printf("f�r\n");
 		if(SDL_GetTicks() - timeStarted > MAX_SEARCH_TIME)
@@ -197,8 +196,7 @@ private:
 		}
 	}
         
-        int alphaBeta(Board &board, Move &path, bool isMaximizer=true, int maxDepth=100, 
-                int alpha=-100000, int beta=100000)
+    int alphaBeta(Board &board, Move &path, bool isMaximizer=true, int maxDepth=100, int alpha=-100000, int beta=100000)
 	{
 		//printf("f�r\n");
 		if(SDL_GetTicks() - timeStarted > MAX_SEARCH_TIME)
@@ -238,7 +236,7 @@ private:
 				moveList.setReturnPoint();
 				
 				(*itr).execute(board);
-				int V = alphaBeta(board, path, true, curDepth+1, maxDepth, alpha, beta);
+				int V = alphaBeta(board, path, true, 1, maxDepth, alpha, beta);
 				if(V < beta)
 				{
 					beta = V;
