@@ -105,6 +105,8 @@ public:
 	}	
 	
 	void erase(iterator &itr);
+	
+	void sort();
 };
 
 #endif

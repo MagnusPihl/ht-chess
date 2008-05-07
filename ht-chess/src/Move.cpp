@@ -3,11 +3,13 @@
 
 #include "Move.h"
 
-Move::Move() {}
+Move::Move() : 
+	from(INVALID_POSITION), to(INVALID_POSITION), special(NO_PIECE), piece(NO_PIECE), content(NO_PIECE), hasMoved(0), enPassantPosition(INVALID_POSITION), reversableMoves(0)//, boardValue(INVALID_BOARD_VALUE) 
+{}
 
 Move::Move(
 	Position _from, Position _to, ColoredPiece _special, ColoredPiece _piece, ColoredPiece _content, int _hasMoved, Position _enPassantPosition, int _reversableMoves) :
-		from(_from), to(_to), special(_special), piece(_piece), content(_content), hasMoved(_hasMoved), enPassantPosition(_enPassantPosition), reversableMoves(_reversableMoves)
+		from(_from), to(_to), special(_special), piece(_piece), content(_content), hasMoved(_hasMoved), enPassantPosition(_enPassantPosition), reversableMoves(_reversableMoves) //, boardValue(INVALID_BOARD_VALUE)
 {
 	#ifdef TEST_MOVE_VALIDITY 
 		if (isValid(*this)) {
@@ -144,44 +146,6 @@ void Move::unexecute(Board &board)
 			}
 			break;	
 	}
-}
-
-//accessors
-Position Move::getOldPosition()
-{
-	return from;
-}
-
-Position Move::getNewPosition()
-{
-	return to;
-}
-
-ColoredPiece Move::getSpecial()
-{
-	return special;
-}
-
-ColoredPiece Move::getPiece()
-{
-	return piece;
-}
-
-ColoredPiece Move::getContent()
-{
-	return content;
-}
-
-int Move::getHasMoved() {
-	return hasMoved;
-}
-		
-Position Move::getEnPassantPosition() {
-	return enPassantPosition;
-}
-
-int Move::getReversableMoves() {
-	return reversableMoves;
 }
 
 /**
