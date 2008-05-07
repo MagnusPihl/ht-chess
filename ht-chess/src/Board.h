@@ -8,6 +8,8 @@
 #include "LayeredStack.h"
 #include <vector>
 
+class MoveGenerator;
+
 #define CHECK_OVERFLOW true
 #define CONTENT_SIZE 256
 

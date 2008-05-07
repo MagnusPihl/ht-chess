@@ -1,7 +1,8 @@
 #ifndef MOVESELECTOR_H
 #define MOVESELECTOR_H
 
-#define DEFAULT_PLY 3
+#define DEFAULT_PLY 6
+#define MAX_SEARCH_TIME 15000	//max milliseconds per turn
 
 #include <vector>
 #include "Move.h"
@@ -131,11 +132,17 @@ private:
 	MoveGenerator moveGen;
 	Evaluator evaluator;
 	LayeredStack<Move, STACK_SIZE> moveList;
+	Move nextMove[2];	//0 == WHITE, 1 == BLACK
+	int timeStarted;
 
 	int alphaBeta(Board &board, Move &path, bool isMaximizer=true, int curDepth=0,
 		int maxDepth=100, int alpha=-100000, int beta=100000)
 	{
 		//printf("før\n");
+		if(SDL_GetTicks() - timeStarted > MAX_SEARCH_TIME)
+		{
+			return 0;
+		}
 		if(curDepth == maxDepth || board.isCheckmate() || board.isStalemate())		//if leaf
 		{
 			//printf("efter\n");
@@ -158,6 +165,8 @@ private:
 					alpha = V;
 					if(curDepth==0)
 						path = (*itr);
+					if(curDepth==2)
+						nextMove[0] = (*itr);
 				}
 				(*itr).unexecute(board);
 				
@@ -182,6 +191,8 @@ private:
 					beta = V;
 					if(curDepth==0)
 						path = (*itr);
+					if(curDepth==2)
+						nextMove[1] = (*itr);
 				}
 				(*itr).unexecute(board);
 				
@@ -205,6 +216,7 @@ public:
 	{
 		Move path;
 		moveList.clear();
+		timeStarted = SDL_GetTicks();
 		alphaBeta(board, path, isMaximizer, 0, maxDepth);
 		if(path.getContent() != NO_PIECE)
 			evaluator.clearCache();

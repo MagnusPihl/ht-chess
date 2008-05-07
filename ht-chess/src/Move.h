@@ -6,6 +6,7 @@
 #include "Board.h"
 
 class Board;
+class MoveGenerator;
 
 static int PAWN_DIRECTION[2] = {-1, 1}; //0 = black, 1 = white
 static int PAWN_ENPASSANT_TAKE_ROW[2] = {ROW_3, ROW_6}; //0 = black, 1 = white
