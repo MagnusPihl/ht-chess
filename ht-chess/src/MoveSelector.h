@@ -1,7 +1,7 @@
 #ifndef MOVESELECTOR_H
 #define MOVESELECTOR_H
 
-#define DEFAULT_PLY 6
+#define DEFAULT_PLY 4
 #define MAX_SEARCH_TIME 15000	//max milliseconds per turn
 
 #include <vector>
@@ -135,7 +135,7 @@ private:
 	Move nextMove[2];	//0 == WHITE, 1 == BLACK
 	int timeStarted;
 
-	int alphaBeta(Board &board, Move &path, bool isMaximizer=true, int curDepth=0, int maxDepth=100, int alpha=-100000, int beta=100000)
+	int alphaBeta(Board &board, Move &path, bool isMaximizer, int curDepth, int maxDepth, int alpha, int beta)
 	{
 		//printf("f�r\n");
 		if(SDL_GetTicks() - timeStarted > MAX_SEARCH_TIME)
@@ -216,13 +216,14 @@ private:
 				if(V > alpha)
 				{
 					alpha = V;
-                                        moveList.setValue(itr, V);
+                    moveList.setValue(itr, V);
 					path = (*itr);
 				}
 				(*itr).unexecute(board);
 				
 				moveList.rollBack();
-			}	
+			}				
+			
 			return alpha;
 		}
 		else	//if minimizer
@@ -240,7 +241,7 @@ private:
 				if(V < beta)
 				{
 					beta = V;
-                                        moveList.setValue(itr, V);
+                    moveList.setValue(itr, V);
 					path = (*itr);
 				}
 				(*itr).unexecute(board);

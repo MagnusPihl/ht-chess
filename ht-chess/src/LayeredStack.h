@@ -1,12 +1,13 @@
 #ifndef LAYERED_STACK_H
 #define LAYERED_STACK_H
 
-#define STACK_SIZE 5
-#define STACK_CAPTURES 0
-#define STACK_PAWN_RROMOTIONS 1
-#define STACK_CASTLING 2
-#define STACK_NORMAL_MOVES 3
-#define STACK_EN_PASSANT_CAPTURES 4
+#define STACK_SIZE 6
+#define STACK_LAST_TURN 0
+#define STACK_CAPTURES 1
+#define STACK_PAWN_RROMOTIONS 2
+#define STACK_CASTLING 3
+#define STACK_NORMAL_MOVES 4
+#define STACK_EN_PASSANT_CAPTURES 5
 
 
 #include <vector>
@@ -49,8 +50,10 @@ public:
 			bool operator== (iterator &rhs);
 			
 			bool operator!= (iterator &rhs);
-			
-			void erase();						
+						
+			void erase() {
+				parent->stack[layerIndex].erase(parent->stack[layerIndex].begin() + stackIndex);
+			}	
 	};			
 	
 	LayeredStack();

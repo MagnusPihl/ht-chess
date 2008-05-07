@@ -58,7 +58,7 @@ void MoveGenerator::generateMoves(Board &board, Color color, LayeredStack<Move, 
         {
             if((*itr).getNewPosition() == pos)
             {
-                moves.add(LAST_CAPTURE, (*itr));
+                moves.add(STACK_LAST_TURN, (*itr));
                 itr.erase();
             }
         }

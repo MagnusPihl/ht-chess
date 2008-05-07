@@ -184,11 +184,6 @@ bool LayeredStack<CONTENT_TYPE, STACK_COUNT>::iterator::operator!= (typename Lay
 }
 
 template <typename CONTENT_TYPE, int STACK_COUNT> 
-void LayeredStack<CONTENT_TYPE, STACK_COUNT>::iterator::erase() {	
-	parent->stack[layerIndex].erase(parent->stack[layerIndex].begin() + stackIndex);
-}
-
-template <typename CONTENT_TYPE, int STACK_COUNT> 
 void LayeredStack<CONTENT_TYPE, STACK_COUNT>::erase(typename LayeredStack<CONTENT_TYPE, STACK_COUNT>::iterator &itr) {
 	stack[itr.layerIndex].erase(parent->stack[itr.layerIndex].begin() + itr.stackIndex);
 }				
