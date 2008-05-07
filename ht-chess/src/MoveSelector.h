@@ -267,7 +267,7 @@ public:
 		Move path;
 		moveList.clear();
 		timeStarted = SDL_GetTicks();
-                for(int i = 2; i <= maxDepth; ++1)
+                for(int i = 2; i <= maxDepth; ++i)
                 {
                     alphaBeta(board, path, isMaximizer, i);
                     moveList.sort();
