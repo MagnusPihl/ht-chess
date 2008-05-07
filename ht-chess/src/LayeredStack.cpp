@@ -77,9 +77,10 @@ template <typename CONTENT_TYPE, int STACK_COUNT>
 void LayeredStack<CONTENT_TYPE, STACK_COUNT>::clear() {
 	for (int i = 0; i < STACK_COUNT; ++i) {
 		stack[i].erase(stack[i].begin(), stack[i].end());
+		valueStack[i].erase(valueStack[i].begin(), valueStack[i].end());
 	}
 	
-	stackPointer.erase(stackPointer.begin() + STACK_COUNT, stackPointer.end());
+	stackPointer.erase(stackPointer.begin() + STACK_COUNT, stackPointer.end());	
 }
 	
 template <typename CONTENT_TYPE, int STACK_COUNT> 
@@ -192,9 +193,33 @@ void LayeredStack<CONTENT_TYPE, STACK_COUNT>::erase(typename LayeredStack<CONTEN
 	stack[itr.layerIndex].erase(parent->stack[itr.layerIndex].begin() + itr.stackIndex);
 }				
 
+//selection sort descending
 template <typename CONTENT_TYPE, int STACK_COUNT> 
-void LayeredStack<CONTENT_TYPE, STACK_COUNT>::sort() {
-	;
+void LayeredStack<CONTENT_TYPE, STACK_COUNT>::sort() {	
+	LayeredStack<CONTENT_TYPE, STACK_COUNT>::iterator unsortedOffset = begin();
+	LayeredStack<CONTENT_TYPE, STACK_COUNT>::iterator end = end();
+	LayeredStack<CONTENT_TYPE, STACK_COUNT>::iterator extremeNode = unsortedOffset;
+	LayeredStack<CONTENT_TYPE, STACK_COUNT>::iterator currentNode = unsortedOffset;
+	CONTENT_TYPE item;	
+	
+	do {
+		extremeNode = unsortedOffset; 				
+		currentNode = extremeNode;
+		++currentNode;
+
+		while (currentNode != firstNode) {
+			if (valueStack[currentNode.layerIndex][currentNode.stackIndex] > valueStack[extremeNode.layerIndex][extremeNode.stackIndex]) {
+				extremeNode = currentNode;
+			}
+			++currentNode;
+		}
+
+		item = (*unsortedOffset);
+		(*unsortedOffset) = (*extremeNode);
+		(*extremeNode) = item;
+		
+		++unsortedOffset;
+	} while (unsortedOffset != end);
 }
 	
 template <typename CONTENT_TYPE, int STACK_COUNT> 
