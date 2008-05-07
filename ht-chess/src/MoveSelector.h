@@ -138,7 +138,7 @@ private:
 	int alphaBeta(Board &board, Move &path, bool isMaximizer=true, int curDepth=0,
 		int maxDepth=100, int alpha=-100000, int beta=100000)
 	{
-		//printf("før\n");
+		//printf("fï¿½r\n");
 		if(SDL_GetTicks() - timeStarted > MAX_SEARCH_TIME)
 		{
 			return 0;
@@ -150,10 +150,8 @@ private:
 		}
 		else if(isMaximizer)	//if maximizer
 		{
-			moveGen.generateMoves(board, WHITE, moveList);						
-			
-			LayeredStack<Move, STACK_SIZE>::iterator itr;									
-			
+			moveGen.generateMoves(board, WHITE, moveList);	
+			LayeredStack<Move, STACK_SIZE>::iterator itr;	
 			for(itr = moveList.begin(); (itr != moveList.end()) && (alpha < beta); ++itr)
 			{	
 				moveList.setReturnPoint();
@@ -163,8 +161,6 @@ private:
 				if(V > alpha)
 				{
 					alpha = V;
-					if(curDepth==0)
-						path = (*itr);
 					if(curDepth==2)
 						nextMove[0] = (*itr);
 				}
@@ -189,10 +185,65 @@ private:
 				if(V < beta)
 				{
 					beta = V;
-					if(curDepth==0)
-						path = (*itr);
 					if(curDepth==2)
 						nextMove[1] = (*itr);
+				}
+				(*itr).unexecute(board);
+				
+				moveList.rollBack();
+			}
+			
+			return beta;
+		}
+	}
+        
+        int alphaBeta(Board &board, Move &path, bool isMaximizer=true, int maxDepth=100, 
+                int alpha=-100000, int beta=100000)
+	{
+		//printf("fï¿½r\n");
+		if(SDL_GetTicks() - timeStarted > MAX_SEARCH_TIME)
+		{
+			return 0;
+		}
+		else if(isMaximizer)	//if maximizer
+		{
+			moveGen.generateMoves(board, WHITE, moveList);	
+			LayeredStack<Move, STACK_SIZE>::iterator itr;	
+			for(itr = moveList.begin(); (itr != moveList.end()) && (alpha < beta); ++itr)
+			{	
+				moveList.setReturnPoint();
+			
+				(*itr).execute(board);				
+				int V = alphaBeta(board, path, false, 1, maxDepth, alpha, beta);
+				if(V > alpha)
+				{
+					alpha = V;
+                                        moveList.setValue(itr, V);
+					path = (*itr);
+				}
+				(*itr).unexecute(board);
+				
+				moveList.rollBack();
+			}	
+			return alpha;
+		}
+		else	//if minimizer
+		{
+			moveGen.generateMoves(board, BLACK, moveList);
+			
+			LayeredStack<Move, STACK_SIZE>::iterator itr;									
+			
+			for(itr = moveList.begin(); (itr != moveList.end()) && (alpha < beta); ++itr)
+			{
+				moveList.setReturnPoint();
+				
+				(*itr).execute(board);
+				int V = alphaBeta(board, path, true, curDepth+1, maxDepth, alpha, beta);
+				if(V < beta)
+				{
+					beta = V;
+                                        moveList.setValue(itr, V);
+					path = (*itr);
 				}
 				(*itr).unexecute(board);
 				
@@ -217,7 +268,7 @@ public:
 		Move path;
 		moveList.clear();
 		timeStarted = SDL_GetTicks();
-		alphaBeta(board, path, isMaximizer, 0, maxDepth);
+		alphaBeta(board, path, isMaximizer, maxDepth);
 		if(path.getContent() != NO_PIECE)
 			evaluator.clearCache();
 		/*printf("k efter:	%i\n", killerMoveList.size());
