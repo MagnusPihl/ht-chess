@@ -16,6 +16,8 @@ private:
 	
 	std::vector<CONTENT_TYPE> stack[STACK_COUNT];
 	std::vector<int> stackPointer;			
+	std::vector<int> valueStack[STACK_COUNT];
+	//std::heap
 	
 public:
 
@@ -107,6 +109,8 @@ public:
 	void erase(iterator &itr);
 	
 	void sort();
+	
+	void setValue(iterator &itr, int value);
 };
 
 #endif
