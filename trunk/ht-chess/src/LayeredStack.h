@@ -38,6 +38,8 @@ public:
 		
 			iterator();	
 		
+			iterator(iterator &itr);	
+			
 			CONTENT_TYPE & operator*();
 			
 			/**

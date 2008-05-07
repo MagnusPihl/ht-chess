@@ -126,7 +126,12 @@ int LayeredStack<CONTENT_TYPE, STACK_COUNT>::size() {
 template <typename CONTENT_TYPE, int STACK_COUNT> 
 LayeredStack<CONTENT_TYPE, STACK_COUNT>::iterator::iterator() :
 	parent(NULL), layerIndex(0), stackIndex(0) {	
-}			
+}
+
+template <typename CONTENT_TYPE, int STACK_COUNT> 
+LayeredStack<CONTENT_TYPE, STACK_COUNT>::iterator::iterator(typename LayeredStack<CONTENT_TYPE, STACK_COUNT>::iterator &itr) :
+	parent(itr.parent), layerIndex(itr.layerIndex), stackIndex(itr.stackIndex) {		
+}						
 
 template <typename CONTENT_TYPE, int STACK_COUNT> 
 LayeredStack<CONTENT_TYPE, STACK_COUNT>::iterator::iterator(LayeredStack *_parent, int _layerIndex, int _stackIndex) :
@@ -190,19 +195,26 @@ void LayeredStack<CONTENT_TYPE, STACK_COUNT>::erase(typename LayeredStack<CONTEN
 
 //selection sort descending
 template <typename CONTENT_TYPE, int STACK_COUNT> 
-void LayeredStack<CONTENT_TYPE, STACK_COUNT>::sort() {	
+void LayeredStack<CONTENT_TYPE, STACK_COUNT>::sort() {		
 	LayeredStack<CONTENT_TYPE, STACK_COUNT>::iterator unsortedOffset = begin();
-	LayeredStack<CONTENT_TYPE, STACK_COUNT>::iterator end = end();
-	LayeredStack<CONTENT_TYPE, STACK_COUNT>::iterator extremeNode = unsortedOffset;
-	LayeredStack<CONTENT_TYPE, STACK_COUNT>::iterator currentNode = unsortedOffset;
+	LayeredStack<CONTENT_TYPE, STACK_COUNT>::iterator endNode = end();
+	LayeredStack<CONTENT_TYPE, STACK_COUNT>::iterator extremeNode = begin();
+	LayeredStack<CONTENT_TYPE, STACK_COUNT>::iterator currentNode = begin();
 	CONTENT_TYPE item;	
+	
+	for (int i = 0; i < STACK_COUNT; i++) {
+		if (stack[i].size() > valueStack[i].size()) {
+			valueStack[i].insert(valueStack[i].end(), stack[i].size() - valueStack[i].size(), INVALID_BOARD_VALUE);
+		}
+	}
 	
 	do {
 		extremeNode = unsortedOffset; 				
 		currentNode = extremeNode;
 		++currentNode;
 
-		while (currentNode != firstNode) {
+		while (currentNode != endNode) {
+			//if (valueStack[extremeNode.layerIndex][extremeNode.stackIndex] == INVALID_BOARD_VALUE)
 			if (valueStack[currentNode.layerIndex][currentNode.stackIndex] > valueStack[extremeNode.layerIndex][extremeNode.stackIndex]) {
 				extremeNode = currentNode;
 			}
@@ -214,12 +226,12 @@ void LayeredStack<CONTENT_TYPE, STACK_COUNT>::sort() {
 		(*extremeNode) = item;
 		
 		++unsortedOffset;
-	} while (unsortedOffset != end);
+	} while (unsortedOffset != endNode);
 }
 	
 template <typename CONTENT_TYPE, int STACK_COUNT> 
 void LayeredStack<CONTENT_TYPE, STACK_COUNT>::setValue(typename LayeredStack<CONTENT_TYPE, STACK_COUNT>::iterator &itr, int value) {	
-	if (valueStack[itr.layerIndex].capacity() <= itr.stackIndex) {
+	if (valueStack[itr.layerIndex].size() <= itr.stackIndex) {
 		valueStack[itr.layerIndex].insert(valueStack[itr.layerIndex].end(), itr.stackIndex - valueStack[itr.layerIndex].size() + 1, INVALID_BOARD_VALUE);
 	}
 	valueStack[itr.layerIndex][itr.stackIndex] = value;
