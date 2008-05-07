@@ -54,7 +54,7 @@ void MoveGenerator::generateMoves(Board &board, Color color, LayeredStack<Move, 
 		}
 	}
         LayeredStack<Move, STACK_SIZE>::iterator itr;
-        for(itr = moveList.begin(); itr != moveList.end(); ++itr) 
+        for(itr = moves.begin(); itr != moves.end(); ++itr) 
         {
             if((*itr).getNewPosition() == pos)
             {
