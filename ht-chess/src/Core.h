@@ -54,6 +54,8 @@ private:
 	LayeredStack<Move, STACK_SIZE> moveList;
 	BoardRenderer renderer;
 	Board board;
+        Position cappedPos;
+        Move curMove;
 #ifdef TEST_PERFORMANCE
 	int performanceTimer;
 	int turnCounter;
@@ -89,6 +91,7 @@ public:
 		fullOverlay = SDL_CreateRGBSurface(SDL_HWSURFACE, 600, 600, 32, 0, 0, 0, 100);
 		//SDL_SetAlpha(fullOverlay, SDL_SRCALPHA, 128);
 		SDL_SetColorKey(fullOverlay, SDL_SRCCOLORKEY, SDL_MapRGB(fullOverlay->format, 255, 0, 255));
+                cappedPos = -1;
 #ifdef TEST_PERFORMANCE
 		turnCounter=0;
 		performanceFile.open ("TestPerformance.m");
@@ -146,12 +149,26 @@ public:
 			}*/
 			if(gameTurn == WHITE && !player1IsHuman)
 			{
-				moveSelector(board, true).execute(board);
+                                curMove = moveSelector(board, true);
+                                if(curMove.getContent() != NO_PIECE) {
+                                    cappedPos = curMove.getNewPosition();
+                                }
+                                else {
+                                    cappedPos = -1;
+                                }
+				curMove.execute(board);
 				turnDone = true;
 			}
 			else if(gameTurn == BLACK && !player2IsHuman)
 			{
-				moveSelector(board, false).execute(board);
+                                curMove = moveSelector(board, false);
+                                if(curMove.getContent() != NO_PIECE) {
+                                    cappedPos = curMove.getNewPosition();
+                                }
+                                else {
+                                    cappedPos = -1;
+                                }
+				curMove.execute(board);
 				turnDone = true;
 			}
 
@@ -227,6 +244,14 @@ public:
 										selectedPiece = -1;
 										turnDone = true;
 										(*itr).execute(board);
+                                                                                if((*itr).getContent() != NO_PIECE)
+                                                                                {
+                                                                                    cappedPos = (*itr).getNewPosition();
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    cappedPos = -1;
+                                                                                }
 										//printf("The material value of white: %i, and black: %i\n", board.getMaterialValue(WHITE), board.getMaterialValue(BLACK));
 										break;
 									}
