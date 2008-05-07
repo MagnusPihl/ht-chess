@@ -219,6 +219,9 @@ void LayeredStack<CONTENT_TYPE, STACK_COUNT>::sort() {
 	
 template <typename CONTENT_TYPE, int STACK_COUNT> 
 void LayeredStack<CONTENT_TYPE, STACK_COUNT>::setValue(typename LayeredStack<CONTENT_TYPE, STACK_COUNT>::iterator &itr, int value) {	
+	if (valueStack[itr.layerIndex].capacity() <= itr.stackIndex) {
+		valueStack[itr.layerIndex].insert(valueStack[itr.layerIndex].end(), itr.stackIndex - valueStack[itr.layerIndex].size() + 1, INVALID_BOARD_VALUE);
+	}
 	valueStack[itr.layerIndex][itr.stackIndex] = value;
 }
 
