@@ -17,7 +17,7 @@
 int threadfunc(void *unused)
 {
     HttpTest http;
-	http.getIncoming();
+	http.run();
 	return 0;
 }
 
