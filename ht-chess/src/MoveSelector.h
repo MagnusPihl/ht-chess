@@ -267,7 +267,11 @@ public:
 		Move path;
 		moveList.clear();
 		timeStarted = SDL_GetTicks();
-		alphaBeta(board, path, isMaximizer, maxDepth);
+                for(int i = 2; i <= maxDepth; ++1)
+                {
+                    alphaBeta(board, path, isMaximizer, i);
+                    moveList.sort();
+                }
 		if(path.getContent() != NO_PIECE)
 			evaluator.clearCache();
 		/*printf("k efter:	%i\n", killerMoveList.size());
