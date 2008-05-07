@@ -11,6 +11,7 @@ class MoveGenerator;
 static int PAWN_DIRECTION[2] = {-1, 1}; //0 = black, 1 = white
 static int PAWN_ENPASSANT_TAKE_ROW[2] = {ROW_3, ROW_6}; //0 = black, 1 = white
 static int PAWN_ENPASSANT_CONTENT_ROW[2] = {ROW_4, ROW_5}; //0 = black, 1 = white
+#define INVALID_BOARD_VALUE 0xFFFFFFFF
 
 class Move
 {
@@ -62,6 +63,11 @@ private:
 	* Whene creating a move just pass in the corresponding field in board.
 	*/
 	int reversableMoves;
+	
+	/**
+	* The resulting board value, this value is relative to the player color passed to the evaluator
+	*/
+	//int boardValue;
 
 public:
 
@@ -90,6 +96,8 @@ public:
 	*	helps in calculating castling.
 	* param: Position, enPassantPosition - position where en-passant was available before the move.	
 	* param: Defines how many turns were executed since the last ireversable move.
+	*
+	* the board value field is set to INVALID_BOARD_VALUE
 	*/
 	Move(Position _from, 
 		Position _to, 
@@ -127,13 +135,19 @@ public:
 	* Get position where piece should be moved from
 	* return: Position - position
 	*/
-	Position getOldPosition();
+	inline Position getOldPosition() {
+		return from;
+	}
+
 	
 	/**
 	* Get position where piece should be moved to
 	* return: Position - position
 	*/	
-	Position getNewPosition();
+	inline Position getNewPosition() {
+		return to;
+	}
+	
 	
 	/**
 	* Get ColoredPiece representing special move.
@@ -141,39 +155,66 @@ public:
 	* Pawn is either promotion or en-passant, derive which from either the new or old position.
 	* return: ColoredPiece
 	*/	
-	ColoredPiece getSpecial();
+	inline ColoredPiece getSpecial() {
+		return special;
+	}
 	
 	/**
 	* Get ColoredPiece being moved.
 	* If a promotion has taken place piece well be the resulting piece.
 	* return: ColoredPiece
 	*/	
-	ColoredPiece getPiece();
+	inline ColoredPiece getPiece() {
+		return piece;
+	}
 	
 	/**
 	* Get ColoredPiece that was captured during the move, if any.
 	* return: ColoredPiece - NO_PIECE if no piece was captured
 	*/	
-	ColoredPiece getContent();
+	inline ColoredPiece getContent() {
+		return content;
+	}
 	
 	/**
 	* Get hasMoved field information, which keeps track of whether
 	* kings and rooks were moved before the move.
 	* return: int - bit mask.
 	*/	
-	int getHasMoved();
+	inline int getHasMoved() {
+		return hasMoved;
+	}
 	
 	/**
 	* Get available en-passant position before move.
 	* return: Position - position.
 	*/	
-	Position getEnPassantPosition();
+	inline Position getEnPassantPosition() {
+		return enPassantPosition;
+	}
 	
 	/**
 	* Get the amount of moves since last ireversable
 	* return: int - reversable move count
 	*/
-	int getReversableMoves();
+	inline int getReversableMoves() {
+		return reversableMoves;
+	}
+		
+	/**
+	* Get the relative board value.
+	* If no value has been set the return will be INVALID_BOARD_VALUE
+	*/
+	/*inline int getBoardValue() {
+		return boardValue;
+	}*/
+	
+	/**
+	* Set the relative board value;
+	*/
+	/*inline void setBoardValue(int value) {
+		boardValue = boardValue;
+	}*/
 };
 
 #endif
