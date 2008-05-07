@@ -198,12 +198,7 @@ private:
         
     int alphaBeta(Board &board, Move &path, bool isMaximizer=true, int maxDepth=100, int alpha=-100000, int beta=100000)
 	{
-		//printf("f�r\n");
-		if(SDL_GetTicks() - timeStarted > MAX_SEARCH_TIME)
-		{
-			return 0;
-		}
-		else if(isMaximizer)	//if maximizer
+		if(isMaximizer)	//if maximizer
 		{
 			moveGen.generateMoves(board, WHITE, moveList);	
 			LayeredStack<Move, STACK_SIZE>::iterator itr;	
@@ -228,7 +223,7 @@ private:
 		}
 		else	//if minimizer
 		{
-			moveGen.generateMoves(board, BLACK, moveList);
+			
 			
 			LayeredStack<Move, STACK_SIZE>::iterator itr;									
 			
@@ -267,11 +262,18 @@ public:
 		Move path;
 		moveList.clear();
 		timeStarted = SDL_GetTicks();
-                for(int i = 2; i <= maxDepth; ++i)
-                {
-                    alphaBeta(board, path, isMaximizer, i);
-                    moveList.sort();
-                }
+		
+		if (isMaximizer) {
+			moveGen.generateMoves(board, WHITE , moveList);
+		} else {
+			moveGen.generateMoves(board, BLACK , moveList);
+		}		
+		
+        for(int i = 2; i <= maxDepth; ++i)
+        {
+            alphaBeta(board, path, isMaximizer, i);
+            moveList.sort();
+        }
 		if(path.getContent() != NO_PIECE)
 			evaluator.clearCache();
 		/*printf("k efter:	%i\n", killerMoveList.size());
