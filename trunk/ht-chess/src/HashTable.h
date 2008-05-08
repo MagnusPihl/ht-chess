@@ -56,9 +56,10 @@ class HashTable {
 public:	
 
 	//constructor
-	explicit HashTable( int size = 4194319/*1048583*/, double load = 1.0 ) 
-		: currentSize(0), collisions(0), /*rehashes(0),*/ loadFactor(load) { 
-		table = new vector<list<BoardValue>>(nextPrime(size));		
+	explicit HashTable( int size = 2097169/*1048583*/, double load = 2.0 ) 
+		: currentSize(0), collisions(
+		0), /*rehashes(0),*/ loadFactor(load) { 
+		table = new vector<vector<BoardValue>>(nextPrime(size));		
 		//distribution.resize(table->size(),0);
 		maxLoad = loadFactor * table->size();
 	}
@@ -67,12 +68,12 @@ public:
 	HashTable(const HashTable &rhs)
 		: currentSize(rhs.currentSize), collisions(rhs.collisions), loadFactor(rhs.loadFactor), maxLoad(rhs.maxLoad) { 
 		/*distribution = rhs.distribution;*/
-		table = new vector<list<BoardValue>>(0);					
+		table = new vector<vector<BoardValue>>(0);					
 		
 		if (!rhs.table->empty()) {
-			vector<list<BoardValue>>::iterator end = rhs.table->end();
+			vector<vector<BoardValue>>::iterator end = rhs.table->end();
 			
-			for (vector<list<BoardValue>>::iterator i = rhs.table->begin(); i != end; ++i) {
+			for (vector<vector<BoardValue>>::iterator i = rhs.table->begin(); i != end; ++i) {
 				table->push_back(*i);
 			}
 		}
@@ -89,8 +90,8 @@ public:
 			collisions = rhs.collisions;
 			maxLoad = rhs.maxLoad;
 						
-			vector<list<BoardValue>>::iterator end = rhs.table->end();
-			for (vector<list<BoardValue>>::iterator i = rhs.table->begin(); i != end; ++i) {
+			vector<vector<BoardValue>>::iterator end = rhs.table->end();
+			for (vector<vector<BoardValue>>::iterator i = rhs.table->begin(); i != end; ++i) {
 				table->push_back(*i);
 			}
 		}
@@ -107,14 +108,15 @@ public:
 		size_t hash = _hash % table->size();
 		
 		if (currentSize > maxLoad) {
+			printf("deleting");
 			clear();
 		}
 		
 		/*if (!(*table)[hash].empty()) {
 
-			list<BoardValue>::iterator end = (*table)[hash].end();
+			vector<BoardValue>::iterator end = (*table)[hash].end();
 
-			for (list<BoardValue>::iterator i = (*table)[hash].begin(); i != end; ++i) {			
+			for (vector<BoardValue>::iterator i = (*table)[hash].begin(); i != end; ++i) {			
 				if (((*i).hash == _hash)&&((*i).lock == _lock)) {	
 					collisions++;
 					return false;
@@ -139,9 +141,9 @@ public:
 		
 		//if (!(*table)[hash].empty()) {
 
-			list<BoardValue>::iterator end = (*table)[hash].end();
+			vector<BoardValue>::iterator end = (*table)[hash].end();
 
-			for (list<BoardValue>::iterator i = (*table)[hash].begin(); i != end; ++i) {			
+			for (vector<BoardValue>::iterator i = (*table)[hash].begin(); i != end; ++i) {			
 				if (((*i).hash == _hash)&&((*i).lock == _lock)) {						
 					//printf("found");
 					return (*i).value;
@@ -158,9 +160,9 @@ public:
 
 		//if (!(*table)[hash].empty()) {
 			
-			list<BoardValue>::iterator end = (*table)[hash].end();
+			vector<BoardValue>::iterator end = (*table)[hash].end();
 			
-			for (list<BoardValue>::iterator i = (*table)[hash].begin(); i != end; ++i) {
+			for (vector<BoardValue>::iterator i = (*table)[hash].begin(); i != end; ++i) {
 				if (((*i).hash == _hash)&&((*i).lock == _lock)) {					
 					(*table)[hash].erase(i);
 					//distribution[hash]--;
@@ -177,8 +179,8 @@ public:
 		unsigned long hash = key.hash % table->size();
 
 		if (!(*table)[hash].empty()) {			
-			list<BoardValue>::iterator i = (*table)[hash].begin();
-			list<BoardValue>::iterator end = (*table)[hash].end();
+			vector<BoardValue>::iterator i = (*table)[hash].begin();
+			vector<BoardValue>::iterator end = (*table)[hash].end();
 			while (i != end) {
 				if ((*i).hash == key) {		
 					return true;
@@ -209,13 +211,13 @@ public:
 		printf("rehash: %i\n", size);
 		size = nextPrime(size);
 		//rehashes++;
-		vector<list<BoardValue>> *temporaryTable = new vector<list<BoardValue>>(size);						
-		vector<list<BoardValue>>::iterator endOfI = table->end();
+		vector<vector<BoardValue>> *temporaryTable = new vector<vector<BoardValue>>(size);						
+		vector<vector<BoardValue>>::iterator endOfI = table->end();
 
-		for (vector<list<BoardValue>>::iterator i = table->begin(); i != endOfI; ++i) {					
-			list<BoardValue>::iterator endOfJ = (*i).end();
+		for (vector<vector<BoardValue>>::iterator i = table->begin(); i != endOfI; ++i) {					
+			vector<BoardValue>::iterator endOfJ = (*i).end();
 
-			for (list<BoardValue>::iterator j = (*i).begin(); j != endOfJ; ++j) {
+			for (vector<BoardValue>::iterator j = (*i).begin(); j != endOfJ; ++j) {
 				temporaryTable->at((*j).hash % size).push_back((*j));
 			}
 		}
@@ -231,7 +233,7 @@ public:
 	public:
 		HashTable *table;
 		int currentList;
-		list<BoardValue>::iterator i;
+		vector<BoardValue>::iterator i;
 
 		//copy constructor
 		Iterator(const Iterator &rhs) {		
@@ -416,9 +418,9 @@ public:
 	//remove all keys
 	void clear() {
 		
-		vector<list<BoardValue>>::iterator end = table->end();
+		vector<vector<BoardValue>>::iterator end = table->end();
 		
-		for (vector<list<BoardValue>>::iterator i = table->begin(); i != end; ++i) {		
+		for (vector<vector<BoardValue>>::iterator i = table->begin(); i != end; ++i) {		
 			(*i).clear();
 		}
 
@@ -474,7 +476,7 @@ private:
 		}
 	}*/
 		
-	vector<list<BoardValue>> *table; // The array of Lists, the // STL list is used
+	vector<vector<BoardValue>> *table; // The array of Lists, the // STL list is used
 	int currentSize; // Number og items in // the hash table
 	//int rehashes; //Number of times the list has been rehashed since creation
 	int collisions; //Number of times an already exsisting key has been tried to be added.
