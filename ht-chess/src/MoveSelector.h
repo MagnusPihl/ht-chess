@@ -1,7 +1,7 @@
 #ifndef MOVESELECTOR_H
 #define MOVESELECTOR_H
 
-#define DEFAULT_PLY 3
+#define DEFAULT_PLY 5
 #define MAX_SEARCH_TIME 15000	//max milliseconds per turn
 
 #include <vector>
@@ -137,13 +137,11 @@ private:
 
 	int alphaBeta(Board &board, Move &path, bool isMaximizer, int curDepth, int maxDepth, int alpha, int beta)
 	{
-		//printf("f?r\n");
-		if(SDL_GetTicks() - timeStarted > MAX_SEARCH_TIME)
-		{
-			return 0;
+		if (SDL_GetTicks() - timeStarted > MAX_SEARCH_TIME) {
+			printf("time\n");
 		}
 		evaluator(board, curDepth);
-		if(curDepth == maxDepth || board.isCheckmate() || board.isStalemate())		//if leaf
+		if((SDL_GetTicks() - timeStarted > MAX_SEARCH_TIME) || curDepth == maxDepth || board.isCheckmate() || board.isStalemate())		//if leaf
 		{
 			//printf("efter\n");
 			return evaluator(board, curDepth);
@@ -270,13 +268,17 @@ public:
 			moveGen.generateMoves(board, BLACK , moveList);
 		}		
 		
-        for(int i = 2; i <= maxDepth; ++i)
+        for(int i = 2; i <= maxDepth; ++i)       
         {
+			if (SDL_GetTicks() - timeStarted > MAX_SEARCH_TIME) {
+				printf("time %i\n", i);
+				break;
+			}
             alphaBeta(board, path, isMaximizer, i);
             moveList.sort();
-        }
-		//if(path.getContent() != NO_PIECE)
-			evaluator.clearCache();
+        }        
+		/*if(path.getContent() != NO_PIECE)
+			evaluator.clearCache();*/
 		/*printf("k efter:	%i\n", killerMoveList.size());
 		printf("m efter:	%i\n", moveList.size());*/
 		/*moveFile << "moveList.push_back(Move(" << path.getOldPosition() << ", " << path.getNewPosition() << ", " << path.getSpecial();

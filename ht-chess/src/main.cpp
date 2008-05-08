@@ -23,30 +23,10 @@ int threadfunc(void *unused)
 
 int main(int argc, char *argv[])
 {
-		
-	LayeredStack<Move, 3> stack;
-	stack.clear();
-
-    stack.add(0, Move(A1, A1, NO_PIECE, KNIGHT_BLACK, PAWN_WHITE, 0, INVALID_POSITION, 0));
-	stack.add(1, Move(A2, A2, NO_PIECE, KNIGHT_BLACK, PAWN_WHITE, 0, INVALID_POSITION, 0));
-	stack.add(2, Move(A3, A3, NO_PIECE, KNIGHT_BLACK, PAWN_WHITE, 0, INVALID_POSITION, 0));
-    stack.setReturnPoint();
-    stack.add(0, Move(B1, A1, NO_PIECE, KNIGHT_BLACK, PAWN_WHITE, 0, INVALID_POSITION, 0));
-	stack.add(1, Move(B2, A2, NO_PIECE, KNIGHT_BLACK, PAWN_WHITE, 0, INVALID_POSITION, 0));
-	stack.add(2, Move(B3, A3, NO_PIECE, KNIGHT_BLACK, PAWN_WHITE, 0, INVALID_POSITION, 0));
-    
-    
-    LayeredStack<Move, 3>::iterator i;
+	/*BoardValue val = BoardValue(1,2,3);
 	
-	for (i = stack.begin(); i != stack.end(); ++i) {
-		printf("%i\n", (*i).getOldPosition());
-	}
-	
-	stack.rollBack();
-	
-	for (i = stack.begin(); i != stack.end(); ++i) {
-		printf("%i\n", (*i).getOldPosition());
-	}
+	printf("%i, %i, %i\n", val.hash, val.lock, val.value);	
+	printf("%i, %i, %i\n", BoardValue(1,2,3).hash, BoardValue(1,2,3).lock, BoardValue(1,2,3).value);	*/
 	
 	
 	

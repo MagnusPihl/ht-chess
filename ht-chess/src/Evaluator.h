@@ -8,7 +8,7 @@
 #define EVALUATOR_H
 
 #include "LayeredStack.h"
-#include <hash_map>
+#include "HashTable.h"
 #include "Move.h"
 
 #define PHASE_1 0x01
@@ -41,19 +41,27 @@ private:
     int threatsWhite;
     Color currentColor;
     int gamePhase;
+    bool cacheValue;
     LayeredStack<Move, STACK_SIZE> moves;
 
-	typedef std::pair<int, int> boardValue;
-	stdext::hash_map<int, boardValue> cache;
+	//typedef std::pair<int, int> boardValue;	
+	HashTable cache;    
     
     int evaluate(Board &board, int ply)
 	{
-#ifdef EVALUATOR_CACHE
-		boardValue v = cache[board.getHashKey()];
-		boardValue va;
-		if(true)//v.first == 0 || v.first != board.getHashLock())
-		{
+	//printf("cols: %i\n", cache.getCollisions);
+#ifdef EVALUATOR_CACHE				
+		int hash = board.getHashKey();
+		int lock = board.getHashLock();		
+		int value = cache.get(hash, lock);
+		
+		if(value != INVALID_BOARD_VALUE)//v.first == 0 || v.first != board.getHashLock())
+		{	
+			//printf("cached: %i\n", hash);
+			return value;
+		} else {
 			//printf("Not cached. Hash: %i, Lock: %i, Cached Lock: %i.\n", board.getHashKey(), board.getHashLock(), v.first);
+			cacheValue = true;
 #endif
 			Position pos;
 			materialValueBlack = board.getMaterialValue(BLACK);
@@ -79,7 +87,7 @@ private:
 			if(board.hasPerformedCastling(BLACK))
 				valueBlack = 16;
 			if(board.hasPerformedCastling(WHITE))
-				valueBlack = 16;
+				valueWhite = 16;
 	        
 			for(int i = 0; i < 8; ++i)
 			{
@@ -127,7 +135,8 @@ private:
 							case KING:
 								//antal trÃ¦k fra MATE!
 								if(board.isCheckmate(currentColor)) {
-									//tempValue -= 1000 * ply;
+									tempValue -= 1000 * ply;
+									cacheValue = false;
 								}
 								if(gamePhase == PHASE_2){
 									tempValue -= GLOBAL_distance[pos];
@@ -150,7 +159,8 @@ private:
 							case KING:
 								//antal træk fra MATE!
 								if(board.isCheckmate(currentColor)) {
-									//tempValue -= 1000 * ply;
+									tempValue -= 1000 * ply;
+									cacheValue = false;
 								}
 								if((materialValueBlack < 600 && currentColor == BLACK) || (materialValueWhite < 600 && currentColor == WHITE))
 									tempValue -= 8 * GLOBAL_distance[pos];
@@ -202,21 +212,21 @@ private:
 			valueWhite += materialValueWhite;
 			valueBlack += materialValueBlack;
 		    
-#ifdef EVALUATOR_CACHE
-//			boardValue va;
-			va.first = board.getHashLock();
-			va.second = valueWhite - valueBlack;
-			cache[board.getHashKey()] = va;
+#ifdef EVALUATOR_CACHE			
+			if (cacheValue) {
+				if (!cache.insert(hash, lock, valueWhite - valueBlack)) {
+					//printf("cache collision: %i\n", cache.getCollisions());
+				}
+			}
 #endif
-			//return valueWhite - valueBlack;
+			//printf("calced_ %i\n", valueWhite - valueBlack);					
+			if (value != INVALID_BOARD_VALUE && value) {
+				//printf("%i - %i!\n", value, valueWhite - valueBlack);
+			}
+			return valueWhite - valueBlack;
 #ifdef EVALUATOR_CACHE
+
 		}
-		if(v.first == board.getHashLock())// && v.first!=0)
-		{
-			printf("Cached! Hash: %i, Lock: %i, Cached Lock: %i.\n", board.getHashKey(), board.getHashLock(), v.first);
-			printf("\tCached value: %i, Actual value: %i.\n", v.second, va.second);
-		}
-		return va.second;	//v.second
 #endif
 	}
 
@@ -244,7 +254,7 @@ public:
 		currentColor = WHITE;
 	}
 
-    int operator()(Board board, int depth)
+    int operator()(Board &board, int depth)
 	{
         return evaluate(board, depth);
     }
@@ -252,7 +262,7 @@ public:
 	void clearCache()
 	{
 #ifdef EVALUATOR_CACHE
-		//cache.clear();
+		cache.clear();
 		//printf("Cache elements: %i\n", cache.size());
 #endif
 	}
