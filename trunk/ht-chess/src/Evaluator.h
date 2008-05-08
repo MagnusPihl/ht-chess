@@ -15,7 +15,7 @@
 #define PHASE_2 0x02
 #define END_GAME 0x04
 
-//#define EVALUATOR_CACHE
+#define EVALUATOR_CACHE
 
 int GLOBAL_pawRow[8] = {0, 0, -1, 0, 2, 14, 30, 0};
 int GLOBAL_pawColumn[8] = {-2, 0, 3, 4, 5, 1, -2, -2};
@@ -28,7 +28,6 @@ int GLOBAL_distance[128] =
 			 3, 2, 1, 1, 1, 1, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0,
 			 3, 2, 2, 2, 2, 2, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0,
 			 3, 3, 3, 3, 3, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0};
-
 
 class Evaluator {
 private:
@@ -43,16 +42,19 @@ private:
     Color currentColor;
     int gamePhase;
     LayeredStack<Move, STACK_SIZE> moves;
-	stdext::hash_map<int, int> cache;
+
+	typedef std::pair<int, int> boardValue;
+	stdext::hash_map<int, boardValue> cache;
     
     int evaluate(Board &board, int ply)
 	{
-		//printf("Evaluating. Hash: %i, Cache: %i. ", board.getHashKey(), cache[board.getHashKey()]);
 #ifdef EVALUATOR_CACHE
-		if(!cache[board.getHashKey()])
+		boardValue v = cache[board.getHashKey()];
+		boardValue va;
+		if(true)//v.first == 0 || v.first != board.getHashLock())
 		{
+			//printf("Not cached. Hash: %i, Lock: %i, Cached Lock: %i.\n", board.getHashKey(), board.getHashLock(), v.first);
 #endif
-		//	printf("Calculating new value.\n");
 			Position pos;
 			materialValueBlack = board.getMaterialValue(BLACK);
 			materialValueWhite = board.getMaterialValue(WHITE);
@@ -125,7 +127,7 @@ private:
 							case KING:
 								//antal trÃ¦k fra MATE!
 								if(board.isCheckmate(currentColor)) {
-									tempValue -= 1000 * ply;
+									//tempValue -= 1000 * ply;
 								}
 								if(gamePhase == PHASE_2){
 									tempValue -= GLOBAL_distance[pos];
@@ -148,7 +150,7 @@ private:
 							case KING:
 								//antal træk fra MATE!
 								if(board.isCheckmate(currentColor)) {
-									tempValue -= 100 * ply;
+									//tempValue -= 1000 * ply;
 								}
 								if((materialValueBlack < 600 && currentColor == BLACK) || (materialValueWhite < 600 && currentColor == WHITE))
 									tempValue -= 8 * GLOBAL_distance[pos];
@@ -201,13 +203,20 @@ private:
 			valueBlack += materialValueBlack;
 		    
 #ifdef EVALUATOR_CACHE
-			cache[board.getHashKey()] = valueWhite - valueBlack;
+//			boardValue va;
+			va.first = board.getHashLock();
+			va.second = valueWhite - valueBlack;
+			cache[board.getHashKey()] = va;
 #endif
-			return valueWhite - valueBlack;
+			//return valueWhite - valueBlack;
 #ifdef EVALUATOR_CACHE
 		}
-	//	printf("Using cached value.\n");
-		return cache[board.getHashKey()];
+		if(v.first == board.getHashLock())// && v.first!=0)
+		{
+			printf("Cached! Hash: %i, Lock: %i, Cached Lock: %i.\n", board.getHashKey(), board.getHashLock(), v.first);
+			printf("\tCached value: %i, Actual value: %i.\n", v.second, va.second);
+		}
+		return va.second;	//v.second
 #endif
 	}
 
@@ -242,7 +251,10 @@ public:
 
 	void clearCache()
 	{
-		cache.clear();
+#ifdef EVALUATOR_CACHE
+		//cache.clear();
+		//printf("Cache elements: %i\n", cache.size());
+#endif
 	}
 };
 

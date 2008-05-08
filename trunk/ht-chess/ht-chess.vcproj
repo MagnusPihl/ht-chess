@@ -115,7 +115,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories=""
+				AdditionalIncludeDirectories="D:\Programmer\boost\boost_1_34_1;E:\boost;&quot;C:\Program Files\boost\boost_1_34_1&quot;;&quot;../ht-chess/src&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -136,7 +136,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="SDL_ttf.lib SDL_net.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="&quot;C:\Program Files\boost\boost_1_34_1\lib&quot;;D:\Programmer\boost\boost_1_34_1\lib;E:\boost\lib;&quot;${SolutionDir}\ht-chess\Release&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -215,6 +215,10 @@
 			</File>
 			<File
 				RelativePath=".\src\Evaluator.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\HashTable.h"
 				>
 			</File>
 			<File

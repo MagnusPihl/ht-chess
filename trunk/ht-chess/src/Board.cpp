@@ -2,18 +2,46 @@
 #define BOARD_CPP
 
 #include "Board.h"
-
+#include <boost/random/linear_congruential.hpp>
+#include <boost/random/uniform_real.hpp>
+#include <boost/random/variate_generator.hpp>
 
 Board::Board() : content(std::vector<ColoredPiece>(CONTENT_SIZE)), moveList(LayeredStack<Move, STACK_SIZE>())
 {
+	boost::minstd_rand generator(42u);
+	boost::uniform_real<> uni_dist(0, 2000000000);
+	boost::variate_generator<boost::minstd_rand, boost::uniform_real<> >
+	uni(generator, uni_dist);
 	for(int i=0; i<128; i++)
 	{
 		for(int j=0; j<128; j++)
 		{
-			hashKeyComponents[i][j] = rand();
-			hashLockComponents[i][j] = rand();
+			hashKeyComponents[i][j] = (int)uni();
+			hashLockComponents[i][j] = (int)uni();
 		}
 	}
+	int collissions = 0;
+	int zeroFilled = 0;
+	for(int i=0; i<128; i++)
+	{
+		for(int j=0; j<128; j++)
+		{
+			for(int k=0; k<128; k++)
+			{
+				for(int l=0; l<128; l++)
+				{
+					if(hashKeyComponents[i][j] == hashKeyComponents[k][l])
+						collissions++;
+					if(hashLockComponents[i][j] == hashLockComponents[k][l])
+						collissions++;
+				}
+			}
+			if(hashLockComponents[i][j] == 0)
+				zeroFilled++;
+		}
+	}
+	printf("Key collissions: %i, zero filled locks: %i\n", collissions, zeroFilled);
+
 	resetBoard();
 }
 
@@ -30,27 +58,6 @@ Board::Board(const Board& rhs) : content(std::vector<ColoredPiece>(CONTENT_SIZE)
 			hashLockComponents[i][j] = rand();
 		}
 	}
-	
-	//hashToPieceMap[0] = PAWN_WHITE;		hashToPieceMap[2] = ROOK_WHITE;		hashToPieceMap[2] = KNIGHT_WHITE;
-	//hashToPieceMap[3] = BISHOP_WHITE;	hashToPieceMap[4] = QUEEN_WHITE;	hashToPieceMap[5] = QUEEN_WHITE;
-	//hashToPieceMap[6] = PAWN_BLACK;		hashToPieceMap[7] = ROOK_BLACK;		hashToPieceMap[8] = KNIGHT_BLACK;
-	//hashToPieceMap[9] = BISHOP_BLACK;	hashToPieceMap[10] = QUEEN_BLACK;	hashToPieceMap[11] = QUEEN_BLACK;
-	//hashToPositionMap[0] =  A1;	hashToPositionMap[1] =  A2;	hashToPositionMap[2] =  A3;	hashToPositionMap[3] =  A4;
-	//hashToPositionMap[4] =  A5;	hashToPositionMap[5] =  A6;	hashToPositionMap[6] =  A7;	hashToPositionMap[7] =  A8;
-	//hashToPositionMap[8] =  B1;	hashToPositionMap[9] =  B2;	hashToPositionMap[10] = B3;	hashToPositionMap[11] = B4;
-	//hashToPositionMap[12] = B5;	hashToPositionMap[13] = B6;	hashToPositionMap[14] = B7;	hashToPositionMap[15] = B8;
-	//hashToPositionMap[16] = C1;	hashToPositionMap[17] = C2;	hashToPositionMap[18] = C3;	hashToPositionMap[19] = C4;
-	//hashToPositionMap[20] = C5;	hashToPositionMap[21] = C6;	hashToPositionMap[22] = C7;	hashToPositionMap[23] = C8;
-	//hashToPositionMap[24] = D1;	hashToPositionMap[25] = D2;	hashToPositionMap[26] = D3;	hashToPositionMap[27] = D4;
-	//hashToPositionMap[28] = D5;	hashToPositionMap[29] = D6;	hashToPositionMap[30] = D7;	hashToPositionMap[31] = D8;
-	//hashToPositionMap[32] = E1;	hashToPositionMap[33] = E2;	hashToPositionMap[34] = E3;	hashToPositionMap[35] = E4;
-	//hashToPositionMap[36] = E5;	hashToPositionMap[37] = E6;	hashToPositionMap[38] = E7;	hashToPositionMap[39] = E8;
-	//hashToPositionMap[40] = F1;	hashToPositionMap[41] = F2;	hashToPositionMap[42] = F3;	hashToPositionMap[43] = F4;
-	//hashToPositionMap[44] = F5;	hashToPositionMap[45] = F6;	hashToPositionMap[46] = F7;	hashToPositionMap[47] = F8;
-	//hashToPositionMap[48] = G1;	hashToPositionMap[49] = G2;	hashToPositionMap[50] = G3;	hashToPositionMap[51] = G4;
-	//hashToPositionMap[52] = G5;	hashToPositionMap[53] = G6;	hashToPositionMap[54] = G7;	hashToPositionMap[55] = G8;
-	//hashToPositionMap[56] = H1;	hashToPositionMap[57] = H2;	hashToPositionMap[58] = H3;	hashToPositionMap[59] = H4;
-	//hashToPositionMap[60] = H5;	hashToPositionMap[61] = H6;	hashToPositionMap[62] = H7;	hashToPositionMap[63] = H8;
 
 	for (int i = 0; i < CONTENT_SIZE; ++i)
 	{

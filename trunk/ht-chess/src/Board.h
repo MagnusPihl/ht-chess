@@ -94,8 +94,6 @@ private:
 	/**
 	* Tables holding random (static) values to generate hash values.
 	*/
-	int hashToPositionMap[64];
-	int hashToPieceMap[12];
 	int hashKeyComponents[128][128];
 	int hashLockComponents[128][128];
 	
