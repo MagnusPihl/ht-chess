@@ -8,7 +8,7 @@
 #define EVALUATOR_H
 
 #include "LayeredStack.h"
-#include "HashTable.h"
+#include "ValueCache.h"
 #include "Move.h"
 
 #define PHASE_1 0x01
@@ -45,7 +45,7 @@ private:
     LayeredStack<Move, STACK_SIZE> moves;
 
 	//typedef std::pair<int, int> boardValue;	
-	HashTable cache;    
+	ValueCache cache;    
     
     int evaluate(Board &board, int ply)
 	{
