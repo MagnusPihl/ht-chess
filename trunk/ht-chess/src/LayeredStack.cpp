@@ -201,6 +201,7 @@ void LayeredStack<CONTENT_TYPE, STACK_COUNT>::sort() {
 	LayeredStack<CONTENT_TYPE, STACK_COUNT>::iterator extremeNode = begin();
 	LayeredStack<CONTENT_TYPE, STACK_COUNT>::iterator currentNode = begin();
 	CONTENT_TYPE item;	
+	int valueA, valueB;
 	
 	for (int i = 0; i < STACK_COUNT; i++) {
 		if (stack[i].size() > valueStack[i].size()) {
@@ -213,11 +214,21 @@ void LayeredStack<CONTENT_TYPE, STACK_COUNT>::sort() {
 		currentNode = extremeNode;
 		++currentNode;
 
-		while (currentNode != endNode) {
-			//if (valueStack[extremeNode.layerIndex][extremeNode.stackIndex] == INVALID_BOARD_VALUE)
-			if (valueStack[currentNode.layerIndex][currentNode.stackIndex] > valueStack[extremeNode.layerIndex][extremeNode.stackIndex]) {
-				extremeNode = currentNode;
+		while (currentNode != endNode) {	
+			valueA = valueStack[currentNode.layerIndex][currentNode.stackIndex];
+			valueB = valueStack[extremeNode.layerIndex][extremeNode.stackIndex];
+			if (valueA != INVALID_BOARD_VALUE) {
+				if (valueB != INVALID_BOARD_VALUE) {
+					if (valueA > valueB) {
+						extremeNode = currentNode;
+					}
+				} else {
+					extremeNode = currentNode;
+				}
 			}
+			/*if (valueStack[currentNode.layerIndex][currentNode.stackIndex] > valueStack[extremeNode.layerIndex][extremeNode.stackIndex]) {
+				extremeNode = currentNode;
+			}*/
 			++currentNode;
 		}
 
