@@ -353,4 +353,24 @@ public:
 	int getHashLock();
 };
 
+
+struct BoardValue {
+	int hash;
+	int lock;
+	int value;
+	
+	BoardValue(int hash, int lock, int value) : hash(hash), lock(lock), value(value) {}
+	
+	bool operator==(BoardValue &rhs) {
+		if ((hash == rhs.hash)&&(lock == rhs.lock)&&(value == rhs.value)) {
+			return true;
+		}
+		return false;
+	}
+	
+	bool operator!=(BoardValue &rhs) {
+		return !(*this == rhs);
+	}
+};
+
 #endif

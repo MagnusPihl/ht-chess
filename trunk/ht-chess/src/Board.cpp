@@ -50,6 +50,7 @@ Board::Board() : content(std::vector<ColoredPiece>(CONTENT_SIZE)), moveList(Laye
 
 Board::Board(const Board& rhs) : content(std::vector<ColoredPiece>(CONTENT_SIZE)), moveList(LayeredStack<Move, STACK_SIZE>())
 {
+	printf("das dhas djsalkd sa");
 	for(int i=0; i<128; i++)
 	{
 		for(int j=0; j<128; j++)

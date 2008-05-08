@@ -136,7 +136,7 @@ public:
 				gameTurn = GET_OPPOSITE_COLOR(gameTurn);
 				turnDone = false;
 			}
-			/*if(board.isCheckmate(gameTurn) && gameTurn!=0)
+			if(board.isCheckmate(gameTurn) && gameTurn!=0)
 			{
 				printf("Checkmate!\n");
 				gameTurn=NO_COLOR;
@@ -145,7 +145,7 @@ public:
 			{
 				printf("Stalemate!\n");
 				gameTurn=NO_COLOR;
-			}*/
+			}
 			if(gameTurn == WHITE && !player1IsHuman)
 			{
                                 curMove = moveSelector(board, true);

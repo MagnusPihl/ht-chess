@@ -209,7 +209,7 @@ void LayeredStack<CONTENT_TYPE, STACK_COUNT>::sort() {
 		}
 	}
 	
-	do {
+	while (unsortedOffset != endNode) {
 		extremeNode = unsortedOffset; 				
 		currentNode = extremeNode;
 		++currentNode;
@@ -237,7 +237,7 @@ void LayeredStack<CONTENT_TYPE, STACK_COUNT>::sort() {
 		(*extremeNode) = item;
 		
 		++unsortedOffset;
-	} while (unsortedOffset != endNode);
+	};
 }
 	
 template <typename CONTENT_TYPE, int STACK_COUNT> 
