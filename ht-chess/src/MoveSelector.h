@@ -1,7 +1,7 @@
 #ifndef MOVESELECTOR_H
 #define MOVESELECTOR_H
 
-#define DEFAULT_PLY 4
+#define DEFAULT_PLY 3
 #define MAX_SEARCH_TIME 15000	//max milliseconds per turn
 
 #include <vector>
@@ -137,11 +137,12 @@ private:
 
 	int alphaBeta(Board &board, Move &path, bool isMaximizer, int curDepth, int maxDepth, int alpha, int beta)
 	{
-		//printf("f�r\n");
+		//printf("f?r\n");
 		if(SDL_GetTicks() - timeStarted > MAX_SEARCH_TIME)
 		{
 			return 0;
 		}
+		evaluator(board, curDepth);
 		if(curDepth == maxDepth || board.isCheckmate() || board.isStalemate())		//if leaf
 		{
 			//printf("efter\n");
@@ -274,7 +275,7 @@ public:
             alphaBeta(board, path, isMaximizer, i);
             moveList.sort();
         }
-		if(path.getContent() != NO_PIECE)
+		//if(path.getContent() != NO_PIECE)
 			evaluator.clearCache();
 		/*printf("k efter:	%i\n", killerMoveList.size());
 		printf("m efter:	%i\n", moveList.size());*/
