@@ -1,13 +1,18 @@
 #ifndef LAYERED_STACK_H
 #define LAYERED_STACK_H
 
-#define STACK_SIZE 6
-#define STACK_LAST_TURN 0
-#define STACK_CAPTURES 1
-#define STACK_PAWN_RROMOTIONS 2
-#define STACK_CASTLING 3
-#define STACK_NORMAL_MOVES 4
-#define STACK_EN_PASSANT_CAPTURES 5
+#if USE_EN_PASSANT == 1
+	#define STACK_SIZE 6	
+	#define STACK_EN_PASSANT_CAPTURES 5
+#else
+	#define STACK_SIZE 5
+#endif
+	#define STACK_LAST_TURN 0
+	#define STACK_CAPTURES 1
+	#define STACK_PAWN_RROMOTIONS 2
+	#define STACK_CASTLING 3
+	#define STACK_NORMAL_MOVES 4
+
 
 
 #include <vector>

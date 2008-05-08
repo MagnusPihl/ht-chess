@@ -55,8 +55,8 @@ Board::Board(const Board& rhs) : content(std::vector<ColoredPiece>(CONTENT_SIZE)
 	{
 		for(int j=0; j<128; j++)
 		{
-			hashKeyComponents[i][j] = rand();
-			hashLockComponents[i][j] = rand();
+			hashKeyComponents[i][j] = rhs.hashKeyComponents[i][j];
+			hashLockComponents[i][j] = rhs.hashLockComponents[i][j];
 		}
 	}
 
@@ -65,7 +65,10 @@ Board::Board(const Board& rhs) : content(std::vector<ColoredPiece>(CONTENT_SIZE)
 		content[i] = rhs.content[i];		
 	}
 
-	enPassantPosition = rhs.enPassantPosition;
+	#if USE_EN_PASSANT == 1
+		enPassantPosition = rhs.enPassantPosition;
+	#endif
+	
 	reversableMoves = rhs.reversableMoves;
 	
 	for (int i = 0; i < 2; i++) {
@@ -82,12 +85,23 @@ Board::Board(const Board& rhs) : content(std::vector<ColoredPiece>(CONTENT_SIZE)
 Board& Board::operator= (Board& rhs) {
 	if (this != &rhs)
 	{
+		for(int i=0; i<128; i++)
+		{
+			for(int j=0; j<128; j++)
+			{
+				hashKeyComponents[i][j] = rhs.hashKeyComponents[i][j];
+				hashLockComponents[i][j] = rhs.hashLockComponents[i][j];
+			}
+		}
+		
 		for (int i = 0; i < CONTENT_SIZE; ++i)
 		{
 			content[i] = rhs.content[i];
 		}
 			
-		enPassantPosition = rhs.enPassantPosition;
+		#if USE_EN_PASSANT == 1
+			enPassantPosition = rhs.enPassantPosition;
+		#endif
 		reversableMoves = rhs.reversableMoves;
 		
 		for (int i = 0; i < 2; i++) {
@@ -118,14 +132,14 @@ Board::~Board() {
 
 /*****************************************************************************/
 
-void Board::testAndAddMove(Color color, Move &move, LayeredStack<Move, STACK_SIZE> &moves, int layerIndex) {
-	move.execute(*this);
+inline void Board::testAndAddMove(Color color, Move &move, LayeredStack<Move, STACK_SIZE> &moves, int layerIndex) {
+/*	move.execute(*this);
 		
-	if (!isCheck(color)) {
+	if (!isCheck(color)) {*/
 		moves.add(layerIndex, move);
-	}
+/*	}
 	
-	move.unexecute(*this);
+	move.unexecute(*this);*/
 }
 
 
@@ -289,26 +303,27 @@ void Board::getPawnMovesFrom(Position position, LayeredStack<Move, STACK_SIZE> &
 	int direction = PAWN_DIRECTION[colorIndex];
 	int doubleDirection = PAWN_DIRECTION[colorIndex]*2;
 	
-	//en-passant	//changed
-	if ((row == PAWN_ENPASSANT_CONTENT_ROW[colorIndex]) && (GET_ROW(enPassantPosition) == PAWN_ENPASSANT_TAKE_ROW[colorIndex])) { //en-passant
-		int x = GET_REAL_COLUMN(enPassantPosition);
-		
-		if (((column + 1) == x) || ((column - 1) == x)) {
-		
-			Move move = Move(
-				position, 
-				enPassantPosition, 
-				piece, 
-				piece, 
-				GET_COLORED_PIECE(PAWN, GET_OPPOSITE_COLOR(color)),
-				hasMoved[colorIndex],
-				enPassantPosition,
-				reversableMoves);
-				
-			testAndAddMove(color, move, moves, STACK_CAPTURES);
+	#if USE_EN_PASSANT == 1			
+		//en-passant	//changed
+		if ((row == PAWN_ENPASSANT_CONTENT_ROW[colorIndex]) && (GET_ROW(enPassantPosition) == PAWN_ENPASSANT_TAKE_ROW[colorIndex])) { //en-passant
+			int x = GET_REAL_COLUMN(enPassantPosition);
+			
+			if (((column + 1) == x) || ((column - 1) == x)) {
+			
+				Move move = Move(
+					position, 
+					enPassantPosition, 
+					piece, 
+					piece, 
+					GET_COLORED_PIECE(PAWN, GET_OPPOSITE_COLOR(color)),
+					hasMoved[colorIndex],				
+					enPassantPosition, 				
+					reversableMoves);
+					
+				testAndAddMove(color, move, moves, STACK_CAPTURES);
+			}
 		}
-	}
-
+	#endif
 	ColoredPiece special = NO_PIECE;
 	
 	//promotion
@@ -326,7 +341,9 @@ void Board::getPawnMovesFrom(Position position, LayeredStack<Move, STACK_SIZE> &
 				piece, 
 				content[GET_POSITION(column - 1, row + direction)],
 				hasMoved[colorIndex],
-				enPassantPosition,
+			#if USE_EN_PASSANT == 1
+				enPassantPosition, 
+			#endif
 				reversableMoves);
 										
 		if (special != NO_PIECE) {
@@ -346,7 +363,9 @@ void Board::getPawnMovesFrom(Position position, LayeredStack<Move, STACK_SIZE> &
 				piece, 
 				content[GET_POSITION(column + 1, row + direction)],
 				hasMoved[colorIndex],
-				enPassantPosition,
+			#if USE_EN_PASSANT == 1
+				enPassantPosition, 
+			#endif
 				reversableMoves);
 														
 		if (special != NO_PIECE) {
@@ -366,7 +385,9 @@ void Board::getPawnMovesFrom(Position position, LayeredStack<Move, STACK_SIZE> &
 				piece, 
 				NO_PIECE,
 				hasMoved[colorIndex],
-				enPassantPosition,
+			#if USE_EN_PASSANT == 1
+				enPassantPosition, 
+			#endif
 				reversableMoves);												
 		
 		if (special != NO_PIECE) {
@@ -385,7 +406,9 @@ void Board::getPawnMovesFrom(Position position, LayeredStack<Move, STACK_SIZE> &
 					piece, 
 					NO_PIECE,
 					hasMoved[colorIndex],
-					enPassantPosition,
+				#if USE_EN_PASSANT == 1
+					enPassantPosition, 
+				#endif
 					reversableMoves);
 									
 			testAndAddMove(color, move, moves, STACK_NORMAL_MOVES);
@@ -419,7 +442,9 @@ void Board::getKnightMovesFrom(Position position, LayeredStack<Move, STACK_SIZE>
 							content[position], 
 							piece,
 							hasMoved[colorIndex],
-							enPassantPosition,
+						#if USE_EN_PASSANT == 1
+							enPassantPosition, 
+						#endif
 							reversableMoves);	
 				
 				if (piece != NO_PIECE) {
@@ -469,7 +494,9 @@ void Board::getBishopMovesFrom(Position position, LayeredStack<Move, STACK_SIZE>
 							content[position], 
 							piece,
 							hasMoved[colorIndex],
-							enPassantPosition,
+						#if USE_EN_PASSANT == 1
+							enPassantPosition, 
+						#endif
 							reversableMoves);							
 					
 				if (piece != NO_PIECE) {
@@ -523,7 +550,9 @@ void Board::getRookMovesFrom(Position position, LayeredStack<Move, STACK_SIZE> &
 							content[position], 
 							piece,
 							hasMoved[colorIndex],
-							enPassantPosition,
+						#if USE_EN_PASSANT == 1
+							enPassantPosition, 
+						#endif
 							reversableMoves);							
 				
 				if (piece != NO_PIECE) {
@@ -577,7 +606,9 @@ void Board::getQueenMovesFrom(Position position, LayeredStack<Move, STACK_SIZE> 
 							content[position], 
 							piece,
 							hasMoved[colorIndex],
-							enPassantPosition,
+						#if USE_EN_PASSANT == 1
+							enPassantPosition, 
+						#endif
 							reversableMoves);
 				
 				if (piece != NO_PIECE) {
@@ -624,7 +655,9 @@ void Board::getKingMovesFrom(Position position, LayeredStack<Move, STACK_SIZE> &
 				piece, 
 				NO_PIECE, 
 				hasMoved[colorIndex], 
+			#if USE_EN_PASSANT == 1
 				enPassantPosition, 
+			#endif
 				reversableMoves));
 				
 		//queenside
@@ -642,7 +675,9 @@ void Board::getKingMovesFrom(Position position, LayeredStack<Move, STACK_SIZE> &
 				piece, 
 				NO_PIECE, 
 				hasMoved[colorIndex], 
+			#if USE_EN_PASSANT == 1
 				enPassantPosition, 
+			#endif
 				reversableMoves));
 		}
 	}			
@@ -663,7 +698,9 @@ void Board::getKingMovesFrom(Position position, LayeredStack<Move, STACK_SIZE> &
 							content[position], 
 							piece,
 							hasMoved[colorIndex], 
-							enPassantPosition,
+						#if USE_EN_PASSANT == 1
+							enPassantPosition, 
+						#endif
 							reversableMoves);
 							
 				if (piece != NO_PIECE) {
@@ -679,6 +716,7 @@ void Board::getKingMovesFrom(Position position, LayeredStack<Move, STACK_SIZE> &
 
 /*****************************************************************************/
 
+//doesn't check en-passant
 ColoredPiece Board::getThreatOf(Position position, Color color) {
 	int row = GET_ROW(position);
 	int column = GET_REAL_COLUMN(position);	
@@ -806,9 +844,9 @@ int Board::getHashLock()
 {
 	int hash = 0;
 	Position pos;
-	for(int row=0; row<8; row++)
+	for(int row=0; row < ROW_COUNT; row++)
 	{
-		for(int col=0; col<8; col++)
+		for(int col=0; col < COLUMN_COUNT; col++)
 		{
 			pos = GET_POSITION(col, row);
 			if(content[pos] != NO_PIECE)
@@ -873,6 +911,10 @@ void Board::resetBoard() {
 	materialValue[BLACK_INDEX] = materialValue[WHITE_INDEX];
 	
 	reversableMoves = 0;
+	
+	#if USE_EN_PASSANT == 1
+		enPassantPosition = INVALID_POSITION;
+	#endif
 }
 
 #endif

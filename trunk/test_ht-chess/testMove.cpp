@@ -20,7 +20,16 @@ struct Fixture
 
     Fixture() 
     {
-		m1 = Move(A2, A3, NO_PIECE, KNIGHT_BLACK, PAWN_WHITE, 0, INVALID_POSITION, 0);
+		m1 = Move(A2, 
+			A3, 
+			NO_PIECE, 
+			KNIGHT_BLACK, 
+			PAWN_WHITE, 
+			0, 
+			#if USE_EN_PASSANT == 1
+				INVALID_POSITION, 
+			#endif
+			0);
     } 
 };
 

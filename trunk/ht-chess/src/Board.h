@@ -10,6 +10,8 @@
 
 class MoveGenerator;
 
+#define USE_EN_PASSANT 0
+
 #define CHECK_OVERFLOW true
 #define CONTENT_SIZE 256
 
@@ -59,10 +61,13 @@ private:
 	*/
 	int hasMoved[2];
 	
+	
+	#if USE_EN_PASSANT == 1
 	/**
 	* Not finished yet
 	*/
 	Position enPassantPosition;
+	#endif
 	
 	/**
 	* Keeps track of the positions of the black and white kings on the board.

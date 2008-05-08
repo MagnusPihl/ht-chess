@@ -8,9 +8,12 @@
 class Board;
 class MoveGenerator;
 
-static int PAWN_DIRECTION[2] = {-1, 1}; //0 = black, 1 = white
+#if USE_EN_PASSANT == 1
 static int PAWN_ENPASSANT_TAKE_ROW[2] = {ROW_3, ROW_6}; //0 = black, 1 = white
 static int PAWN_ENPASSANT_CONTENT_ROW[2] = {ROW_4, ROW_5}; //0 = black, 1 = white
+#endif
+
+static int PAWN_DIRECTION[2] = {-1, 1}; //0 = black, 1 = white
 #define INVALID_BOARD_VALUE 0xFFFFFFFF
 
 class Move
@@ -52,11 +55,13 @@ private:
 	*/
 	int hasMoved;	
 	
+	#if USE_EN_PASSANT == 1
 	/**
 	* Defines what position if any an en-passant moves was possible to before the move
 	* When creating a move just pass in the corresponding field in board.
 	*/
 	Position enPassantPosition;
+	#endif
 	
 	/**
 	* Defines how many turns were executed since the last ireversable move
@@ -105,7 +110,9 @@ public:
 		ColoredPiece _piece, 
 		ColoredPiece _content, 
 		int _hasMoved, 
+	#if USE_EN_PASSANT == 1
 		Position _enPassantPosition,
+	#endif
 		int reversableMoves);
 
 	/**
@@ -185,6 +192,7 @@ public:
 		return hasMoved;
 	}
 	
+	#if USE_EN_PASSANT == 1
 	/**
 	* Get available en-passant position before move.
 	* return: Position - position.
@@ -192,6 +200,7 @@ public:
 	inline Position getEnPassantPosition() {
 		return enPassantPosition;
 	}
+	#endif
 	
 	/**
 	* Get the amount of moves since last ireversable
