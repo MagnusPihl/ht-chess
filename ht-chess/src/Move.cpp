@@ -4,12 +4,39 @@
 #include "Move.h"
 
 Move::Move() : 
-	from(INVALID_POSITION), to(INVALID_POSITION), special(NO_PIECE), piece(NO_PIECE), content(NO_PIECE), hasMoved(0), enPassantPosition(INVALID_POSITION), reversableMoves(0)//, boardValue(INVALID_BOARD_VALUE) 
+	from(INVALID_POSITION), 
+	to(INVALID_POSITION), 
+	special(NO_PIECE), 
+	piece(NO_PIECE), 
+	content(NO_PIECE), 
+	hasMoved(0), 
+#if USE_EN_PASSANT == 1
+	enPassantPosition(INVALID_POSITION), 
+#endif	
+	reversableMoves(0)
 {}
 
 Move::Move(
-	Position _from, Position _to, ColoredPiece _special, ColoredPiece _piece, ColoredPiece _content, int _hasMoved, Position _enPassantPosition, int _reversableMoves) :
-		from(_from), to(_to), special(_special), piece(_piece), content(_content), hasMoved(_hasMoved), enPassantPosition(_enPassantPosition), reversableMoves(_reversableMoves) //, boardValue(INVALID_BOARD_VALUE)
+	Position _from, 
+	Position _to, 
+	ColoredPiece _special, 
+	ColoredPiece _piece, 
+	ColoredPiece _content, 
+	int _hasMoved, 
+#if USE_EN_PASSANT == 1
+	Position _enPassantPosition, 
+#endif
+	int _reversableMoves) :
+		from(_from), 
+		to(_to), 
+		special(_special), 
+		piece(_piece), 
+		content(_content), 
+		hasMoved(_hasMoved), 
+	#if USE_EN_PASSANT == 1
+		enPassantPosition(_enPassantPosition), 
+	#endif
+		reversableMoves(_reversableMoves) 
 {
 	#ifdef TEST_MOVE_VALIDITY 
 		if (isValid(*this)) {
@@ -23,7 +50,11 @@ void Move::execute(Board &board)
 {
 	board[from] = NO_PIECE;
 	board[to] = piece;	
-	board.enPassantPosition = INVALID_POSITION;
+	
+	#if USE_EN_PASSANT == 1
+		board.enPassantPosition = INVALID_POSITION;
+	#endif
+	
 	Piece type = GET_PIECE_TYPE(piece);
 	Color color = GET_PIECE_COLOR(piece);
 	board.reversableMoves++;		
@@ -40,9 +71,11 @@ void Move::execute(Board &board)
 		case PAWN:
 			board.reversableMoves = 0;			
 			
-			if (((GET_ROW(to) - GET_ROW(from))*PAWN_DIRECTION[colorIndex]) == 2) {				
-				board.enPassantPosition = COMBINE_TO_POSITION(GET_COLUMN(to), PAWN_ENPASSANT_TAKE_ROW[(colorIndex ^ 0x01)]);
-			}			
+			#if USE_EN_PASSANT == 1
+				if (((GET_ROW(to) - GET_ROW(from))*PAWN_DIRECTION[colorIndex]) == 2) {				
+					board.enPassantPosition = COMBINE_TO_POSITION(GET_COLUMN(to), PAWN_ENPASSANT_TAKE_ROW[(colorIndex ^ 0x01)]);
+				}			
+			#endif
 			
 			break;			
 	
@@ -73,12 +106,17 @@ void Move::execute(Board &board)
 	
 		case PAWN: //en-passant or promotion			
 
-				//changed
-			if (GET_ROW(to) == PAWN_ENPASSANT_TAKE_ROW[colorIndex]) { //en-passant
-				board[COMBINE_TO_POSITION(GET_COLUMN(to), PAWN_ENPASSANT_CONTENT_ROW[colorIndex])] = NO_PIECE;					
-			} else {					
-				board.materialValue[colorIndex] += (PIECE_VALUE[QUEEN] - PIECE_VALUE[PAWN]);
-			}
+			//changed
+			#if USE_EN_PASSANT == 1
+				if (GET_ROW(to) == PAWN_ENPASSANT_TAKE_ROW[colorIndex]) { //en-passant
+					board[COMBINE_TO_POSITION(GET_COLUMN(to), PAWN_ENPASSANT_CONTENT_ROW[colorIndex])] = NO_PIECE;					
+				} else {		
+			#endif			
+					board.materialValue[colorIndex] += (PIECE_VALUE[QUEEN] - PIECE_VALUE[PAWN]);
+			#if USE_EN_PASSANT == 1
+				}			
+			#endif
+			
 			break;
 			
 		case KING: //castling
@@ -102,7 +140,11 @@ void Move::unexecute(Board &board)
 {		
 	Color color = GET_PIECE_COLOR(piece);
 	int colorIndex = (color == WHITE);
-	board.enPassantPosition = enPassantPosition;
+	
+	#if USE_EN_PASSANT == 1
+		board.enPassantPosition = enPassantPosition;
+	#endif
+	
 	board.reversableMoves = reversableMoves;
 	board.hasMoved[colorIndex] = hasMoved;		
 	board.materialValue[(GET_PIECE_COLOR(content) == WHITE)] += PIECE_VALUE[GET_PIECE_TYPE(content)];	
@@ -121,15 +163,20 @@ void Move::unexecute(Board &board)
 		case PAWN: //promotion and en-passant
 					
 					//changed
-			if (GET_ROW(to) == PAWN_ENPASSANT_TAKE_ROW[colorIndex]) { //en-passant
-				board[COMBINE_TO_POSITION(GET_COLUMN(to), PAWN_ENPASSANT_CONTENT_ROW[colorIndex])] = content;					
-				board[to] = NO_PIECE;
-				board[from] = piece;	
-			} else { //promotion
-				board.materialValue[colorIndex] += (PIECE_VALUE[PAWN] - PIECE_VALUE[QUEEN]);
-				board[from] = special;
-				board[to] = content;
-			}
+			#if USE_EN_PASSANT == 1
+				if (GET_ROW(to) == PAWN_ENPASSANT_TAKE_ROW[colorIndex]) { //en-passant
+					board[COMBINE_TO_POSITION(GET_COLUMN(to), PAWN_ENPASSANT_CONTENT_ROW[colorIndex])] = content;					
+					board[to] = NO_PIECE;
+					board[from] = piece;	
+				} else { //promotion
+			#endif
+					board.materialValue[colorIndex] += (PIECE_VALUE[PAWN] - PIECE_VALUE[QUEEN]);
+					board[from] = special;
+					board[to] = content;
+			#if USE_EN_PASSANT == 1
+				}
+			#endif
+			
 			break;
 
 		case KING: //castling
