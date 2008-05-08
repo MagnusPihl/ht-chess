@@ -218,10 +218,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\HashTable.h"
-				>
-			</File>
-			<File
 				RelativePath=".\src\HttpResponse.h"
 				>
 			</File>
@@ -255,6 +251,10 @@
 			</File>
 			<File
 				RelativePath=".\src\Position.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\ValueCache.h"
 				>
 			</File>
 		</Filter>
