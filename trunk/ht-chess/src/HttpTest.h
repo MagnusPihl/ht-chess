@@ -6,11 +6,14 @@
 
 int clientThread(void *clientSocket)
 {
+	TCPsocket socket = (TCPsocket)clientSocket;
 	printf("Accepted a socket.\n");
 
 	char msg[4096];
-	SDLNet_TCP_Recv((TCPsocket)clientSocket, msg, 4095);
+	SDLNet_TCP_Recv(socket, msg, 4095);
+	printf("Receiving message:\n");
 	printf(msg);
+	printf("\n");
 
 	int len, result;
 	HttpResponse resp("Hello!");
@@ -20,7 +23,7 @@ int clientThread(void *clientSocket)
 	printf(resp());
 
 	len = strlen(resp()) + 1; // add one for the terminating NULL
-	result = SDLNet_TCP_Send((TCPsocket)clientSocket, resp(), resp.getLength());
+	result = SDLNet_TCP_Send(socket, resp(), resp.getLength());
 	if( result < resp.getLength() )
 		printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
 	printf("\n\nMessage sent!\n");
@@ -67,18 +70,40 @@ public:
 		}
 		printf("Succesfully created a socket!\n");
 	
-		while(true)
-		{
+		/*while(true)
+		{*/
 			TCPsocket clientSocket;
 			
-			//while(!clientSocket)
-			clientSocket=SDLNet_TCP_Accept(tcpsock);
+			while(!clientSocket)
+			{
+				clientSocket=SDLNet_TCP_Accept(tcpsock);
+			}
+			char msg[4096];
+			SDLNet_TCP_Recv(clientSocket, msg, 4095);
+			printf("Receiving message:\n");
+			printf(msg);
+			printf("\n");
+
+			int len, result;
+			HttpResponse resp("Hello!");
+			
+
+			printf("\nSending message:\n");
+			printf(resp());
+
+			len = strlen(resp()) + 1; // add one for the terminating NULL
+			result = SDLNet_TCP_Send(clientSocket, resp(), resp.getLength());
+			if( result < resp.getLength() )
+				printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+			printf("\n\nMessage sent!\n");
+
+	/*		clientSocket=SDLNet_TCP_Accept(tcpsock);
 			if(clientSocket != NULL)
 			{
 				SDL_Thread *client;
 				client = SDL_CreateThread(clientThread, &clientSocket);
 			}
-		}
+		}*/
 	}
 };
 

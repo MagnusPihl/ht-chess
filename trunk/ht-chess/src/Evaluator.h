@@ -1,9 +1,3 @@
-/*
- * File:   Validater.h
- * Author: zeor
- *
- * Created on April 21, 2008, 10:13 AM
- */
 #ifndef EVALUATOR_H
 #define EVALUATOR_H
 
@@ -29,203 +23,164 @@ int GLOBAL_distance[128] =
 			 3, 2, 2, 2, 2, 2, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0,
 			 3, 3, 3, 3, 3, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0};
 
-class Evaluator {
+class Evaluator
+{
 private:
-    int materialValueBlack;
-    int materialValueWhite;
-    int valueBlack;
-    int valueWhite;
-    int tempValue;
-    int threats;
-    int threatsBlack;
-    int threatsWhite;
-    Color currentColor;
-    int gamePhase;
     bool cacheValue;
     LayeredStack<Move, STACK_SIZE> moves;
 
-	//typedef std::pair<int, int> boardValue;	
-	ValueCache cache;    
-    
-    int evaluate(Board &board, int ply)
-	{
-	//printf("cols: %i\n", cache.getCollisions);
-#ifdef EVALUATOR_CACHE				
-		int hash = board.getHashKey();
-		int lock = board.getHashLock();		
-		int value = cache.get(hash, lock);
-		
-		if(value != INVALID_BOARD_VALUE)//v.first == 0 || v.first != board.getHashLock())
-		{	
-			//printf("cached: %i\n", hash);
-			return value;
-		} else {
-			//printf("Not cached. Hash: %i, Lock: %i, Cached Lock: %i.\n", board.getHashKey(), board.getHashLock(), v.first);
-			cacheValue = true;
+#ifdef EVALUATOR_CACHE
+	ValueCache cache;
 #endif
-			Position pos;
-			materialValueBlack = board.getMaterialValue(BLACK);
-			materialValueWhite = board.getMaterialValue(WHITE);
-	        
-			valueBlack = 0;
-			valueWhite = 0;
-			threatsBlack = 0;
-			threatsWhite = 0;
-			currentColor = WHITE;
-	        
-	        
-			if(materialValueBlack < 1500 || materialValueWhite < 1500){
-				if(materialValueBlack < 600 || materialValueWhite < 600){
-				   gamePhase = END_GAME;
-				}
+
+	int getValue(Board &board, Color color, int ply)
+	{
+		int value = 0;
+
+		int gamePhase;
+		if(board.getMaterialValue(color) <= 1500 || board.getMaterialValue(GET_OPPOSITE_COLOR(color)) <= 1500)
+		{
+			if(board.getMaterialValue(color) <= 600 || board.getMaterialValue(GET_OPPOSITE_COLOR(color)) <= 600)
+				gamePhase = END_GAME;
+			else
 				gamePhase = PHASE_2;
-			}
-			else{
-				gamePhase = PHASE_1;
-			}
-	            
-			if(board.hasPerformedCastling(BLACK))
-				valueBlack = 16;
-			if(board.hasPerformedCastling(WHITE))
-				valueWhite = 16;
-	        
-			for(int i = 0; i < 8; ++i)
+		}
+		else
+			gamePhase = PHASE_1;
+		
+		if(board.hasPerformedCastling(color))
+				value += 16;
+		
+		Position pos;
+		for(int i = 0; i < 8; ++i)
+		{
+			for(int j = 0; j < 8; ++j)
 			{
-				for(int j = 0; j < 8; ++j)
+				pos = GET_POSITION(i, j);
+				if(GET_PIECE_COLOR(board[pos]) == color)
 				{
-					tempValue = 0;
-					pos = GET_POSITION(i, j);
-					currentColor = GET_PIECE_COLOR(board[pos]);
 					if(gamePhase == PHASE_1 || gamePhase == PHASE_2)
 					{                    
 						switch (GET_PIECE_TYPE(board[pos]))
 						{
 							case PAWN:
-								if(GET_PIECE_TYPE(board[GET_POSITION(i, j+1)]) == PAWN){
-									tempValue -= 8;
-								}
-								if(currentColor == 0x10)
-									tempValue += GLOBAL_pawRow[7 - GET_ROW(pos)] + GLOBAL_pawColumn[7-GET_REAL_COLUMN(pos)] * (7-GET_ROW(pos)/2);
-								else
-									tempValue += GLOBAL_pawRow[GET_ROW(pos)] + GLOBAL_pawColumn[GET_REAL_COLUMN(pos)]*(GET_ROW(pos)/2);
+								if(GET_PIECE_TYPE(board[GET_POSITION(i, j+1)]) == PAWN)
+									value -= 8;
+								if(color == BLACK)
+									value += GLOBAL_pawRow[7 - GET_ROW(pos)] + GLOBAL_pawColumn[7-GET_REAL_COLUMN(pos)] * (7-GET_ROW(pos)/2);
+								else	//WHITE
+									value += GLOBAL_pawRow[GET_ROW(pos)] + GLOBAL_pawColumn[GET_REAL_COLUMN(pos)]*(GET_ROW(pos)/2);
 								break;
 	                            
 							case KNIGHT:
-								tempValue += 3 * GLOBAL_distance[pos];
+								value += 3 * GLOBAL_distance[pos];
 								break;
 	                            
 							case BISHOP:
 								board.getMovesFromPosition(pos, moves);
-								tempValue += (int)(2.5 * (moves.size()));
+								value += (int)(2.5 * (moves.size()));
 								moves.clear();
 								break;
 	                            
 							case ROOK:
 								board.getMovesFromPosition(pos, moves);
-								tempValue += (int)(1.5 * (moves.size()));
+								value += (int)(1.5 * (moves.size()));
 								moves.clear();                      
 								break;
 	                            
 							case QUEEN:
 								board.getMovesFromPosition(pos, moves);
-								tempValue += (moves.size());
+								value += (moves.size());
 								moves.clear();                        
 								break;
 	                            
 							case KING:
-								//antal trÃ¦k fra MATE!
-								if(board.isCheckmate(currentColor)) {
-									tempValue -= 1000 * ply;
+								//antal træk fra MATE!
+								if(board.isCheckmate(color))
+								{
+									value -= 1000 * ply;
 									cacheValue = false;
 								}
-								if(gamePhase == PHASE_2){
-									tempValue -= GLOBAL_distance[pos];
+								if(gamePhase == PHASE_2)
+								{
+									value -= GLOBAL_distance[pos];
 								}
-								tempValue += 10000;
+								value += 10000;
 								break;
 						}
 					}
-					else{
-						switch (GET_PIECE_TYPE(board[pos])) {
+					else	//gamePhase == END_GAME
+					{
+						switch (GET_PIECE_TYPE(board[pos]))
+						{
 							case PAWN:
-								if(GET_PIECE_TYPE(board[GET_POSITION(i, j+1)]) == PAWN){
-									tempValue -= 8;
-								}
-								if(currentColor == BLACK)
-									tempValue += GLOBAL_pawRow[7-GET_ROW(pos)] + GLOBAL_pawColumn[7-GET_REAL_COLUMN(pos)]*(7-GET_ROW(pos)/2);
-								else
-									tempValue += GLOBAL_pawRow[GET_ROW(pos)] + GLOBAL_pawColumn[GET_REAL_COLUMN(pos)]*(GET_ROW(pos)/2);
+								if(GET_PIECE_TYPE(board[GET_POSITION(i, j+1)]) == PAWN)
+									value -= 8;
+								if(color == BLACK)
+									value += GLOBAL_pawRow[7 - GET_ROW(pos)] + GLOBAL_pawColumn[7-GET_REAL_COLUMN(pos)] * (7-GET_ROW(pos)/2);
+								else	//WHITE
+									value += GLOBAL_pawRow[GET_ROW(pos)] + GLOBAL_pawColumn[GET_REAL_COLUMN(pos)]*(GET_ROW(pos)/2);
 								break;
 							case KING:
 								//antal træk fra MATE!
-								if(board.isCheckmate(currentColor)) {
-									tempValue -= 1000 * ply;
+								if(board.isCheckmate(color))
+								{
+									value -= 1000 * ply;
 									cacheValue = false;
 								}
-								if((materialValueBlack < 600 && currentColor == BLACK) || (materialValueWhite < 600 && currentColor == WHITE))
-									tempValue -= 8 * GLOBAL_distance[pos];
+								if(board.getMaterialValue(color) < board.getMaterialValue(GET_OPPOSITE_COLOR(color)))
+									value -= 8 * GLOBAL_distance[pos];
 								else 
-									tempValue -= 2 * getDistance(i, j, currentColor, board);
-								tempValue += 10000;
+									value -= 2 * getDistance(i, j, color, board);
+								value += 10000;
 								break;
 						}
 					}
-	                
-					if(currentColor == BLACK)
-						valueBlack += tempValue;
-					else
-						valueWhite += tempValue;
-				}
-	            
-				// indoperer
-				if(GET_PIECE_TYPE(board[pos]) > PAWN){
-					if(board.getThreatOf(pos, currentColor) != NO_PIECE){
-						if(currentColor == BLACK)
-							++threatsBlack;
-						else
-							++threatsWhite;
-					}
 				}
 			}
-	    
-	    
-			if(threatsBlack == 0){
-				valueBlack += 2;
-			}
-			else if(threatsBlack == 1){
-				valueBlack -= 10;
-			}
-			else{
-				valueBlack -= 50;
-			}
-		    
-			if(threatsWhite == 0){
-				valueWhite += 2;
-			}
-			else if(threatsWhite == 1){
-				valueWhite -= 10;
-			}
-			else{
-				valueWhite -= 50;
-			}
-		        
-			valueWhite += materialValueWhite;
-			valueBlack += materialValueBlack;
+		}
+		// indoperer - WTF?
+		int threats = 0;
+		if(GET_PIECE_TYPE(board[pos]) > PAWN)
+			if(board.getThreatOf(pos, color) != NO_PIECE)
+				threats++;
+		if(threats == 0)
+			value += 2;
+		else if(threats == 1)
+			value -= 10;
+		else
+			value -= 50;
+
+		return value;
+	}
+    
+    int evaluate(Board &board, int ply)
+	{
+		int value;
+	//printf("cols: %i\n", cache.getCollisions);
+#ifdef EVALUATOR_CACHE				
+		int hash = board.getHashKey();
+		int lock = board.getHashLock();		
+		value = cache.get(hash, lock);
+		
+		if(value != INVALID_BOARD_VALUE)//v.first == 0 || v.first != board.getHashLock())
+		{	
+			//printf("cached: %i\n", hash);
+			return value;
+		}
+		else
+		{
+			//printf("Not cached. Hash: %i, Lock: %i, Cached Lock: %i.\n", board.getHashKey(), board.getHashLock(), v.first);
+			cacheValue = true;
+#endif
+			value = getValue(board, WHITE, ply) - getValue(board, BLACK, ply);
 		    
 #ifdef EVALUATOR_CACHE			
-			if (cacheValue) {
-				if (!cache.insert(hash, lock, valueWhite - valueBlack)) {
-					//printf("cache collision: %i\n", cache.getCollisions());
-				}
-			}
+			if (cacheValue)
+				cache.insert(hash, lock, value);
 #endif
-			//printf("calced_ %i\n", valueWhite - valueBlack);					
-			if (value != INVALID_BOARD_VALUE && value) {
-				//printf("%i - %i!\n", value, valueWhite - valueBlack);
-			}
-			return valueWhite - valueBlack;
+			return value;
 #ifdef EVALUATOR_CACHE
-
 		}
 #endif
 	}
@@ -241,18 +196,7 @@ private:
 	}
 
 public:
-	Evaluator()
-	{	
-		materialValueBlack = 0;
-		materialValueWhite = 0;
-		valueBlack = 0;
-		valueWhite = 0;
-		tempValue = 0;
-		threats = 0;
-		threatsBlack = 0;
-		threatsWhite = 0;
-		currentColor = WHITE;
-	}
+	Evaluator() {}
 
     int operator()(Board &board, int depth)
 	{
