@@ -25,7 +25,7 @@ class MoveGenerator;
 static int PAWN_OUT_OF_BOUNDS[2] = {ROW_1 - 1, ROW_8 + 1};
 static int PAWN_START_ROW[2] = {ROW_7, ROW_2};
 
-static int CASTLING_ROW[2] = {ROW_8, ROW_1}; //the start row for each color
+static int CASTLING_ROW[2] = {ROW_8, ROW_1}; //the start row for each color black, white
 static Position CASTLING_COLUMN_A[2] = {A8, A1}; 
 static Position CASTLING_COLUMN_B[2] = {B8, B1}; 
 static Position CASTLING_COLUMN_C[2] = {C8, C1}; 
