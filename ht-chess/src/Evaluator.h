@@ -56,7 +56,7 @@ private:
 				value += 16;
 		
 		Position pos;
-		for(int x = 0; i < 8; ++x)
+		for(int x = 0; x < 8; ++x)
 		{
 			for(int y = 0; y < 8; ++y)
 			{
