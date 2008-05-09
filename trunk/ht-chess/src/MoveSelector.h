@@ -1,7 +1,7 @@
 #ifndef MOVESELECTOR_H
 #define MOVESELECTOR_H
 
-#define DEFAULT_PLY 4
+#define DEFAULT_PLY 6
 #define MAX_SEARCH_TIME 15000	//max milliseconds per turn
 
 #include <vector>
@@ -140,7 +140,6 @@ private:
 		if (SDL_GetTicks() - timeStarted > MAX_SEARCH_TIME) {
 			printf("time\n");
 		}
-		evaluator(board, curDepth);
 		if((SDL_GetTicks() - timeStarted > MAX_SEARCH_TIME) || curDepth == maxDepth || board.isCheckmate() || board.isStalemate())		//if leaf
 		{
 			//printf("efter\n");
