@@ -4,6 +4,7 @@
 #include "LayeredStack.h"
 #include "ValueCache.h"
 #include "Move.h"
+#include "Board.h"
 
 #define PHASE_1 0x01
 #define PHASE_2 0x02
@@ -36,6 +37,9 @@ private:
 	int getValue(Board &board, Color color, int ply)
 	{
 		int value = 0;
+		int colorIndex = (color == WHITE); 
+		int rowIndex = CASTLING_ROW[colorIndex];
+		int direction = PAWN_DIRECTION[colorIndex];
 
 		int gamePhase;
 		if(board.getMaterialValue(color) <= 1500 || board.getMaterialValue(GET_OPPOSITE_COLOR(color)) <= 1500)
@@ -52,11 +56,11 @@ private:
 				value += 16;
 		
 		Position pos;
-		for(int i = 0; i < 8; ++i)
+		for(int x = 0; i < 8; ++x)
 		{
-			for(int j = 0; j < 8; ++j)
+			for(int y = 0; y < 8; ++y)
 			{
-				pos = GET_POSITION(i, j);
+				pos = GET_POSITION(x, y);
 				if(GET_PIECE_COLOR(board[pos]) == color)
 				{
 					if(gamePhase == PHASE_1 || gamePhase == PHASE_2)
@@ -64,12 +68,12 @@ private:
 						switch (GET_PIECE_TYPE(board[pos]))
 						{
 							case PAWN:
-								if(GET_PIECE_TYPE(board[GET_POSITION(i, j+1)]) == PAWN)
-									value -= 8;
-								if(color == BLACK)
-									value += GLOBAL_pawRow[7 - GET_ROW(pos)] + GLOBAL_pawColumn[7-GET_REAL_COLUMN(pos)] * (7-GET_ROW(pos)/2);
-								else	//WHITE
-									value += GLOBAL_pawRow[GET_ROW(pos)] + GLOBAL_pawColumn[GET_REAL_COLUMN(pos)]*(GET_ROW(pos)/2);
+								if(GET_PIECE_TYPE(board[GET_POSITION(x, y+1)]) == PAWN)
+									value -= 8;				
+								//rowIndex is used for the column part too because it equals a shifted column				
+								value += GLOBAL_pawRow[rowIndex + direction * GET_ROW(pos)] 
+									+ GLOBAL_pawColumn[rowIndex + direction * GET_REAL_COLUMN(pos)] * (rowIndex + direction*(GET_ROW(pos) >> 2));
+								
 								break;
 	                            
 							case KNIGHT:
@@ -114,12 +118,12 @@ private:
 						switch (GET_PIECE_TYPE(board[pos]))
 						{
 							case PAWN:
-								if(GET_PIECE_TYPE(board[GET_POSITION(i, j+1)]) == PAWN)
+								if(GET_PIECE_TYPE(board[GET_POSITION(x, y+1)]) == PAWN)
 									value -= 8;
-								if(color == BLACK)
-									value += GLOBAL_pawRow[7 - GET_ROW(pos)] + GLOBAL_pawColumn[7-GET_REAL_COLUMN(pos)] * (7-GET_ROW(pos)/2);
-								else	//WHITE
-									value += GLOBAL_pawRow[GET_ROW(pos)] + GLOBAL_pawColumn[GET_REAL_COLUMN(pos)]*(GET_ROW(pos)/2);
+								//rowIndex is used for the column part too because it equals a shifted column				
+								value += GLOBAL_pawRow[rowIndex + direction * GET_ROW(pos)] 
+									+ GLOBAL_pawColumn[rowIndex + direction * GET_REAL_COLUMN(pos)] * (rowIndex + direction*(GET_ROW(pos) >> 2));
+								
 								break;
 							case KING:
 								//antal træk fra MATE!
@@ -131,7 +135,7 @@ private:
 								if(board.getMaterialValue(color) < board.getMaterialValue(GET_OPPOSITE_COLOR(color)))
 									value -= 8 * GLOBAL_distance[pos];
 								else 
-									value -= 2 * getDistance(i, j, color, board);
+									value -= 2 * getDistance(x, y, color, board);
 								value += 10000;
 								break;
 						}
