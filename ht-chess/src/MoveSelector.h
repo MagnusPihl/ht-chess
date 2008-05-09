@@ -1,8 +1,8 @@
 #ifndef MOVESELECTOR_H
 #define MOVESELECTOR_H
 
-#define DEFAULT_PLY 6
-#define MAX_SEARCH_TIME 15000	//max milliseconds per turn
+#define DEFAULT_PLY 5
+#define MAX_SEARCH_TIME 30000	//max milliseconds per turn
 
 #include <vector>
 #include "Move.h"

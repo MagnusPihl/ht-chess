@@ -37,6 +37,7 @@ private:
 	int getValue(Board &board, Color color, int ply)
 	{
 		int value = 0;
+		int threats = 0;
 		int colorIndex = (color == WHITE); 
 		int rowIndex = CASTLING_ROW[colorIndex];
 		int direction = PAWN_DIRECTION[colorIndex];
@@ -51,9 +52,11 @@ private:
 		}
 		else
 			gamePhase = PHASE_1;
+		//printf("gamePhase i v1 is %i\n", gamePhase);
 		
 		if(board.hasPerformedCastling(color))
 				value += 16;
+//		printf("Current value: %i\n", value);
 		
 		Position pos;
 		for(int x = 0; x < 8; ++x)
@@ -77,7 +80,7 @@ private:
 								break;
 	                            
 							case KNIGHT:
-								value += 3 * GLOBAL_distance[pos];
+								value += 3 * (4 - GLOBAL_distance[pos]);
 								break;
 	                            
 							case BISHOP:
@@ -141,19 +144,25 @@ private:
 						}
 					}
 				}
+				if(GET_PIECE_TYPE(board[pos]) < PAWN)
+					if(board.getThreatOf(pos, color) != NO_PIECE)
+						threats++;
+				
 			}
 		}
-		// indoperer - WTF?
-		int threats = 0;
-		if(GET_PIECE_TYPE(board[pos]) > PAWN)
-			if(board.getThreatOf(pos, color) != NO_PIECE)
-				threats++;
+		///*if(color == WHITE)
+		//	printf("v1 W: %i\n", value);
+		//else
+		//	printf("v1 B: %i\n", value);*/
+
 		if(threats == 0)
 			value += 2;
 		else if(threats == 1)
 			value -= 10;
 		else
 			value -= 50;
+
+		value += board.getMaterialValue(color);
 
 		return value;
 	}
@@ -178,6 +187,9 @@ private:
 			cacheValue = true;
 #endif
 			value = getValue(board, WHITE, ply) - getValue(board, BLACK, ply);
+			//int v2 = getValue2(board, ply);
+			//if(value != v2)
+			//	printf("%i does not equal %i, difference is %i\n", value, v2, value - v2);
 		    
 #ifdef EVALUATOR_CACHE			
 			if (cacheValue)
