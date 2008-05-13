@@ -1,13 +1,11 @@
 #ifndef MOVESELECTOR_H
 #define MOVESELECTOR_H
 
-#define DEFAULT_PLY 5
-#define MAX_SEARCH_TIME 30000	//max milliseconds per turn
-
 #include <vector>
 #include "Move.h"
 #include "Piece.h"
 #include "Evaluator.h"
+#include "GameConfiguration.h"
 
 //static int MINMAX_COLOR[2] = {BLACK, WHITE};
 //#include <fstream>
@@ -144,7 +142,10 @@ private:
 		}
 		int boardState;
 		
-		if((SDL_GetTicks() - timeStarted > MAX_SEARCH_TIME) || 
+		if(
+#if DONT_USE_TIME_CONSTRAINT == 0
+		    (SDL_GetTicks() - timeStarted > MAX_SEARCH_TIME) || 
+#endif		    		    
 			(curDepth == maxDepth) || 
 			((boardState = board.isCheckmate()) & (IS_CHECKMATE | IS_STALEMATE) != 0))		//if leaf
 		{			
@@ -267,16 +268,30 @@ public:
 		} else {
 			moveGen.generateMoves(board, BLACK , moveList);
 		}		
-		
+
+#if DONT_USE_ITERATIVE_DEEPENING == 0		
+
         for(int i = 2; i <= maxDepth; ++i)       
         {
+    
+    #if DONT_USE_TIME_CONSTRAINT == 0
 			if (SDL_GetTicks() - timeStarted > MAX_SEARCH_TIME) {
 				printf("time %i\n", i);
 				break;
 			}
+	#endif
+    
             alphaBeta(board, path, isMaximizer, i);
+
+	#if USE_UNSORTED_STACK == 0
             moveList.sort();
-        }        
+	#endif
+	
+        } 
+#else
+		alphaBeta(board, path, isMaximizer, maxDepth);
+		       
+#endif
 		/*if(path.getContent() != NO_PIECE)
 			evaluator.clearCache();*/
 		/*printf("k efter:	%i\n", killerMoveList.size());
@@ -293,6 +308,7 @@ class StaticMoveSelector
 private:
 	std::vector<Move> moveList;
 	int listPos;
+	
 public:
 	StaticMoveSelector()
 	{

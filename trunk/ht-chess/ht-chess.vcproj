@@ -218,6 +218,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\GameConfiguration.h"
+				>
+			</File>
+			<File
 				RelativePath=".\src\HttpResponse.h"
 				>
 			</File>

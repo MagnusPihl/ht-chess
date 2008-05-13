@@ -45,13 +45,6 @@ LayeredStack<CONTENT_TYPE, STACK_COUNT>::~LayeredStack() {
 
 
 
-//
-/*template <typename CONTENT_TYPE, int STACK_COUNT> 
-void LayeredStack<CONTENT_TYPE, STACK_COUNT>::add(int layerIndex, CONTENT_TYPE &content) {
-	//index check??
-	stack[layerIndex].push_back(content);
-}*/
-	
 template <typename CONTENT_TYPE, int STACK_COUNT> 
 void LayeredStack<CONTENT_TYPE, STACK_COUNT>::setReturnPoint() {		
 	//insert end points
@@ -94,32 +87,6 @@ template <typename CONTENT_TYPE, int STACK_COUNT>
 typename LayeredStack<CONTENT_TYPE, STACK_COUNT>::iterator LayeredStack<CONTENT_TYPE, STACK_COUNT>::end() {
 	return iterator(this, STACK_COUNT, 0);
 }
-
-/*template <typename CONTENT_TYPE, int STACK_COUNT> 
-bool LayeredStack<CONTENT_TYPE, STACK_COUNT>::empty() {
-	int *pointer = stackPointer.back();
-	
-	for (int i = 0; i < STACK_COUNT; i++) {
-		if (stack[i].size() != pointer[i]) {
-			return false;
-		}
-	}		
-	
-	return true;
-}
-
-template <typename CONTENT_TYPE, int STACK_COUNT> 
-int LayeredStack<CONTENT_TYPE, STACK_COUNT>::size() {
-	int *pointer = stackPointer.back();
-	int size = 0;
-	
-	for (int i = 0; i < STACK_COUNT; i++) {
-		size += (stack[i].size() - pointer[i]);
-	}		
-	
-	return size;
-}*/
-
 
 //iterator
 //forward moving iterator
@@ -226,9 +193,7 @@ void LayeredStack<CONTENT_TYPE, STACK_COUNT>::sort() {
 					extremeNode = currentNode;
 				}
 			}
-			/*if (valueStack[currentNode.layerIndex][currentNode.stackIndex] > valueStack[extremeNode.layerIndex][extremeNode.stackIndex]) {
-				extremeNode = currentNode;
-			}*/
+						
 			++currentNode;
 		}
 
