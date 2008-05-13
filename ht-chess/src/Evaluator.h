@@ -2,6 +2,7 @@
 #define EVALUATOR_H
 
 #include "LayeredStack.h"
+#include "GameConfiguration.h"
 #include "ValueCache.h"
 #include "Move.h"
 #include "Board.h"
@@ -9,8 +10,6 @@
 #define PHASE_1 0x01
 #define PHASE_2 0x02
 #define END_GAME 0x04
-
-#define EVALUATOR_CACHE
 
 int GLOBAL_pawRow[8] = {0, 0, -1, 0, 2, 14, 30, 0};
 int GLOBAL_pawColumn[8] = {-2, 0, 3, 4, 5, 1, -2, -2};
@@ -29,7 +28,7 @@ class Evaluator
 private:
     LayeredStack<Move, STACK_SIZE> moves;
 
-#ifdef EVALUATOR_CACHE
+#if DONT_USE_EVALUATION_CACHING == 0
 	ValueCache cache;
 #endif
 
@@ -168,7 +167,9 @@ private:
 	{	
 		int value;	
 	//printf("cols: %i\n", cache.getCollisions);
-#ifdef EVALUATOR_CACHE			
+	
+#if DONT_USE_EVALUATION_CACHING == 0
+
 		int hash, lock;		
 		
 		if (boardState == IS_SAFE) {
@@ -187,7 +188,7 @@ private:
 #endif
 		value = getValue(board, WHITE, ply, boardState) - getValue(board, BLACK, ply, boardState);
 	    
-#ifdef EVALUATOR_CACHE			
+#if DONT_USE_EVALUATION_CACHING == 0			
 		if (boardState == IS_SAFE)
 			cache.insert(hash, lock, value);
 #endif
@@ -214,7 +215,7 @@ public:
 
 	inline void clearCache()
 	{
-#ifdef EVALUATOR_CACHE
+#if DONT_USE_EVALUATION_CACHING == 0
 		cache.clear();
 		//printf("Cache elements: %i\n", cache.size());
 #endif

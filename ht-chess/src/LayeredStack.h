@@ -1,29 +1,37 @@
 #ifndef LAYERED_STACK_H
 #define LAYERED_STACK_H
 
-#if USE_EN_PASSANT == 1
-	#define STACK_SIZE 6	
-	#define STACK_EN_PASSANT_CAPTURES 5
-#else
-	#define STACK_SIZE 5
-#endif
-	#define STACK_LAST_TURN 0
-	#define STACK_CAPTURES 1
-	#define STACK_PAWN_RROMOTIONS 2
-	#define STACK_CASTLING 3
-	#define STACK_NORMAL_MOVES 4
-
-
-
+#include "GameConfiguration.h"
 #include <vector>
+
+#if USE_FLAT_STACK == 1
+	#if USE_EN_PASSANT == 1
+		#define STACK_SIZE 6	
+		#define STACK_EN_PASSANT_CAPTURES 5
+	#else
+		#define STACK_SIZE 5
+	#endif
+		#define STACK_LAST_TURN 0
+		#define STACK_CAPTURES 1
+		#define STACK_PAWN_RROMOTIONS 2
+		#define STACK_CASTLING 3
+		#define STACK_NORMAL_MOVES 4
+#else
+	#define STACK_SIZE 1
+	#define STACK_EN_PASSANT_CAPTURES 0
+	#define STACK_LAST_TURN 0
+	#define STACK_CAPTURES 0
+	#define STACK_PAWN_RROMOTIONS 0
+	#define STACK_CASTLING 0
+	#define STACK_NORMAL_MOVES 0
+#endif
 
 template<typename CONTENT_TYPE, int STACK_COUNT> class LayeredStack {
 private:	
 	
 	std::vector<CONTENT_TYPE> stack[STACK_COUNT];
 	std::vector<int> stackPointer;			
-	std::vector<int> valueStack[STACK_COUNT];
-	//std::heap
+	std::vector<int> valueStack[STACK_COUNT];	
 	
 public:
 
@@ -71,8 +79,6 @@ public:
 	~LayeredStack();
 	
 	LayeredStack & operator=(LayeredStack &rhs);		
-
-	//void add(int layerIndex, CONTENT_TYPE &content);
 	
 	void setReturnPoint();
 	
@@ -84,11 +90,7 @@ public:
 
 	iterator begin();
 	
-	iterator end();
-	
-	/*bool empty();
-	
-	int size();*/
+	iterator end();	
 		
 	bool empty() {
 		int index = stackPointer.size() - STACK_COUNT;

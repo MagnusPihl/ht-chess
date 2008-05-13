@@ -6,11 +6,10 @@
 #include "Move.h"
 #include "MoveGenerator.h"
 #include "LayeredStack.h"
+#include "GameConfiguration.h"
 #include <vector>
 
 class MoveGenerator;
-
-#define USE_EN_PASSANT 0
 
 #define CHECK_OVERFLOW true
 #define CONTENT_SIZE 256

@@ -133,13 +133,17 @@ Board::~Board() {
 /*****************************************************************************/
 
 inline void Board::testAndAddMove(Color color, Move &move, LayeredStack<Move, STACK_SIZE> &moves, int layerIndex) {
-/*	move.execute(*this);
+#if ONLY_GENERATE_LEGAL_MOVES == 1
+	move.execute(*this);
 		
-	if (!isCheck(color)) {*/
+	if (!isCheck(color)) {
 		moves.add(layerIndex, move);
-/*	}
+	}
 	
-	move.unexecute(*this);*/
+	move.unexecute(*this);
+#else
+	moves.add(layerIndex, move);
+#endif
 }
 
 
