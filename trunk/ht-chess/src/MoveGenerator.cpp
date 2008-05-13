@@ -22,6 +22,7 @@ void MoveGenerator::generateMoves(Board &board, Color color, LayeredStack<Move, 
 	for (x = 0; x < ROW_COUNT; ++x) {
 		for (y = 0; y < COLUMN_COUNT; ++y) {	
 			position = GET_POSITION(x,y);
+			//printf("%i, %i\n", x, y);
 			if (GET_PIECE_COLOR(board.getItemAt(position)) == color) {
 				board.getMovesFromPosition(position, moves);
 				//if(!usedNextMove)
@@ -53,14 +54,35 @@ void MoveGenerator::generateMoves(Board &board, Color color, LayeredStack<Move, 
 			}			
 		}
 	}
-        LayeredStack<Move, STACK_SIZE>::iterator itr;
-        for(itr = moves.begin(); itr != moves.end(); ++itr) 
+	     
+    for(LayeredStack<Move, STACK_SIZE>::iterator itr = moves.begin(); itr != moves.end(); ++itr) 
+    {
+        if((*itr).getNewPosition() == pos)
         {
-            if((*itr).getNewPosition() == pos)
-            {
-                moves.add(STACK_LAST_TURN, (*itr));
-                itr.erase();
-            }
+            moves.add(STACK_LAST_TURN, (*itr));
+            itr.erase();
         }
+    }
+   
 }
+
+void MoveGenerator::generateLegalMoves(Board &board, Color color, Position position, LayeredStack<Move, STACK_SIZE> &moves) {			
+	if (GET_PIECE_COLOR(board.getItemAt(position)) == color) {
+		board.getMovesFromPosition(position, moves);
+	}
+	
+	ColoredPiece threat;
+	
+	for(LayeredStack<Move, STACK_SIZE>::iterator itr = moves.begin(); itr != moves.end(); ++itr) 
+    {
+		(*itr).execute(board);
+		threat = board.getThreatOf(board.getPositionOfKing(color),color);					
+		(*itr).unexecute(board);
+		
+		if (threat != NO_PIECE) {
+			itr.erase();
+		}		
+    }
+}
+
 #endif MOVE_GENERATOR_H

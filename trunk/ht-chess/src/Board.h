@@ -19,6 +19,11 @@ class MoveGenerator;
 #define ROOK_A_MOVED 0x02
 #define ROOK_H_MOVED 0x04
 
+#define IS_SAFE 0x00
+#define IS_CHECK 0x01
+#define IS_CHECKMATE 0x02
+#define IS_STALEMATE 0x04
+
 #define HAS_KING_MOVED(board, colorIndex) (((board).hasMoved[(colorIndex)] & KING_MOVED) == KING_MOVED)
 #define HAS_ROOK_A_MOVED(board, colorIndex) (((board).hasMoved[(colorIndex)] & ROOK_A_MOVED) == ROOK_A_MOVED)
 #define HAS_ROOK_H_MOVED(board, colorIndex) (((board).hasMoved[(colorIndex)] & ROOK_H_MOVED) == ROOK_H_MOVED)
@@ -297,14 +302,7 @@ public:
 	* return: ColoredPiece - the least valued piece threatening the selected position
 	*	values goes down from king through queen, rook, bishop, knight to pawn.
 	*/
-	ColoredPiece getThreatOf(Position position, Color color);
-	
-	/**
-	* Tells whether the specified player is stalemate	
-	* param: Color, color - Player color
-	* return: bool - true if player is stalemate
-	*/
-	bool isStalemate(Color color);
+	ColoredPiece getThreatOf(Position position, Color color);	
 	
 	/**	
 	* Tells whether the specified player is in check
@@ -318,16 +316,8 @@ public:
 	* param: Color, color - Player color
 	* return: bool - true if player is in checkmate
 	*/
-	bool isCheckmate(Color color);
-	
-	/**
-	* Returns whom if any player is stalemate
-	* return: int - 0 if no one is stalemate, 
-	*	BLACK if black player is stalemate
-	*	or WHITE if white player is stalemate,
-	*/
-	int isStalemate();
-	
+	int isCheckmate(Color color);
+		
 	/**
 	* Returns whom if any player is checkmate	
 	* return: int - 0 if no one is checkmate, 
