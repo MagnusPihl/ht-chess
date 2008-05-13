@@ -136,12 +136,12 @@ public:
 				gameTurn = GET_OPPOSITE_COLOR(gameTurn);
 				turnDone = false;
 			}
-			if(board.isCheckmate(gameTurn) && gameTurn!=0)
+			if(board.isCheckmate(gameTurn) && gameTurn!=NO_COLOR)
 			{
 				printf("Checkmate!\n");
 				gameTurn=NO_COLOR;
 			}
-			else if(board.isStalemate() && gameTurn!=0)
+			else if(board.isStalemate() && gameTurn!=NO_COLOR)
 			{
 				printf("Stalemate!\n");
 				gameTurn=NO_COLOR;
