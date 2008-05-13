@@ -8,6 +8,8 @@
 #include "Move.h"
 #include "Piece.h"
 #include "Evaluator.h"
+
+//static int MINMAX_COLOR[2] = {BLACK, WHITE};
 //#include <fstream>
 
 /*class MiniMax
@@ -140,10 +142,13 @@ private:
 		if (SDL_GetTicks() - timeStarted > MAX_SEARCH_TIME) {
 			printf("time\n");
 		}
-		if((SDL_GetTicks() - timeStarted > MAX_SEARCH_TIME) || curDepth == maxDepth || board.isCheckmate() || board.isStalemate())		//if leaf
-		{
-			//printf("efter\n");
-			return evaluator(board, curDepth);
+		int boardState;
+		
+		if((SDL_GetTicks() - timeStarted > MAX_SEARCH_TIME) || 
+			(curDepth == maxDepth) || 
+			((boardState = board.isCheckmate()) & (IS_CHECKMATE | IS_STALEMATE) != 0))		//if leaf
+		{			
+			return evaluator(board, curDepth, boardState);
 		}
 		else if(isMaximizer)	//if maximizer
 		{
@@ -169,11 +174,9 @@ private:
 		}
 		else	//if minimizer
 		{
-			moveGen.generateMoves(board, BLACK, moveList);
+			moveGen.generateMoves(board, BLACK, moveList);													
 			
-			LayeredStack<Move, STACK_SIZE>::iterator itr;									
-			
-			for(itr = moveList.begin(); (itr != moveList.end()) && (alpha < beta); ++itr)
+			for(LayeredStack<Move, STACK_SIZE>::iterator itr = moveList.begin(); (itr != moveList.end()) && (alpha < beta); ++itr)
 			{
 				moveList.setReturnPoint();
 				
@@ -195,12 +198,12 @@ private:
 	}
         
     int alphaBeta(Board &board, Move &path, bool isMaximizer=true, int maxDepth=100, int alpha=-100000, int beta=100000)
-	{
+	{		
 		if(isMaximizer)	//if maximizer
 		{
 			moveGen.generateMoves(board, WHITE, moveList);	
-			LayeredStack<Move, STACK_SIZE>::iterator itr;	
-			for(itr = moveList.begin(); (itr != moveList.end()) && (alpha < beta); ++itr)
+				
+			for(LayeredStack<Move, STACK_SIZE>::iterator itr = moveList.begin(); (itr != moveList.end()) && (alpha < beta); ++itr)
 			{	
 				moveList.setReturnPoint();
 			
@@ -221,11 +224,9 @@ private:
 		}
 		else	//if minimizer
 		{
-			
-			
-			LayeredStack<Move, STACK_SIZE>::iterator itr;									
-			
-			for(itr = moveList.begin(); (itr != moveList.end()) && (alpha < beta); ++itr)
+			moveGen.generateMoves(board, BLACK, moveList);	
+						
+			for(LayeredStack<Move, STACK_SIZE>::iterator itr = moveList.begin(); (itr != moveList.end()) && (alpha < beta); ++itr)
 			{
 				moveList.setReturnPoint();
 				

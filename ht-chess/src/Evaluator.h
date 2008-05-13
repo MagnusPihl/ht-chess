@@ -27,20 +27,19 @@ int GLOBAL_distance[128] =
 class Evaluator
 {
 private:
-    bool cacheValue;
     LayeredStack<Move, STACK_SIZE> moves;
 
 #ifdef EVALUATOR_CACHE
 	ValueCache cache;
 #endif
 
-	int getValue(Board &board, Color color, int ply)
+	int getValue(Board &board, Color color, int ply, int boardState)
 	{
 		int value = 0;
 		int threats = 0;
 		int colorIndex = (color == WHITE); 
 		int rowIndex = CASTLING_ROW[colorIndex];
-		int direction = PAWN_DIRECTION[colorIndex];
+		int direction = PAWN_DIRECTION[colorIndex];		
 
 		int gamePhase;
 		if(board.getMaterialValue(color) <= 1500 || board.getMaterialValue(GET_OPPOSITE_COLOR(color)) <= 1500)
@@ -103,10 +102,9 @@ private:
 	                            
 							case KING:
 								//antal træk fra MATE!
-								if(board.isCheckmate(color))
+								if((boardState & (color | IS_CHECKMATE | IS_STALEMATE)) != 0)
 								{
-									value -= 1000 * ply;
-									cacheValue = false;
+									value -= 1000 * ply;									
 								}
 								if(gamePhase == PHASE_2)
 								{
@@ -130,10 +128,9 @@ private:
 								break;
 							case KING:
 								//antal træk fra MATE!
-								if(board.isCheckmate(color))
+								if((boardState & (color | IS_CHECKMATE | IS_STALEMATE)) != 0)
 								{
 									value -= 1000 * ply;
-									cacheValue = false;
 								}
 								if(board.getMaterialValue(color) < board.getMaterialValue(GET_OPPOSITE_COLOR(color)))
 									value -= 8 * GLOBAL_distance[pos];
@@ -167,38 +164,34 @@ private:
 		return value;
 	}
     
-    int evaluate(Board &board, int ply)
-	{
-		int value;
+    int evaluate(Board &board, int ply, int boardState)
+	{	
+		int value;	
 	//printf("cols: %i\n", cache.getCollisions);
-#ifdef EVALUATOR_CACHE				
-		int hash = board.getHashKey();
-		int lock = board.getHashLock();		
-		value = cache.get(hash, lock);
-		
-		if(value != INVALID_BOARD_VALUE)//v.first == 0 || v.first != board.getHashLock())
-		{	
-			//printf("cached: %i\n", hash);
-			return value;
-		}
-		else
-		{
-			//printf("Not cached. Hash: %i, Lock: %i, Cached Lock: %i.\n", board.getHashKey(), board.getHashLock(), v.first);
-			cacheValue = true;
-#endif
-			value = getValue(board, WHITE, ply) - getValue(board, BLACK, ply);
-			//int v2 = getValue2(board, ply);
-			//if(value != v2)
-			//	printf("%i does not equal %i, difference is %i\n", value, v2, value - v2);
-		    
 #ifdef EVALUATOR_CACHE			
-			if (cacheValue)
-				cache.insert(hash, lock, value);
-#endif
-			return value;
-#ifdef EVALUATOR_CACHE
+		int hash, lock;		
+		
+		if (boardState == IS_SAFE) {
+			hash = board.getHashKey();
+			lock = board.getHashLock();		
+			value = cache.get(hash, lock);
+		
+			if(value != INVALID_BOARD_VALUE)//v.first == 0 || v.first != board.getHashLock())
+			{	
+				//printf("cached: %i\n", hash);
+				return value;
+			}
 		}
+		
+		//printf("Not cached. Hash: %i, Lock: %i, Cached Lock: %i.\n", board.getHashKey(), board.getHashLock(), v.first);		
 #endif
+		value = getValue(board, WHITE, ply, boardState) - getValue(board, BLACK, ply, boardState);
+	    
+#ifdef EVALUATOR_CACHE			
+		if (boardState == IS_SAFE)
+			cache.insert(hash, lock, value);
+#endif
+		return value;
 	}
 
 
@@ -214,12 +207,12 @@ private:
 public:
 	Evaluator() {}
 
-    int operator()(Board &board, int depth)
+    int operator()(Board &board, int depth, int boardState)
 	{
-        return evaluate(board, depth);
+        return evaluate(board, depth, boardState);
     }
 
-	void clearCache()
+	inline void clearCache()
 	{
 #ifdef EVALUATOR_CACHE
 		cache.clear();

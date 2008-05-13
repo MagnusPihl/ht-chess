@@ -129,44 +129,60 @@ public:
 		MouseHandler mouse;
 		SDL_Event event;
 		MouseEvent mouseEvent;
+		int boardState;
+		
 		while(true)
 		{
 			if(turnDone)
 			{
 				gameTurn = GET_OPPOSITE_COLOR(gameTurn);
 				turnDone = false;
-			}
-			if(board.isCheckmate(gameTurn) && gameTurn!=NO_COLOR)
+			}			
+			
+			if ((gameTurn != NO_COLOR) && ((boardState = board.isCheckmate()) != IS_SAFE))
 			{
-				printf("Checkmate!\n");
-				gameTurn=NO_COLOR;
+				if ((boardState & IS_CHECKMATE) != 0) {
+					if (GET_PIECE_COLOR(boardState) == WHITE) {
+						printf("White is checkmate!\n");
+					} else {
+						printf("Black is checkmate!\n");
+					}					
+					gameTurn = NO_COLOR;
+					
+				} else if ((boardState & IS_STALEMATE) != 0) {
+					printf("Stalemate!\n");
+					gameTurn = NO_COLOR;
+					
+				} else if ((boardState & IS_CHECK) != 0) {	
+					if (GET_PIECE_COLOR(boardState) == WHITE) {
+						printf("White is check!\n");
+					} else {
+						printf("Black is check!\n");
+					}			
+				}
 			}
-			else if(board.isStalemate() && gameTurn!=NO_COLOR)
-			{
-				printf("Stalemate!\n");
-				gameTurn=NO_COLOR;
-			}
+			
 			if(gameTurn == WHITE && !player1IsHuman)
 			{
-                                curMove = moveSelector(board, true);
-                                if(curMove.getContent() != NO_PIECE) {
-                                    cappedPos = curMove.getNewPosition();
-                                }
-                                else {
-                                    cappedPos = INVALID_POSITION;
-                                }
+				curMove = moveSelector(board, true);
+				if(curMove.getContent() != NO_PIECE) {
+					cappedPos = curMove.getNewPosition();
+				}
+				else {
+					cappedPos = INVALID_POSITION;
+				}
 				curMove.execute(board);
 				turnDone = true;
 			}
 			else if(gameTurn == BLACK && !player2IsHuman)
 			{
-                                curMove = moveSelector(board, false);
-                                if(curMove.getContent() != NO_PIECE) {
-                                    cappedPos = curMove.getNewPosition();
-                                }
-                                else {
-                                    cappedPos = INVALID_POSITION;
-                                }
+                curMove = moveSelector(board, false);
+                if(curMove.getContent() != NO_PIECE) {
+                    cappedPos = curMove.getNewPosition();
+                }
+                else {
+                    cappedPos = INVALID_POSITION;
+                }
 				curMove.execute(board);
 				turnDone = true;
 			}
@@ -213,7 +229,7 @@ public:
 								&& ((gameTurn==WHITE && player1IsHuman) || (gameTurn==BLACK && player2IsHuman)))
 							{
 								moveList.clear();
-								board.getMovesFromPosition(pos, moveList);								
+								MoveGenerator::generateLegalMoves(board, gameTurn, pos, moveList);								
 								/*if(!moveList.empty())		//If this is enabled, players can't choose pieces with no valid moves.
 								{*/
 									SDL_FillRect(fullOverlay, NULL, SDL_MapRGB(screen->format, 255, 0, 255));

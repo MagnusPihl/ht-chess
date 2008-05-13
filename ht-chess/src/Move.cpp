@@ -65,6 +65,9 @@ void Move::execute(Board &board)
 	if (content != NO_PIECE) {
 		board.reversableMoves = 0;
 		board.materialValue[(GET_PIECE_COLOR(content) == WHITE)] -= PIECE_VALUE[GET_PIECE_TYPE(content)];
+		if (GET_PIECE_TYPE(content) == KING) {
+			board.kingPosition[colorIndex ^ 0x01] = INVALID_POSITION;
+		}
 	}
 
 	switch (type) {
@@ -76,11 +79,11 @@ void Move::execute(Board &board)
 					board.enPassantPosition = COMBINE_TO_POSITION(GET_COLUMN(to), PAWN_ENPASSANT_TAKE_ROW[(colorIndex ^ 0x01)]);
 				}			
 			#endif
-			
+					
 			break;			
 	
 		case KING:					
-			board.setPositionOfKing(to, color);
+			board.kingPosition[colorIndex] = to;
 			board.hasMoved[colorIndex] |= KING_MOVED;
 			break;
 			
@@ -149,9 +152,13 @@ void Move::unexecute(Board &board)
 	board.hasMoved[colorIndex] = hasMoved;		
 	board.materialValue[(GET_PIECE_COLOR(content) == WHITE)] += PIECE_VALUE[GET_PIECE_TYPE(content)];	
 	
+	if (GET_PIECE_TYPE(content) == KING) {
+		board.kingPosition[colorIndex ^ 0x01] = to;
+	}
+	
 	
 	if (GET_PIECE_TYPE(piece) == KING) {		
-		board.setPositionOfKing(from, color);
+		board.kingPosition[colorIndex] = from;
 	}
 	
 	switch (GET_PIECE_TYPE(special)) {

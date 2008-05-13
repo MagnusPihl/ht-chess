@@ -60,6 +60,7 @@ public:
 						
 			void erase() {
 				parent->stack[layerIndex].erase(parent->stack[layerIndex].begin() + stackIndex);
+				stackIndex--;
 			}	
 	};			
 	

@@ -180,26 +180,6 @@ Position Board::getPositionOfKing(Color color) {
 
 /*****************************************************************************/
 
-bool Board::isStalemate(Color color) {
-	if (reversableMoves >= MAX_TURNS) {
-		return true;
-	}
-	if ((materialValue[BLACK_INDEX] == 0) && (materialValue[WHITE_INDEX] == 0)) {
-		return true;
-	}
-	if (!isCheck(color)) {
-		moveList.clear();	
-		MoveGenerator::generateMoves(*this, color, moveList);		
-		if (moveList.empty()) {
-			return true;
-		}
-	}
-	return false;
-}
-
-
-/*****************************************************************************/
-
 bool Board::isCheck(Color color) {	
 	if (NO_PIECE != getThreatOf(kingPosition[(color == WHITE)], color)) {
 		return true;
@@ -210,41 +190,70 @@ bool Board::isCheck(Color color) {
 
 /*****************************************************************************/
 
-bool Board::isCheckmate(Color color) {
-	if (isCheck(color)) {
-		moveList.clear();		
-		MoveGenerator::generateMoves(*this, color, moveList);		
-		if (moveList.empty()) {
-			return true;
-		}
+int Board::isCheckmate(Color color) {	
+	int colorIndex = (color == WHITE);	
+		
+	if (kingPosition[colorIndex] == INVALID_POSITION) {
+		return IS_CHECKMATE;
 	}
-	return false;
+	
+	if ((materialValue[BLACK_INDEX] == 0) && (materialValue[WHITE_INDEX] == 0)) {
+		return IS_STALEMATE;
+	}
+	
+	moveList.clear();		
+	MoveGenerator::generateMoves(*this, color, moveList);	
+	LayeredStack<Move, STACK_SIZE>::iterator end = moveList.end();	
+	bool movePossible = false;	
+		
+	//check if any moves are possible
+	for (LayeredStack<Move, STACK_SIZE>::iterator itr = moveList.begin(); (itr != end) && (!movePossible); ++itr) {
+		(*itr).execute(*this);
+		if ((kingPosition[colorIndex] != INVALID_POSITION)&&(NO_PIECE == getThreatOf(kingPosition[colorIndex], color))) {
+			movePossible = true;
+		}
+		/*if (NO_PIECE == getThreatOf(kingPosition[colorIndex], color)) {
+			movePossible = true;
+		}*/
+		(*itr).unexecute(*this);
+	}
+	
+	int output;
+	
+	if (NO_PIECE != getThreatOf(kingPosition[colorIndex], color)) { //if check
+		if (!movePossible) {
+			output = IS_CHECKMATE;
+		} else {
+			output = IS_CHECK;
+		}
+	} else { //not check
+		if (!movePossible) {
+			output = IS_STALEMATE;
+		} else {
+			output = IS_SAFE;
+		}
+	}	
+	
+	if (reversableMoves >= MAX_TURNS) {
+		return IS_STALEMATE;
+	}
+	
+	return output;		
 }
 
 
 /*****************************************************************************/
 
 int Board::isCheckmate() {
-	if (isCheckmate(WHITE)) {
-		return WHITE;
+	int output = isCheckmate(WHITE);
+	if (output != IS_SAFE) {
+		return WHITE | output;
 	}
-	if (isCheckmate(BLACK)) {
-		return BLACK;
+	output = isCheckmate(BLACK);
+	if (output != IS_SAFE) {
+		return BLACK | output;
 	}
-	return 0;
-}
-
-
-/*****************************************************************************/
-
-int Board::isStalemate() {
-	if (isStalemate(WHITE)) {
-		return WHITE;
-	}
-	if (isStalemate(BLACK)) {
-		return BLACK;
-	}
-	return 0;
+	return IS_SAFE;
 }
 
 
@@ -902,6 +911,15 @@ void Board::resetBoard() {
 	content[G1] = KNIGHT_WHITE;
 	content[H1] = ROOK_WHITE;
 	
+	/*content[B1] = KING_BLACK;
+	content[C3] = QUEEN_WHITE;
+	content[C4] = QUEEN_WHITE;
+	content[C5] = QUEEN_WHITE;
+	content[D1] = KING_WHITE;
+	kingPosition[BLACK_INDEX] = B1;	
+	kingPosition[WHITE_INDEX] = D1;*/
+	
+	
 	kingPosition[BLACK_INDEX] = E8;	
 	kingPosition[WHITE_INDEX] = E1;
 	hasMoved[BLACK_INDEX] = 0;	
@@ -914,7 +932,7 @@ void Board::resetBoard() {
 	
 	#if USE_EN_PASSANT == 1
 		enPassantPosition = INVALID_POSITION;
-	#endif
+	#endif	
 }
 
 #endif
