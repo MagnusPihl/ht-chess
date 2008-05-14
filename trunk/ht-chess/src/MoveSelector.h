@@ -10,26 +10,44 @@
 //static int MINMAX_COLOR[2] = {BLACK, WHITE};
 //#include <fstream>
 
-/*class MiniMax
+class MiniMax
 {
 private:
 	MoveGenerator moveGen;
+	LayeredStack<Move, 1> moves;
+	Evaluator evaluator;
+#if USE_TIME_CONSTRAINT == 1	
+	int timeStarted;
+#endif
 
 	int miniMax(Board &board, Move &path, bool isMaximizer=true, int curDepth=0, int maxDepth=100)
 	{
-		if(curDepth == maxDepth || board.isCheckmate() || board.isStalemate())		//if leaf
+		int boardState;
+				
+#if USE_TIME_CONSTRAINT == 1
+		if (SDL_GetTicks() - timeStarted > MAX_SEARCH_TIME) {
+			printf("timeeee\n");
+		}
+#endif		  
+		
+		if (		
+#if USE_TIME_CONSTRAINT == 1
+		    (SDL_GetTicks() - timeStarted > MAX_SEARCH_TIME) || 
+#endif		  
+			(curDepth == maxDepth) || 
+			(((boardState = board.isCheckmate()) & (IS_STALEMATE | IS_CHECKMATE)) != 0))		//if leaf
 		{
-			return 0;//BoardEvaluator.boardValue(board);
+			return evaluator(board, curDepth, boardState);
 		}
 		else if(isMaximizer)	//if maximizer
 		{
 			int bestMove = -10000;
 			int curMove;
-			std::vector<Move> moveList;
-			moveGen.generateMoves(board, WHITE, moveList, moveList);
-			for(std::vector<Move>::iterator itr = moveList.begin(); itr != moveList.end(); itr++)
+			moveGen.generateMoves(board, WHITE, moves);
+			for(LayeredStack<Move,1>::iterator itr = moves.begin(); itr != moves.end(); ++itr)
 			{			
 				(*itr).execute(board);
+				moves.setReturnPoint();
 				curMove = miniMax(board, path, false, curDepth+1, maxDepth);
 				if(curMove > bestMove)
 				{
@@ -37,6 +55,7 @@ private:
 					path = (*itr);
 				}
 				(*itr).unexecute(board);
+				moves.rollBack();
 			}
 			return bestMove;
 		}
@@ -44,11 +63,11 @@ private:
 		{
 			int bestMove = 10000;
 			int curMove;
-			std::vector<Move> moveList;
-			moveGen.generateMoves(board, BLACK, moveList, moveList);
-			for(std::vector<Move>::iterator itr = moveList.begin(); itr != moveList.end(); itr++)
+			moveGen.generateMoves(board, BLACK, moves);
+			for(LayeredStack<Move,1>::iterator itr = moves.begin(); itr != moves.end(); ++itr)
 			{
 				(*itr).execute(board);
+				moves.setReturnPoint();
 				curMove = miniMax(board, path, true, curDepth+1, maxDepth);
 				if(curMove < bestMove)
 				{
@@ -56,6 +75,7 @@ private:
 					path = (*itr);
 				}
 				(*itr).unexecute(board);
+				moves.rollBack();
 			}
 			return bestMove;
 		}
@@ -64,12 +84,15 @@ public:
 	Move operator()(Board &board, bool isMaximizer=true, int maxDepth=DEFAULT_PLY)
 	{
 		Move path;
+#if USE_TIME_CONSTRAINT == 1				
+		timeStarted = SDL_GetTicks();
+#endif
 		miniMax(board, path, isMaximizer, 0, maxDepth);
 		return path;
 	}
 };
 
-class AlphaBeta
+/*class AlphaBeta
 {
 private:
 	MoveGenerator moveGen;
@@ -133,21 +156,25 @@ private:
 	Evaluator evaluator;
 	LayeredStack<Move, STACK_SIZE> moveList;
 	Move nextMove[2];	//0 == WHITE, 1 == BLACK
+#if USE_TIME_CONSTRAINT == 1
 	int timeStarted;
+#endif
 
 	int alphaBeta(Board &board, Move &path, bool isMaximizer, int curDepth, int maxDepth, int alpha, int beta)
 	{
+#if USE_TIME_CONSTRAINT == 1
 		if (SDL_GetTicks() - timeStarted > MAX_SEARCH_TIME) {
 			printf("time\n");
 		}
+#endif
 		int boardState;
 		
 		if(
-#if DONT_USE_TIME_CONSTRAINT == 0
+#if USE_TIME_CONSTRAINT == 1
 		    (SDL_GetTicks() - timeStarted > MAX_SEARCH_TIME) || 
 #endif		    		    
 			(curDepth == maxDepth) || 
-			((boardState = board.isCheckmate()) & (IS_CHECKMATE | IS_STALEMATE) != 0))		//if leaf
+			(((boardState = board.isCheckmate()) & (IS_CHECKMATE | IS_STALEMATE)) != 0))		//if leaf
 		{			
 			return evaluator(board, curDepth, boardState);
 		}
@@ -269,19 +296,19 @@ public:
 			moveGen.generateMoves(board, BLACK , moveList);
 		}		
 
-#if DONT_USE_ITERATIVE_DEEPENING == 0		
+#if USE_ITERATIVE_DEEPENING == 1		
 
         for(int i = 2; i <= maxDepth; ++i)       
         {
     
-    #if DONT_USE_TIME_CONSTRAINT == 0
+    #if USE_TIME_CONSTRAINT == 1
 			if (SDL_GetTicks() - timeStarted > MAX_SEARCH_TIME) {
 				printf("time %i\n", i);
 				break;
 			}
 	#endif
-    
-            alphaBeta(board, path, isMaximizer, i);
+			
+			alphaBeta(board, path, isMaximizer, i);
 
 	#if USE_UNSORTED_STACK == 0
             moveList.sort();
@@ -299,6 +326,12 @@ public:
 		/*moveFile << "moveList.push_back(Move(" << path.getOldPosition() << ", " << path.getNewPosition() << ", " << path.getSpecial();
 		moveFile << ", " << path.getPiece() << ", " << path.getContent() << ", " << path.getHasMoved() << ", " << path.getEnPassantPosition();
 		moveFile << ", " << path.getReversableMoves() << "));\n";*/
+		
+#if CLEAR_CACHE_ON_NON_REVERSABLE_MOVE == 1
+		if (path.getContent() != NO_PIECE) {
+			evaluator.clearCache();
+		}
+#endif
 		return path;
 	}
 };

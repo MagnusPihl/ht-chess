@@ -28,7 +28,7 @@ class Evaluator
 private:
     LayeredStack<Move, STACK_SIZE> moves;
 
-#if DONT_USE_EVALUATION_CACHING == 0
+#if USE_EVALUATION_CACHING == 1
 	ValueCache cache;
 #endif
 
@@ -168,7 +168,7 @@ private:
 		int value;	
 	//printf("cols: %i\n", cache.getCollisions);
 	
-#if DONT_USE_EVALUATION_CACHING == 0
+#if USE_EVALUATION_CACHING == 1
 
 		int hash, lock;		
 		
@@ -188,7 +188,7 @@ private:
 #endif
 		value = getValue(board, WHITE, ply, boardState) - getValue(board, BLACK, ply, boardState);
 	    
-#if DONT_USE_EVALUATION_CACHING == 0			
+#if USE_EVALUATION_CACHING == 1		
 		if (boardState == IS_SAFE)
 			cache.insert(hash, lock, value);
 #endif
@@ -215,10 +215,8 @@ public:
 
 	inline void clearCache()
 	{
-#if DONT_USE_EVALUATION_CACHING == 0
 		cache.clear();
 		//printf("Cache elements: %i\n", cache.size());
-#endif
 	}
 };
 

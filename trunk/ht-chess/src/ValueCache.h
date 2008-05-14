@@ -3,7 +3,14 @@
 
 #include <cstdio>
 #include <vector>
+#include <list>
 #include "Board.h"
+
+#if USE_LINKEDLISTS_WHEN_CACHING == 0	
+	#define LIST_TYPE vector
+#else
+	#define LIST_TYPE list
+#endif	
 
 using namespace std;
 
@@ -13,21 +20,22 @@ class ValueCache {
 public:	
 
 	//constructor
-	explicit ValueCache( int size = 2097169, double load = 2.0 ) 
-		: currentSize(0), loadFactor(load) { 
-		table = new vector<vector<BoardValue>>(nextPrime(size));				
+	explicit ValueCache( int size = CACHE_SIZE, double load = 2.0 ) 
+		: currentSize(0), loadFactor(load) { 	
+		table = new vector<LIST_TYPE<BoardValue>>(nextPrime(size));				
 		maxLoad = loadFactor * table->size();
 	}
 
 	//copyconstructor
 	ValueCache(const ValueCache &rhs)
 		: currentSize(rhs.currentSize), loadFactor(rhs.loadFactor), maxLoad(rhs.maxLoad) { 		
-		table = new vector<vector<BoardValue>>(0);					
+		
+		table = new vector<LIST_TYPE<BoardValue>>(0);					
 		
 		if (!rhs.table->empty()) {
-			vector<vector<BoardValue>>::iterator end = rhs.table->end();
+			vector<LIST_TYPE<BoardValue>>::iterator end = rhs.table->end();
 			
-			for (vector<vector<BoardValue>>::iterator i = rhs.table->begin(); i != end; ++i) {
+			for (vector<LIST_TYPE<BoardValue>>::iterator i = rhs.table->begin(); i != end; ++i) {
 				table->push_back(*i);
 			}
 		}
@@ -41,8 +49,8 @@ public:
 			table->clear();
 			maxLoad = rhs.maxLoad;
 						
-			vector<vector<BoardValue>>::iterator end = rhs.table->end();
-			for (vector<vector<BoardValue>>::iterator i = rhs.table->begin(); i != end; ++i) {
+			vector<LIST_TYPE<BoardValue>>::iterator end = rhs.table->end();
+			for (vector<LIST_TYPE<BoardValue>>::iterator i = rhs.table->begin(); i != end; ++i) {
 				table->push_back(*i);
 			}
 		}
@@ -58,10 +66,12 @@ public:
 	bool insert(int _hash, int _lock, int _value) {
 		size_t hash = _hash % table->size();
 		
+#if CLEAR_CACHE_ON_OVERFLOW == 1
 		if (currentSize > maxLoad) {
-			printf("deleting");
+			//printf("deleting");
 			clear();
 		}		
+#endif
 		
 		(*table)[hash].push_back(BoardValue(_hash, _lock, _value));		
 		currentSize++;
@@ -73,9 +83,9 @@ public:
 	int get(int _hash, int _lock) {
 		size_t hash = _hash % table->size();		
 		
-		vector<BoardValue>::iterator end = (*table)[hash].end();
+		LIST_TYPE<BoardValue>::iterator end = (*table)[hash].end();
 
-		for (vector<BoardValue>::iterator i = (*table)[hash].begin(); i != end; ++i) {			
+		for (LIST_TYPE<BoardValue>::iterator i = (*table)[hash].begin(); i != end; ++i) {			
 			if (((*i).hash == _hash)&&((*i).lock == _lock)) {						
 				//printf("found");
 				return (*i).value;
@@ -89,9 +99,9 @@ public:
 	bool erase(int _hash, int _lock) { 
 		unsigned long hash = _hash % table->size();
 			
-		vector<BoardValue>::iterator end = (*table)[hash].end();
+		LIST_TYPE<BoardValue>::iterator end = (*table)[hash].end();
 		
-		for (vector<BoardValue>::iterator i = (*table)[hash].begin(); i != end; ++i) {
+		for (LIST_TYPE<BoardValue>::iterator i = (*table)[hash].begin(); i != end; ++i) {
 			if (((*i).hash == _hash)&&((*i).lock == _lock)) {					
 				(*table)[hash].erase(i);					
 				currentSize--;
@@ -120,9 +130,9 @@ public:
 	//remove all keys
 	void clear() {
 		
-		vector<vector<BoardValue>>::iterator end = table->end();
+		vector<LIST_TYPE<BoardValue>>::iterator end = table->end();
 		
-		for (vector<vector<BoardValue>>::iterator i = table->begin(); i != end; ++i) {		
+		for (vector<LIST_TYPE<BoardValue>>::iterator i = table->begin(); i != end; ++i) {		
 			(*i).clear();
 		}
 
@@ -142,7 +152,7 @@ public:
 
 private:
 		
-	vector<vector<BoardValue>> *table; // The array of Lists, the // STL list is used
+	vector<LIST_TYPE<BoardValue>> *table; // The array of Lists, the // STL list is used
 	int currentSize; // Number og items in // the hash table
 	double loadFactor; //Allowable fill rate. 
 	double maxLoad; //Pre calculated number of items that are allowed in list before rehash.	

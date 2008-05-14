@@ -4,7 +4,7 @@
 #include "GameConfiguration.h"
 #include <vector>
 
-#if USE_FLAT_STACK == 1
+#if USE_FLAT_STACK == 1 && USE_MINIMAX_ONLY == 0
 	#if USE_EN_PASSANT == 1
 		#define STACK_SIZE 6	
 		#define STACK_EN_PASSANT_CAPTURES 5
