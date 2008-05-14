@@ -1,8 +1,11 @@
 #ifndef CORE_H
 #define CORE_H
 
-//#define TEST_PERFORMANCE
-#define AI_TYPE AlphaBetaOptimized
+#if USE_MINIMAX_ONLY == 1
+	#define AI_TYPE MiniMax
+#else
+	#define AI_TYPE AlphaBetaOptimized
+#endif
 
 #include "SDL.h"
 #include "SDL_ttf.h"
@@ -14,7 +17,7 @@
 #include "LayeredStack.h"
 #include <math.h>
 
-#ifdef TEST_PERFORMANCE
+#if TEST_PERFORMANCE == 1
 	#include <fstream>
 #endif
 
@@ -56,7 +59,7 @@ private:
 	Board board;
         Position cappedPos;
         Move curMove;
-#ifdef TEST_PERFORMANCE
+#if TEST_PERFORMANCE == 1
 	int performanceTimer;
 	int turnCounter;
 	ofstream performanceFile;
@@ -92,7 +95,7 @@ public:
 		//SDL_SetAlpha(fullOverlay, SDL_SRCALPHA, 128);
 		SDL_SetColorKey(fullOverlay, SDL_SRCCOLORKEY, SDL_MapRGB(fullOverlay->format, 255, 0, 255));
                 cappedPos = INVALID_POSITION;
-#ifdef TEST_PERFORMANCE
+#if TEST_PERFORMANCE == 1
 		turnCounter=0;
 		performanceFile.open ("TestPerformance.m");
 		performanceFile << "timeUsed = [];\n";
@@ -117,7 +120,7 @@ public:
 
 	void run()
 	{
-#ifdef TEST_PERFORMANCE
+#if TEST_PERFORMANCE == 1
 		performanceTimer = SDL_GetTicks();
 #endif
 		Color gameTurn = WHITE;
@@ -165,7 +168,7 @@ public:
 			if(gameTurn == WHITE && !player1IsHuman)
 			{
 				curMove = moveSelector(board, true);
-				if(curMove.getContent() != NO_PIECE) {
+				if(curMove.getContent() != NO_PIECE) {					
 					cappedPos = curMove.getNewPosition();
 				}
 				else {
@@ -302,7 +305,7 @@ public:
 			SDL_BlitSurface(restartText, NULL, screen, &restartTextRect);
 			SDL_BlitSurface(quitText, NULL, screen, &quitTextRect);
 			SDL_Flip(screen);	//Update screen
-#ifdef TEST_PERFORMANCE
+#if TEST_PERFORMANCE == 1
 			if(turnDone)
 			{
 				int timeSpent = SDL_GetTicks() - performanceTimer;
