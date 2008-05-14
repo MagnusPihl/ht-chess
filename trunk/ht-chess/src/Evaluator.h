@@ -28,9 +28,9 @@ class Evaluator
 private:
     LayeredStack<Move, STACK_SIZE> moves;
 
-#if USE_EVALUATION_CACHING == 1
-	ValueCache cache;
-#endif
+	#if USE_EVALUATION_CACHING == 1
+		ValueCache cache;
+	#endif
 
 	int getValue(Board &board, Color color, int ply, int boardState)
 	{
@@ -168,30 +168,41 @@ private:
 		int value;	
 	//printf("cols: %i\n", cache.getCollisions);
 	
-#if USE_EVALUATION_CACHING == 1
+		#if USE_EVALUATION_CACHING == 1
 
-		int hash, lock;		
-		
-		if (boardState == IS_SAFE) {
-			hash = board.getHashKey();
-			lock = board.getHashLock();		
-			value = cache.get(hash, lock);
-		
-			if(value != INVALID_BOARD_VALUE)//v.first == 0 || v.first != board.getHashLock())
-			{	
-				//printf("cached: %i\n", hash);
-				return value;
+			int hash, lock;		
+			
+			if (boardState == IS_SAFE) {
+				hash = board.getHashKey();
+				lock = board.getHashLock();		
+				value = cache.get(hash, lock);
+			
+				if(value != INVALID_BOARD_VALUE)//v.first == 0 || v.first != board.getHashLock())
+				{	
+					//printf("cached: %i\n", hash);
+					#if PRINT_CACHE_RETRIEVALS == 1
+						#if USE_ITERATIVE_DEEPENING == 1 && USE_MINIMAX_ONLY == 0
+							performanceFile << "cacheRetrievals[" << turnNumber << ", " << iterationNumber << ", " << ply << "]++;\n"; 
+						#else
+							performanceFile << "cacheRetrievals[" << turnNumber << "]++;\n"; 
+						#endif
+					#endif
+					
+					return value;
+				}
 			}
-		}
-		
-		//printf("Not cached. Hash: %i, Lock: %i, Cached Lock: %i.\n", board.getHashKey(), board.getHashLock(), v.first);		
-#endif
-		value = getValue(board, WHITE, ply, boardState) - getValue(board, BLACK, ply, boardState);
-	    
-#if USE_EVALUATION_CACHING == 1		
-		if (boardState == IS_SAFE)
-			cache.insert(hash, lock, value);
-#endif
+			
+			//printf("Not cached. Hash: %i, Lock: %i, Cached Lock: %i.\n", board.getHashKey(), board.getHashLock(), v.first);		
+			
+		#endif
+			value = getValue(board, WHITE, ply, boardState) - getValue(board, BLACK, ply, boardState);
+			    
+		#if USE_EVALUATION_CACHING == 1		
+			if (boardState == IS_SAFE)
+			{
+				cache.insert(hash, lock, value);
+			}
+		#endif
 		return value;
 	}
 
@@ -199,10 +210,15 @@ private:
 	int getDistance(int x, int y, int currentColor, Board &board)
 	{
 		int opKing = board.getPositionOfKing(GET_OPPOSITE_COLOR(currentColor));
+		
 		if(abs(x-GET_ROW(opKing)) > abs(y-GET_REAL_COLUMN(opKing)))
+		{
 			return abs(x-GET_ROW(opKing));
+		}
 		else
+		{
 			return abs(y-GET_REAL_COLUMN(opKing));
+		}
 	}
 
 public:

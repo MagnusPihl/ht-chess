@@ -7,8 +7,12 @@
 #include "Evaluator.h"
 #include "GameConfiguration.h"
 
-//static int MINMAX_COLOR[2] = {BLACK, WHITE};
-//#include <fstream>
+#if TEST_PERFORMANCE == 1
+	int iterationNumber;
+	#if PRINT_SEARCH_TIME == 1
+		int searchTime;
+	#endif
+#endif
 
 class MiniMax
 {
@@ -24,16 +28,17 @@ private:
 	{
 		int boardState;
 				
-#if USE_TIME_CONSTRAINT == 1
-		if (SDL_GetTicks() - timeStarted > MAX_SEARCH_TIME) {
-			printf("timeeee\n");
-		}
-#endif		  
+		#if USE_TIME_CONSTRAINT == 1
+			if (SDL_GetTicks() - timeStarted > MAX_SEARCH_TIME) {
+				printf("timeeee\n");
+			}
+		#endif		  
 		
 		if (		
-#if USE_TIME_CONSTRAINT == 1
-		    (SDL_GetTicks() - timeStarted > MAX_SEARCH_TIME) || 
-#endif		  
+			#if USE_TIME_CONSTRAINT == 1
+				(SDL_GetTicks() - timeStarted > MAX_SEARCH_TIME) || 
+			#endif		  
+			
 			(curDepth == maxDepth) || 
 			(((boardState = board.isCheckmate()) & (IS_STALEMATE | IS_CHECKMATE)) != 0))		//if leaf
 		{
@@ -44,6 +49,11 @@ private:
 			int bestMove = -10000;
 			int curMove;
 			moveGen.generateMoves(board, WHITE, moves);
+			
+			#if PRINT_NUMBER_OF_MOVES_GENERATED == 1 && TEST_PERFORMANCE == 1				
+				performanceFile << "movesGenerated[" << turnNumber << ", " << curDepth+1 << "] +=" << moves.size();				
+			#endif
+
 			for(LayeredStack<Move,1>::iterator itr = moves.begin(); itr != moves.end(); ++itr)
 			{			
 				(*itr).execute(board);
@@ -64,6 +74,11 @@ private:
 			int bestMove = 10000;
 			int curMove;
 			moveGen.generateMoves(board, BLACK, moves);
+			
+			#if PRINT_NUMBER_OF_MOVES_GENERATED == 1 && TEST_PERFORMANCE == 1		
+				performanceFile << "movesGenerated[" << turnNumber << ", " << curDepth+1 << "] +=" moves.size();				
+			#endif
+			
 			for(LayeredStack<Move,1>::iterator itr = moves.begin(); itr != moves.end(); ++itr)
 			{
 				(*itr).execute(board);
@@ -84,10 +99,21 @@ public:
 	Move operator()(Board &board, bool isMaximizer=true, int maxDepth=DEFAULT_PLY)
 	{
 		Move path;
-#if USE_TIME_CONSTRAINT == 1				
-		timeStarted = SDL_GetTicks();
-#endif
+		
+		#if PRINT_SEARCH_TIME == 1 && TEST_PERFORMANCE == 1
+			searchTime = SDL_GetTicks();		
+		#endif
+		
+		#if USE_TIME_CONSTRAINT == 1				
+			timeStarted = SDL_GetTicks();
+		#endif
+		
 		miniMax(board, path, isMaximizer, 0, maxDepth);
+
+		#if PRINT_SEARCH_TIME == 1 && TEST_PERFORMANCE == 1	
+			performanceFile << "searchTime[" << turnNumber << "] = " << (SDL_GetTicks() - searchTime) << ";\n"; 
+		#endif
+
 		return path;
 	}
 };
@@ -156,23 +182,24 @@ private:
 	Evaluator evaluator;
 	LayeredStack<Move, STACK_SIZE> moveList;
 	Move nextMove[2];	//0 == WHITE, 1 == BLACK
-#if USE_TIME_CONSTRAINT == 1
-	int timeStarted;
-#endif
+	#if USE_TIME_CONSTRAINT == 1
+		int timeStarted;
+	#endif
 
 	int alphaBeta(Board &board, Move &path, bool isMaximizer, int curDepth, int maxDepth, int alpha, int beta)
 	{
-#if USE_TIME_CONSTRAINT == 1
-		if (SDL_GetTicks() - timeStarted > MAX_SEARCH_TIME) {
-			printf("time\n");
-		}
-#endif
+		#if USE_TIME_CONSTRAINT == 1
+			if (SDL_GetTicks() - timeStarted > MAX_SEARCH_TIME) {
+				printf("time\n");
+			}
+		#endif
+		
 		int boardState;
 		
 		if(
-#if USE_TIME_CONSTRAINT == 1
-		    (SDL_GetTicks() - timeStarted > MAX_SEARCH_TIME) || 
-#endif		    		    
+			#if USE_TIME_CONSTRAINT == 1
+				(SDL_GetTicks() - timeStarted > MAX_SEARCH_TIME) || 
+			#endif		    		    
 			(curDepth == maxDepth) || 
 			(((boardState = board.isCheckmate()) & (IS_CHECKMATE | IS_STALEMATE)) != 0))		//if leaf
 		{			
@@ -181,6 +208,15 @@ private:
 		else if(isMaximizer)	//if maximizer
 		{
 			moveGen.generateMoves(board, WHITE, moveList);	
+
+			#if PRINT_NUMBER_OF_MOVES_GENERATED == 1 && TEST_PERFORMANCE == 1		
+				#if USE_ITERATIVE_DEEPENING == 1
+					performanceFile << "movesGenerated[" << turnNumber << ", " << iterationNumber << ", " << curDepth+1 << "] +=" moves.size();				
+				#else
+					performanceFile << "movesGenerated[" << turnNumber << ", " << curDepth+1 << "] +=" moves.size();				
+				#endif
+			#endif
+			
 			LayeredStack<Move, STACK_SIZE>::iterator itr;	
 			for(itr = moveList.begin(); (itr != moveList.end()) && (alpha < beta); ++itr)
 			{	
@@ -202,7 +238,15 @@ private:
 		}
 		else	//if minimizer
 		{
-			moveGen.generateMoves(board, BLACK, moveList);													
+			moveGen.generateMoves(board, BLACK, moveList);		
+
+			#if PRINT_NUMBER_OF_MOVES_GENERATED == 1 && TEST_PERFORMANCE == 1		
+				#if USE_ITERATIVE_DEEPENING == 1
+					performanceFile << "movesGenerated[" << turnNumber << ", " << iterationNumber << ", " << curDepth+1 << "] +=" moves.size();				
+				#else
+					performanceFile << "movesGenerated[" << turnNumber << ", " << curDepth+1 << "] +=" moves.size();				
+				#endif
+			#endif											
 			
 			for(LayeredStack<Move, STACK_SIZE>::iterator itr = moveList.begin(); (itr != moveList.end()) && (alpha < beta); ++itr)
 			{
@@ -230,6 +274,15 @@ private:
 		if(isMaximizer)	//if maximizer
 		{
 			moveGen.generateMoves(board, WHITE, moveList);	
+			
+			#if PRINT_NUMBER_OF_MOVES_GENERATED == 1 && TEST_PERFORMANCE == 1		
+				#if USE_ITERATIVE_DEEPENING == 1
+					performanceFile << "movesGenerated[" << turnNumber << ", " << iterationNumber << ", " << 1 << "] +=" moves.size();				
+				#else
+					performanceFile << "movesGenerated[" << turnNumber << ", " << 1 << "] +=" moves.size();				
+				#endif
+			#endif
+
 				
 			for(LayeredStack<Move, STACK_SIZE>::iterator itr = moveList.begin(); (itr != moveList.end()) && (alpha < beta); ++itr)
 			{	
@@ -253,6 +306,14 @@ private:
 		else	//if minimizer
 		{
 			moveGen.generateMoves(board, BLACK, moveList);	
+			
+			#if PRINT_NUMBER_OF_MOVES_GENERATED == 1 && TEST_PERFORMANCE == 1		
+				#if USE_ITERATIVE_DEEPENING == 1
+					performanceFile << "movesGenerated[" << turnNumber << ", " << iterationNumber << ", " << 1 << "] +=" moves.size();				
+				#else
+					performanceFile << "movesGenerated[" << turnNumber << ", " << 1 << "] +=" moves.size();				
+				#endif
+			#endif
 						
 			for(LayeredStack<Move, STACK_SIZE>::iterator itr = moveList.begin(); (itr != moveList.end()) && (alpha < beta); ++itr)
 			{
@@ -288,7 +349,14 @@ public:
 	{
 		Move path;
 		moveList.clear();
-		timeStarted = SDL_GetTicks();
+		
+		#if USE_TIME_CONSTRAINT == 1
+			timeStarted = SDL_GetTicks();
+		#endif
+		
+		#if PRINT_SEARCH_TIME == 1 && TEST_PERFORMANCE == 1
+			searchTime = SDL_GetTicks();
+		#endif
 		
 		if (isMaximizer) {
 			moveGen.generateMoves(board, WHITE , moveList);
@@ -296,29 +364,44 @@ public:
 			moveGen.generateMoves(board, BLACK , moveList);
 		}		
 
-#if USE_ITERATIVE_DEEPENING == 1		
+		#if USE_ITERATIVE_DEEPENING == 1		
 
-        for(int i = 2; i <= maxDepth; ++i)       
-        {
-    
-    #if USE_TIME_CONSTRAINT == 1
-			if (SDL_GetTicks() - timeStarted > MAX_SEARCH_TIME) {
-				printf("time %i\n", i);
-				break;
-			}
-	#endif
+			for(int i = 2; i <= maxDepth; ++i)       
+			{
+	    
+				#if TEST_PERFORMANCE == 1
+					iterationNumber = (i-1);	
+				#endif
+				
+				#if USE_TIME_CONSTRAINT == 1
+					if (SDL_GetTicks() - timeStarted > MAX_SEARCH_TIME) {
+						printf("time %i\n", i);
+						break;
+					}
+				#endif
+				
+				alphaBeta(board, path, isMaximizer, i);
+
+				#if USE_UNSORTED_STACK == 0
+					moveList.sort();
+				#endif
+		
+				#if PRINT_SEARCH_TIME == 1 && TEST_PERFORMANCE == 1
+					performanceFile << "searchTime[" << turnNumber << ", " << iterationNumber << "] = " << (SDL_GetTicks() - searchTime) << ";\n"; 
+					searchTime = SDL_GetTicks();
+				#endif
+			} 
 			
-			alphaBeta(board, path, isMaximizer, i);
+		#else
 
-	#if USE_UNSORTED_STACK == 0
-            moveList.sort();
-	#endif
-	
-        } 
-#else
-		alphaBeta(board, path, isMaximizer, maxDepth);
-		       
-#endif
+			alphaBeta(board, path, isMaximizer, maxDepth);		       
+			
+			#if PRINT_SEARCH_TIME == 1 && TEST_PERFORMANCE == 1
+				performanceFile << "searchTime[" << turnNumber << "] = " << (SDL_GetTicks() - searchTime) << ";\n"; 				
+			#endif
+			
+		#endif
+		
 		/*if(path.getContent() != NO_PIECE)
 			evaluator.clearCache();*/
 		/*printf("k efter:	%i\n", killerMoveList.size());
@@ -326,12 +409,13 @@ public:
 		/*moveFile << "moveList.push_back(Move(" << path.getOldPosition() << ", " << path.getNewPosition() << ", " << path.getSpecial();
 		moveFile << ", " << path.getPiece() << ", " << path.getContent() << ", " << path.getHasMoved() << ", " << path.getEnPassantPosition();
 		moveFile << ", " << path.getReversableMoves() << "));\n";*/
-		
-#if CLEAR_CACHE_ON_NON_REVERSABLE_MOVE == 1
-		if (path.getContent() != NO_PIECE) {
-			evaluator.clearCache();
-		}
-#endif
+			
+		#if CLEAR_CACHE_ON_NON_REVERSABLE_MOVE == 1
+			if (path.getContent() != NO_PIECE) {
+				evaluator.clearCache();
+			}
+		#endif
+			
 		return path;
 	}
 };

@@ -59,11 +59,6 @@ private:
 	Board board;
         Position cappedPos;
         Move curMove;
-#if TEST_PERFORMANCE == 1
-	int performanceTimer;
-	int turnCounter;
-	ofstream performanceFile;
-#endif
 
 public:
 	Core()
@@ -95,12 +90,10 @@ public:
 		//SDL_SetAlpha(fullOverlay, SDL_SRCALPHA, 128);
 		SDL_SetColorKey(fullOverlay, SDL_SRCCOLORKEY, SDL_MapRGB(fullOverlay->format, 255, 0, 255));
                 cappedPos = INVALID_POSITION;
-#if TEST_PERFORMANCE == 1
-		turnCounter=0;
-		performanceFile.open ("TestPerformance.m");
-		performanceFile << "timeUsed = [];\n";
-		performanceFile << "turnNumber = [];\n";
-#endif
+                
+		#if TEST_PERFORMANCE == 1
+			turnCounter=0;
+		#endif
 	}
 
 	~Core()
@@ -120,9 +113,10 @@ public:
 
 	void run()
 	{
-#if TEST_PERFORMANCE == 1
-		performanceTimer = SDL_GetTicks();
-#endif
+		#if TEST_PERFORMANCE == 1
+			performanceTimer = SDL_GetTicks();
+		#endif
+		
 		Color gameTurn = WHITE;
 		bool turnDone = false;
 		int selectedPiece = -1;
@@ -262,14 +256,14 @@ public:
 										selectedPiece = -1;
 										turnDone = true;
 										(*itr).execute(board);
-                                                                                if((*itr).getContent() != NO_PIECE)
-                                                                                {
-                                                                                    cappedPos = (*itr).getNewPosition();
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    cappedPos = INVALID_POSITION;
-                                                                                }
+                                        if((*itr).getContent() != NO_PIECE)
+                                        {
+                                            cappedPos = (*itr).getNewPosition();
+                                        }
+                                        else
+                                        {
+                                            cappedPos = INVALID_POSITION;
+                                        }
 										//printf("The material value of white: %i, and black: %i\n", board.getMaterialValue(WHITE), board.getMaterialValue(BLACK));
 										break;
 									}
@@ -287,33 +281,47 @@ public:
 					break;
 				}
 			}
+			
 			if(selectedPiece != -1)
 			{
 				SDL_BlitSurface(cursor, NULL, screen, &cursorRect);
 				SDL_BlitSurface(fullOverlay, NULL, screen, NULL);
 			}
+			
 			SDL_BlitSurface(whiteText, NULL, screen, &whiteTextRect);
 			SDL_BlitSurface(blackText, NULL, screen, &blackTextRect);
+			
 			if(player1IsHuman)
+			{
 				SDL_BlitSurface(humanText, NULL, screen, &player1TextRect);
+			}
 			else
+			{
 				SDL_BlitSurface(aiText, NULL, screen, &player1TextRect);
+			}
+			
 			if(player2IsHuman)
+			{
 				SDL_BlitSurface(humanText, NULL, screen, &player2TextRect);
+			}
 			else
+			{
 				SDL_BlitSurface(aiText, NULL, screen, &player2TextRect);
+			}
+			
 			SDL_BlitSurface(restartText, NULL, screen, &restartTextRect);
 			SDL_BlitSurface(quitText, NULL, screen, &quitTextRect);
 			SDL_Flip(screen);	//Update screen
-#if TEST_PERFORMANCE == 1
-			if(turnDone)
-			{
-				int timeSpent = SDL_GetTicks() - performanceTimer;
-				performanceFile << "timeUsed = [timeUsed " << timeSpent << "];\n";
-				performanceFile << "turnNumber = [turnNumber " << turnCounter << "];\n";
-				turnCounter++;
-			}
-#endif
+			
+			#if TEST_PERFORMANCE == 1
+				if(turnDone)
+				{
+					int timeSpent = SDL_GetTicks() - performanceTimer;
+					performanceFile << "timeUsed = [timeUsed " << timeSpent << "];\n";
+					performanceFile << "turnNumber = [turnNumber " << turnCounter << "];\n";
+					turnCounter++;
+				}
+			#endif
 		}
 	}
 };
