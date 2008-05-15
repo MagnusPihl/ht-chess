@@ -4,6 +4,7 @@
 
 #include "Piece.h"
 #include "Board.h"
+#include "PerformanceTester.h"
 
 class Board;
 class MoveGenerator;
