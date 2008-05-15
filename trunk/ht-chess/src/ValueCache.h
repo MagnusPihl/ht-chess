@@ -130,8 +130,12 @@ public:
 	
 	//remove all keys
 	void clear() {
-		#if PRINT_CACHE_CLEARS == 1 && TEST_PERFORMANCE == 1
-			test().out << "cacheClears[" << test().turn << "]++; \n";
+		#if PRINT_CACHE_CLEARS == 1 && TEST_PERFORMANCE == 1			
+			#if USE_ITERATIVE_DEEPENING == 1 && USE_MINIMAX_ONLY == 0
+				test().cacheClears[test().iteration-1]++;
+			#else
+				test().cacheClears++;
+			#endif			
 		#endif
 		
 		vector<LIST_TYPE<BoardValue>>::iterator end = table->end();
