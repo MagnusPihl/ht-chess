@@ -45,9 +45,7 @@
 		
 		#if USE_ITERATIVE_DEEPENING == 1 && USE_MINIMAX_ONLY == 0
 			int iteration;
-		#endif 
-	
-		#if USE_ITERATIVE_DEEPENING == 1
+			
 			#if PRINT_NUMBER_OF_EVALUATIONS == 1
 				int evaluations[DEFAULT_PLY - 1];
 			#endif

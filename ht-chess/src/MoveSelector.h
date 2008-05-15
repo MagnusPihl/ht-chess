@@ -308,7 +308,7 @@
 					#if USE_ITERATIVE_DEEPENING == 1
 						test().movesGenerated[test().iteration-1] += moveList.size();			
 					#else
-						test().movesGenerated += moves.size();
+						test().movesGenerated += moveList.size();
 					#endif
 				#endif
 				
@@ -352,7 +352,7 @@
 					#if USE_ITERATIVE_DEEPENING == 1
 						test().movesGenerated[test().iteration-1] += moveList.size();			
 					#else
-						test().movesGenerated += moves.size();
+						test().movesGenerated += moveList.size();
 					#endif
 				#endif
 				
@@ -404,7 +404,7 @@
 					#if USE_ITERATIVE_DEEPENING == 1
 						test().movesGenerated[test().iteration-1] += moveList.size();			
 					#else
-						test().movesGenerated += moves.size();
+						test().movesGenerated += moveList.size();
 					#endif
 				#endif
 				
@@ -448,7 +448,7 @@
 					#if USE_ITERATIVE_DEEPENING == 1
 						test().movesGenerated[test().iteration-1] += moveList.size();			
 					#else
-						test().movesGenerated += moves.size();
+						test().movesGenerated += moveList.size();
 					#endif
 				#endif
 				
@@ -591,6 +591,15 @@
 						}
 						test().out << test().cacheSize[maxDepth-2] << "]];" << std::endl; 				
 					#endif
+										
+					#if PRINT_CACHE_CLEARS == 1
+						test().out << "cacheClears = [cacheClears, [";
+						
+						for(int i = 0; i < (maxDepth-2); ++i) {
+							test().out << test().cacheClears[i] << "; "; 
+						}
+						test().out << test().cacheClears[maxDepth-2] << "]];" << std::endl; 				
+					#endif
 					
 					#if PRINT_NUMBER_OF_CUTOFFS == 1
 						test().out << "cutoffs = [cutoffs, [";
@@ -612,13 +621,19 @@
 						test().evaluations = 0;
 					#endif
 					
-					#if PRINT_CACHE_RETRIEVALS == 1
-						test().cacheRetrievals = 0;
+					#if USE_EVALUATION_CACHING == 1
+						#if PRINT_CACHE_RETRIEVALS == 1
+							test().cacheRetrievals = 0;
+						#endif
+												
+						#if PRINT_CACHE_CLEARS == 1			
+							test().cacheClears = 0;
+						#endif
 					#endif
 					
 					#if PRINT_NUMBER_OF_CUTOFFS == 1
 						test().cutoffs = 0; 
-					#endif		    					
+					#endif		    							
 				#endif
 
 				alphaBeta(board, path, isMaximizer, maxDepth);	
@@ -636,17 +651,23 @@
 						test().out << "evaluations = [evaluations, " << test().evaluations << "];" << std::endl; 				
 					#endif
 					
-					#if PRINT_CACHE_RETRIEVALS == 1						
-						test().out << "cacheRetrievals = [cacheRetrievals, " << test().cacheRetrievals << "];" << std::endl; 										
-					#endif	
-					
-					#if PRINT_CACHE_SIZE == 1
-						test().out << "cacheSize = [cacheSize, " << evaluator.cache.getSize() << "];"  << std::endl; 
-					#endif
-					
 					#if PRINT_NUMBER_OF_CUTOFFS == 1
 						test().out << "cutoffs = [cutoffs, " << test().cutoffs << "];"  << std::endl; 
 					#endif	
+					
+					#if USE_EVALUATION_CACHING == 1
+						#if PRINT_CACHE_RETRIEVALS == 1						
+							test().out << "cacheRetrievals = [cacheRetrievals, " << test().cacheRetrievals << "];" << std::endl; 										
+						#endif	
+						
+						#if PRINT_CACHE_SIZE == 1
+							test().out << "cacheSize = [cacheSize, " << evaluator.cache.getSize() << "];"  << std::endl; 
+						#endif
+											
+						#if PRINT_CACHE_CLEARS == 1
+							test().out << "cacheClears = [cacheClears, " << test().cacheClears << "];" << std::endl; 				
+						#endif
+					#endif
 				#endif				
 			#endif		
 										
