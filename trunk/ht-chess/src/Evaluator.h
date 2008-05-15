@@ -237,12 +237,14 @@ public:
 		
         return evaluate(board, depth, boardState);
     }
-
-	inline void clearCache()
-	{
-		cache.clear();
-		//printf("Cache elements: %i\n", cache.size());
-	}
+    
+    #if USE_EVALUATION_CACHING == 1
+		inline void clearCache()
+		{
+			cache.clear();
+			//printf("Cache elements: %i\n", cache.size());
+		}
+	#endif 
 };
 
 

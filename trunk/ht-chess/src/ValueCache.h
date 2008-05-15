@@ -130,7 +130,7 @@ public:
 	
 	//remove all keys
 	void clear() {
-		#if PRINT_CACHE_CLEARS == 1 && TEST_PERFORMANCE == 1			
+		#if PRINT_CACHE_CLEARS == 1 && TEST_PERFORMANCE == 1 && USE_EVALUATION_CACHING == 1
 			#if USE_ITERATIVE_DEEPENING == 1 && USE_MINIMAX_ONLY == 0
 				test().cacheClears[test().iteration-1]++;
 			#else
