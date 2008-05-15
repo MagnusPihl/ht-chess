@@ -28,10 +28,6 @@ class Evaluator
 private:
     LayeredStack<Move, STACK_SIZE> moves;
 
-	#if USE_EVALUATION_CACHING == 1
-		ValueCache cache;
-	#endif
-
 	int getValue(Board &board, Color color, int ply, int boardState)
 	{
 		int value = 0;
@@ -180,11 +176,11 @@ private:
 				if(value != INVALID_BOARD_VALUE)//v.first == 0 || v.first != board.getHashLock())
 				{	
 					//printf("cached: %i\n", hash);
-					#if PRINT_CACHE_RETRIEVALS == 1
+					#if PRINT_CACHE_RETRIEVALS == 1 && TEST_PERFORMANCE == 1
 						#if USE_ITERATIVE_DEEPENING == 1 && USE_MINIMAX_ONLY == 0
-							performanceFile << "cacheRetrievals[" << turnNumber << ", " << iterationNumber << ", " << ply << "]++;\n"; 
+							test().cacheRetrievals[test().iteration-1]++;
 						#else
-							performanceFile << "cacheRetrievals[" << turnNumber << "]++;\n"; 
+							test().cacheRetrievals++;
 						#endif
 					#endif
 					
@@ -222,10 +218,23 @@ private:
 	}
 
 public:
+
+	#if USE_EVALUATION_CACHING == 1
+		ValueCache cache;
+	#endif
+	
 	Evaluator() {}
 
     int operator()(Board &board, int depth, int boardState)
 	{
+		#if PRINT_NUMBER_OF_EVALUATIONS == 1 && TEST_PERFORMANCE == 1
+			#if USE_ITERATIVE_DEEPENING == 1 && USE_MINIMAX_ONLY == 0
+				test().evaluations[test().iteration-1]++;
+			#else
+				test().evaluations++;
+			#endif
+		#endif
+		
         return evaluate(board, depth, boardState);
     }
 

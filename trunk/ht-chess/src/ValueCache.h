@@ -5,6 +5,7 @@
 #include <vector>
 #include <list>
 #include "Board.h"
+#include "PerformanceTester.h"
 
 #if USE_LINKEDLISTS_WHEN_CACHING == 0	
 	#define LIST_TYPE vector
@@ -66,12 +67,12 @@ public:
 	bool insert(int _hash, int _lock, int _value) {
 		size_t hash = _hash % table->size();
 		
-#if CLEAR_CACHE_ON_OVERFLOW == 1
-		if (currentSize > maxLoad) {
-			//printf("deleting");
-			clear();
-		}		
-#endif
+		#if CLEAR_CACHE_ON_OVERFLOW == 1
+			if (currentSize > maxLoad) {
+				//printf("deleting");								
+				clear();
+			}		
+		#endif
 		
 		(*table)[hash].push_back(BoardValue(_hash, _lock, _value));		
 		currentSize++;
@@ -129,6 +130,9 @@ public:
 	
 	//remove all keys
 	void clear() {
+		#if PRINT_CACHE_CLEARS == 1 && TEST_PERFORMANCE == 1
+			test().out << "cacheClears[" << test().turn << "]++; \n";
+		#endif
 		
 		vector<LIST_TYPE<BoardValue>>::iterator end = table->end();
 		
@@ -148,6 +152,18 @@ public:
 	//get capacity of ValueCache
 	int getCapacity() {
 		return table->capacity();
+	}
+	
+	int getSize() {
+		int size = 0;
+		
+		vector<LIST_TYPE<BoardValue>>::iterator end = table->end();
+		
+		for (vector<LIST_TYPE<BoardValue>>::iterator itr = table->begin(); itr != end; ++itr) {		
+			size += (*itr).size();
+		}
+
+		return size;
 	}
 
 private:

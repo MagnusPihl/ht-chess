@@ -16,6 +16,7 @@
 #include "MoveSelector.h"
 #include "LayeredStack.h"
 #include <math.h>
+#include "PerformanceTester.h"
 
 #if TEST_PERFORMANCE == 1
 	#include <fstream>
@@ -89,11 +90,7 @@ public:
 		fullOverlay = SDL_CreateRGBSurface(SDL_HWSURFACE, 600, 600, 32, 0, 0, 0, 100);
 		//SDL_SetAlpha(fullOverlay, SDL_SRCALPHA, 128);
 		SDL_SetColorKey(fullOverlay, SDL_SRCCOLORKEY, SDL_MapRGB(fullOverlay->format, 255, 0, 255));
-                cappedPos = INVALID_POSITION;
-                
-		#if TEST_PERFORMANCE == 1
-			turnCounter=0;
-		#endif
+                cappedPos = INVALID_POSITION;              
 	}
 
 	~Core()
@@ -114,7 +111,7 @@ public:
 	void run()
 	{
 		#if TEST_PERFORMANCE == 1
-			performanceTimer = SDL_GetTicks();
+			int performanceTimer = SDL_GetTicks();
 		#endif
 		
 		Color gameTurn = WHITE;
@@ -315,11 +312,10 @@ public:
 			
 			#if TEST_PERFORMANCE == 1
 				if(turnDone)
-				{
-					int timeSpent = SDL_GetTicks() - performanceTimer;
-					performanceFile << "timeUsed = [timeUsed " << timeSpent << "];\n";
-					performanceFile << "turnNumber = [turnNumber " << turnCounter << "];\n";
-					turnCounter++;
+				{					
+					/*test().out << "timeUsed = [timeUsed " << SDL_GetTicks() - performanceTimer << "];"  << std::endl;
+					test().out << "turnNumber = [turnNumber " << test().turn << "];"  << std::endl;*/
+					test().turn++;
 				}
 			#endif
 		}

@@ -28,14 +28,14 @@
 #define MAX_SEARCH_TIME 30000	//max milliseconds per turn
 
 //instrumentation
-#define TEST_PERFORMANCE 0
-#define PRINT_NUMBER_OF_EVALUATIONS 0
-#define PRINT_CACHE_RETRIEVALS 0
-#define PRINT_CACHE_SIZE 0
+#define TEST_PERFORMANCE 1
+#define PRINT_NUMBER_OF_EVALUATIONS 1
+#define PRINT_CACHE_RETRIEVALS 1
+#define PRINT_CACHE_SIZE 1
 #define PRINT_CACHE_CLEARS 0
-#define PRINT_NUMBER_OF_MOVES_GENERATED 0
+#define PRINT_NUMBER_OF_MOVES_GENERATED 1
 #define PRINT_NUMBER_OF_CUTOFFS 0
-#define PRINT_SEARCH_TIME 0
+#define PRINT_SEARCH_TIME 1
 
 
 //the following configuration will flag warnings because they redefine macros
@@ -96,67 +96,4 @@
 	#define USE_EN_PASSANT 0
 #endif
 
-#endif
-
-
-//
-#if TEST_PERFORMANCE == 1	
-	int turnCounter = 0;
-	ofstream performanceFile;
-	performanceFile.open ("TestPerformance.m");	
-	
-	performanceFile << "DEFAULT_PLY =" << DEFAULT_PLY << "\n";
-	
-	#if USE_EVALUATION_CACHING == 1
-		#if PRINT_CACHE_SIZE == 1			
-			performanceFile << "cacheSize = []; #turn\n"; 
-		#endif
-		
-		#if PRINT_CACHE_CLEARS == 1
-			performanceFile << "cacheClears = []; #turn\n"; 
-		#endif 
-	#endif 
-			
-	#if USE_ITERATIVE_DEEPENING == 1 && USE_MINIMAX_ONLY == 0
-		#if PRINT_NUMBER_OF_EVALUATIONS == 1
-			performanceFile << "evaluations = [,DEFAULT_PLY,DEFAULT_PLY]; #turn, iteration, depth\n"; 
-		#endif
-	
-		#if PRINT_NUMBER_OF_MOVES_GENERATED == 1
-			performanceFile << "movesGenerated = [,DEFAULT_PLY,DEFAULT_PLY]; #turn, iteration, depth\n"; 
-		#endif
-	
-		#if USE_EVALUATION_CACHING == 1 && PRINT_CACHE_RETRIEVALS == 1
-			performanceFile << "cacheRetrievals = [,DEFAULT_PLY,DEFAULT_PLY]; #turn, iteration, depth\n"; 
-		#endif
-		
-		#if PRINT_SEARCH_TIME == 1
-			performanceFile << "searchTime = [,DEFAULT_PLY]; #turn, iteration\n"; 
-		#endif
-	#else
-		#if PRINT_NUMBER_OF_EVALUATIONS == 1
-			performanceFile << "evaluations = []; #turn\n";
-		#endif
-	
-		#if PRINT_NUMBER_OF_MOVES_GENERATED == 1
-			performanceFile << "movesGenerated = [,DEFAULT_PLY]; #turn, depth\n"; 
-		#endif
-	
-		#if USE_EVALUATION_CACHING == 1 && PRINT_CACHE_RETRIEVALS == 1
-			performanceFile << "cacheRetrievals = []; #turn\n"; 			
-		#endif
-		
-		#if PRINT_SEARCH_TIME == 1
-			performanceFile << "searchTime = []; #turn\n"; 
-		#endif
-	#endif 	
-	
-	#if PRINT_NUMBER_OF_CUTOFFS == 1 && USE_MINIMAX_ONLY == 0
-		#if USE_ITERATIVE_DEEPENING == 1
-			performanceFile << "cutoffs = [,DEFAULT_PLY,DEFAULT_PLY]; #turn, iteration, depth\n"; 
-		#else
-			performanceFile << "cutoffs = [,DEFAULT_PLY]; #turn, depth\n"; 
-		#endif
-	#endif
-	
 #endif

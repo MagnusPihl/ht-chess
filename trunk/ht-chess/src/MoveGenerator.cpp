@@ -1,4 +1,3 @@
-
 #ifndef MOVE_GENERATOR_CPP
 #define MOVE_GENERATOR_CPP
 
@@ -40,6 +39,14 @@ void MoveGenerator::generateMoves(Board &board, Color color, LayeredStack<Move, 
 			}			
 		}
 	}
+		
+	#if PRINT_NUMBER_OF_MOVES_GENERATED == 1 && TEST_PERFORMANCE == 1				
+		#if USE_ITERATIVE_DEEPENING == 1 && USE_MINIMAX_ONLY == 0
+			test().movesGenerated[test().iteration-1] += moves.size();			
+		#else
+			test().movesGenerated += moves.size();
+		#endif
+	#endif
 }
 
 void MoveGenerator::generateMoves(Board &board, Color color, LayeredStack<Move, STACK_SIZE> &moves, Position pos) {			
@@ -64,6 +71,13 @@ void MoveGenerator::generateMoves(Board &board, Color color, LayeredStack<Move, 
         }
     }
    
+	#if PRINT_NUMBER_OF_MOVES_GENERATED == 1 && TEST_PERFORMANCE == 1				
+		#if USE_ITERATIVE_DEEPENING == 1 && USE_MINIMAX_ONLY == 0
+			test().movesGenerated[test().iteration-1] += moves.size();			
+		#else
+			test().movesGenerated += moves.size();
+		#endif
+	#endif
 }
 
 void MoveGenerator::generateLegalMoves(Board &board, Color color, Position position, LayeredStack<Move, STACK_SIZE> &moves) {			

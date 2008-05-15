@@ -1,13 +1,18 @@
+#ifndef MAIN_CPP
+#define MAIN_CPP
+
 #ifdef WIN32
 #pragma comment(lib, "SDL.lib")
 #pragma comment(lib, "SDLmain.lib")
 #endif
 
+#include "PerformanceTester.h"
 #include "SDL_thread.h"
 #include "Core.h"
 #include "HttpTest.h"
 #include "LayeredStack.h"
 #include "LayeredStack.cpp"
+#include <fstream>
 
 #define WIDTH 800
 #define HEIGHT 600
@@ -22,7 +27,17 @@ int threadfunc(void *unused)
 }
 
 int main(int argc, char *argv[])
-{
+{		
+	//using namespace std;
+	
+	/*int turnNumber = 0;
+	std::ofstream outout;
+	outout.open("testtest.m");
+	
+	if (outout.is_open()) {
+		outout << "dsadsa";
+	}*/
+
 	/*BoardValue val = BoardValue(1,2,3);
 	
 	printf("%i, %i, %i\n", val.hash, val.lock, val.value);	
@@ -49,5 +64,8 @@ int main(int argc, char *argv[])
 	Core core;
 	core.run();
 	//SDL_WaitThread(thread, NULL);
+		
 	return 0;
 }
+
+#endif

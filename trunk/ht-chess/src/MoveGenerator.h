@@ -5,6 +5,7 @@
 #include "Board.h"
 #include "LayeredStack.h"
 #include <vector>
+#include "PerformanceTester.h"
 
 class Board;
 class Move;
