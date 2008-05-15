@@ -56,7 +56,12 @@
 					}
 					(*itr).unexecute(board);
 					moves.rollBack();
-				}
+				}				
+				
+				#if PRINT_NUMBER_OF_MOVES_GENERATED == 1 && TEST_PERFORMANCE == 1									
+					test().movesGenerated += moves.size();					
+				#endif
+				
 				return bestMove;
 			}
 			else	//if minimizer
@@ -78,6 +83,11 @@
 					(*itr).unexecute(board);
 					moves.rollBack();
 				}
+								
+				#if PRINT_NUMBER_OF_MOVES_GENERATED == 1 && TEST_PERFORMANCE == 1									
+					test().movesGenerated += moves.size();					
+				#endif
+				
 				return bestMove;
 			}
 		}
@@ -98,9 +108,25 @@
 				#if PRINT_NUMBER_OF_EVALUATIONS == 1
 					test().evaluations = 0; 				
 				#endif				
+								
+				#if PRINT_NUMBER_OF_MOVES_GENERATED == 1
+					test().movesGenerated = 0;					
+				#endif
 				
-				#if PRINT_CACHE_RETRIEVALS == 1
-					test().cacheRetrievals = 0;
+				#if PRINT_NUMBER_OF_CUTOFFS == 1
+					test().cutoffs = 0;
+				#endif
+					
+				#if USE_EVALUATION_CACHING == 1
+				
+					#if PRINT_CACHE_RETRIEVALS == 1						
+						test().cacheRetrievals = 0;
+					#endif
+					
+					#if PRINT_CACHE_RETRIEVALS == 1
+						test().cacheRetrievals = 0;
+					#endif
+					
 				#endif
 			#endif
 			
@@ -118,18 +144,24 @@
 				#if PRINT_SEARCH_TIME == 1
 					test().out << "searchTime = [searchTime, " << SDL_GetTicks() - test().time << "];"  << std::endl; 
 				#endif
-						
-				#if PRINT_CACHE_SIZE == 1
-					test().out << "cacheSize = [cacheSize, " << evaluator.cache.getSize() << "];"  << std::endl; 
-				#endif	
-				
+										
 				#if PRINT_NUMBER_OF_EVALUATIONS == 1
 					test().out << "evaluations = [evaluations, " << test().evaluations << "];" << std::endl; 				
 				#endif
 				
-				#if PRINT_CACHE_RETRIEVALS == 1						
-					test().out << "cacheRetrievals = [cacheRetrievals, " << test().cacheRetrievals << "];" << std::endl; 										
-				#endif
+				#if USE_EVALUATION_CACHING == 1
+					#if PRINT_CACHE_SIZE == 1
+						test().out << "cacheSize = [cacheSize, " << evaluator.cache.getSize() << "];"  << std::endl; 
+					#endif					
+					
+					#if PRINT_CACHE_RETRIEVALS == 1						
+						test().out << "cacheRetrievals = [cacheRetrievals, " << test().cacheRetrievals << "];" << std::endl; 										
+					#endif
+									
+					#if PRINT_NUMBER_OF_CUTOFFS == 1
+						test().out << "cutoffs = [cutoffs, " << test().cutoffs << "];"  << std::endl; 
+					#endif
+				#endif	
 			#endif
 					
 			#if CLEAR_CACHE_ON_NON_REVERSABLE_MOVE == 1
@@ -170,6 +202,11 @@
 					}
 					(*itr).unexecute(board);
 				}
+				
+				#if PRINT_NUMBER_OF_MOVES_GENERATED == 1 && TEST_PERFORMANCE == 1									
+					test().movesGenerated += moves.size();					
+				#endif
+				
 				return alpha;
 			}
 			else	//if minimizer
@@ -186,7 +223,12 @@
 						if(curDepth==0)	path = (*itr);
 					}
 					(*itr).unexecute(board);
-				}
+				}				
+				
+				#if PRINT_NUMBER_OF_MOVES_GENERATED == 1 && TEST_PERFORMANCE == 1									
+					test().movesGenerated += moves.size();					
+				#endif
+				
 				return beta;
 			}
 		}
@@ -260,13 +302,21 @@
 					(*itr).unexecute(board);
 					
 					moveList.rollBack();
-				}	
+				}					
+				
+				#if PRINT_NUMBER_OF_MOVES_GENERATED == 1 && TEST_PERFORMANCE == 1				
+					#if USE_ITERATIVE_DEEPENING == 1
+						test().movesGenerated[test().iteration-1] += moveList.size();			
+					#else
+						test().movesGenerated += moves.size();
+					#endif
+				#endif
 				
 				#if PRINT_NUMBER_OF_CUTOFFS == 1 && TEST_PERFORMANCE == 1
 					#if USE_ITERATIVE_DEEPENING == 1
-						test().out << "cutoffs(" << test().turn << ", " << test().iteration << ", " << curDepth+1 << ") = " << moveList.size() - cutoffs << ";"  << std::endl; 
+						test().cutoffs[test().iteration-1] +=  moveList.size() - cutoffs; 
 					#else
-						test().out << "cutoffs(" << test().turn << ", " << curDepth+1 << ") = " << moveList.size() - cutoffs << ";"  << std::endl; 					
+						test().cutoffs +=  moveList.size() - cutoffs; 
 					#endif
 				#endif
 				
@@ -296,13 +346,21 @@
 					(*itr).unexecute(board);
 					
 					moveList.rollBack();
-				}
+				}				
+				
+				#if PRINT_NUMBER_OF_MOVES_GENERATED == 1 && TEST_PERFORMANCE == 1				
+					#if USE_ITERATIVE_DEEPENING == 1
+						test().movesGenerated[test().iteration-1] += moveList.size();			
+					#else
+						test().movesGenerated += moves.size();
+					#endif
+				#endif
 				
 				#if PRINT_NUMBER_OF_CUTOFFS == 1 && TEST_PERFORMANCE == 1
 					#if USE_ITERATIVE_DEEPENING == 1
-						test().out << "cutoffs(" << test().turn << ", " << test().iteration << ", " << curDepth+1 << ") = " << moveList.size() - cutoffs << ";"  << std::endl; 
+						test().cutoffs[test().iteration-1] +=  moveList.size() - cutoffs; 
 					#else
-						test().out << "cutoffs(" << test().turn << ", " << curDepth+1 << ") = " << moveList.size() - cutoffs << ";"  << std::endl; 					
+						test().cutoffs +=  moveList.size() - cutoffs; 
 					#endif
 				#endif
 				
@@ -342,11 +400,19 @@
 					moveList.rollBack();
 				}				
 				
+				#if PRINT_NUMBER_OF_MOVES_GENERATED == 1 && TEST_PERFORMANCE == 1				
+					#if USE_ITERATIVE_DEEPENING == 1
+						test().movesGenerated[test().iteration-1] += moveList.size();			
+					#else
+						test().movesGenerated += moves.size();
+					#endif
+				#endif
+				
 				#if PRINT_NUMBER_OF_CUTOFFS == 1 && TEST_PERFORMANCE == 1
 					#if USE_ITERATIVE_DEEPENING == 1
-						test().out << "cutoffs(" << test().turn << ", " << test().iteration << ", " << 1 << ") = " << moveList.size() - cutoffs << ";"  << std::endl; 
+						test().cutoffs[test().iteration-1] +=  moveList.size() - cutoffs; 
 					#else
-						test().out << "cutoffs(" << test().turn << ", " << 1 << ") = " << moveList.size() - cutoffs << ";"  << std::endl; 					
+						test().cutoffs +=  moveList.size() - cutoffs; 
 					#endif
 				#endif
 				
@@ -359,7 +425,7 @@
 				for(LayeredStack<Move, STACK_SIZE>::iterator itr = moveList.begin(); (itr != moveList.end()) && (alpha < beta); ++itr)
 				{
 					
-					#if PRINT_NUMBER_OF_CUTOFFS == 1 && USE_MINIMAX_ONLY == 0			
+					#if PRINT_NUMBER_OF_CUTOFFS == 1
 						cutoffs++;
 					#endif
 					
@@ -376,13 +442,21 @@
 					(*itr).unexecute(board);
 					
 					moveList.rollBack();
-				}
+				}				
+				
+				#if PRINT_NUMBER_OF_MOVES_GENERATED == 1 && TEST_PERFORMANCE == 1				
+					#if USE_ITERATIVE_DEEPENING == 1
+						test().movesGenerated[test().iteration-1] += moveList.size();			
+					#else
+						test().movesGenerated += moves.size();
+					#endif
+				#endif
 				
 				#if PRINT_NUMBER_OF_CUTOFFS == 1 && TEST_PERFORMANCE == 1
 					#if USE_ITERATIVE_DEEPENING == 1
-						test().out << "cutoffs(" << test().turn << ", " << test().iteration << ", 1) = " << moveList.size() - cutoffs << ";"  << std::endl; 
+						test().cutoffs[test().iteration-1] +=  moveList.size() - cutoffs; 
 					#else
-						test().out << "cutoffs(" << test().turn << ", 1 ") = " << moveList.size() - cutoffs << ";"  << std::endl; 					
+						test().cutoffs +=  moveList.size() - cutoffs; 
 					#endif
 				#endif			
 				
@@ -437,6 +511,10 @@
 						
 						#if PRINT_CACHE_RETRIEVALS == 1
 							test().cacheRetrievals[i-2] = 0;
+						#endif
+						
+						#if PRINT_NUMBER_OF_CUTOFFS == 1
+							test().cutoffs[i-2] = 0;
 						#endif
 		    					
 						test().iteration = (i-1);	
@@ -512,6 +590,15 @@
 							test().out << test().cacheSize[i] << "; "; 
 						}
 						test().out << test().cacheSize[maxDepth-2] << "]];" << std::endl; 				
+					#endif
+					
+					#if PRINT_NUMBER_OF_CUTOFFS == 1
+						test().out << "cutoffs = [cutoffs, [";
+						
+						for(int i = 0; i < (maxDepth-2); ++i) {
+							test().out << test().cutoffs[i] << "; "; 
+						}
+						test().out << test().cutoffs[maxDepth-2] << "]];" << std::endl; 				
 					#endif										
 				#endif
 			#else
@@ -527,7 +614,11 @@
 					
 					#if PRINT_CACHE_RETRIEVALS == 1
 						test().cacheRetrievals = 0;
-					#endif	    					
+					#endif
+					
+					#if PRINT_NUMBER_OF_CUTOFFS == 1
+						test().cutoffs = 0; 
+					#endif		    					
 				#endif
 
 				alphaBeta(board, path, isMaximizer, maxDepth);	
@@ -551,6 +642,10 @@
 					
 					#if PRINT_CACHE_SIZE == 1
 						test().out << "cacheSize = [cacheSize, " << evaluator.cache.getSize() << "];"  << std::endl; 
+					#endif
+					
+					#if PRINT_NUMBER_OF_CUTOFFS == 1
+						test().out << "cutoffs = [cutoffs, " << test().cutoffs << "];"  << std::endl; 
 					#endif	
 				#endif				
 			#endif		
