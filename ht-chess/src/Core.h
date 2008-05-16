@@ -316,6 +316,7 @@ public:
 					/*test().out << "timeUsed = [timeUsed " << SDL_GetTicks() - performanceTimer << "];"  << std::endl;
 					test().out << "turnNumber = [turnNumber " << test().turn << "];"  << std::endl;*/
 					test().turn++;
+					test().out << "\n%Turn: " << test().turn << std::endl;
 				}
 			#endif
 		}

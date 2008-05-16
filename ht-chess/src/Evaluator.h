@@ -168,7 +168,7 @@ private:
 
 			int hash, lock;		
 			
-			if (boardState == IS_SAFE) {
+			if ((boardState & (IS_CHECKMATE | IS_STALEMATE)) == 0) {
 				hash = board.getHashKey();
 				lock = board.getHashLock();		
 				value = cache.get(hash, lock);
