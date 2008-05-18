@@ -97,7 +97,7 @@ private:
 	                            
 							case KING:
 								//antal træk fra MATE!
-								if((boardState & (color | IS_CHECKMATE | IS_STALEMATE)) != 0)
+								if((boardState & (color | IS_CHECKMATE | IS_STALEMATE)) != 0) //this can be a problem, because there is no guarantee that a stalemate will be detected if the opposition is evaluated first in the isCheckmate function
 								{
 									value -= 1000 * ply;									
 								}
@@ -123,7 +123,7 @@ private:
 								break;
 							case KING:
 								//antal træk fra MATE!
-								if((boardState & (color | IS_CHECKMATE | IS_STALEMATE)) != 0)
+								if((boardState & (color | IS_CHECKMATE | IS_STALEMATE)) != 0) //this can be a problem, because there is no guarantee that a stalemate will be detected if the opposition is evaluated first in the isCheckmate function
 								{
 									value -= 1000 * ply;
 								}

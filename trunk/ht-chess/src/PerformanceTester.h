@@ -8,36 +8,59 @@
 
 	class PerformanceTester {		
 					
-		void initTest() {			
+		void initTest() {		
+			out << "%configuration << \n";
+			out << "%move generation\n";
+			out << "USE_FLAT_STACK = " << USE_FLAT_STACK << std::endl;
+			out << "USE_EN_PASSANT = " << USE_EN_PASSANT << std::endl;
+			out << "ONLY_GENERATE_LEGAL_MOVES = " << ONLY_GENERATE_LEGAL_MOVES << std::endl;
 			
+			out << "\n%minimax\n";
+			out << "USE_MINIMAX_ONLY = " << USE_MINIMAX_ONLY << std::endl;
+			out << "USE_ITERATIVE_DEEPENING = " << USE_ITERATIVE_DEEPENING << std::endl;
+			out << "USE_UNSORTED_STACK = " << USE_UNSORTED_STACK << std::endl;
+			out << "USE_TIME_CONSTRAINT = " << USE_TIME_CONSTRAINT << std::endl;
+						
+			out << "\n%caching\n";
+			out << "USE_EVALUATION_CACHING = " << USE_EVALUATION_CACHING << std::endl;
+			out << "USE_LINKEDLISTS_WHEN_CACHING = " << USE_LINKEDLISTS_WHEN_CACHING << std::endl;
+			out << "CACHE_SIZE = " << CACHE_SIZE << std::endl;
+			out << "CLEAR_CACHE_ON_OVERFLOW = " << CLEAR_CACHE_ON_OVERFLOW << std::endl;
+			out << "CLEAR_CACHE_ON_NON_REVERSABLE_MOVE = " << CLEAR_CACHE_ON_NON_REVERSABLE_MOVE << std::endl;
+	
+			out << "\n%caching\n";
+			out << "DEFAULT_PLY = " << DEFAULT_PLY << std::endl;
+			out << "MAX_SEARCH_TIME = " << MAX_SEARCH_TIME << std::endl;
+			
+			out << "\n%variables\n";
 			#if USE_EVALUATION_CACHING == 1
 				#if PRINT_CACHE_SIZE == 1			
-					out << "cacheSize = []; %turn" << std::endl; 
+					out << "cacheSize = [];" << std::endl; 
 				#endif
 				
 				#if PRINT_CACHE_CLEARS == 1
-					out << "cacheClears = []; %turn" << std::endl; 
+					out << "cacheClears = [];" << std::endl; 
 				#endif
 				
 				#if PRINT_CACHE_CLEARS == 1
-					out << "cacheClears = []; %turn, iteration, depth" << std::endl; 
+					out << "cacheClears = [];" << std::endl; 
 				#endif		 
 			#endif 
 								
 			#if PRINT_NUMBER_OF_EVALUATIONS == 1
-				out << "evaluations = []; %turn, iteration, depth" << std::endl; 
+				out << "evaluations = [];" << std::endl; 
 			#endif
 		
 			#if PRINT_NUMBER_OF_MOVES_GENERATED == 1
-				out << "movesGenerated = []; %turn, iteration, depth" << std::endl; 
+				out << "movesGenerated = [];" << std::endl; 
 			#endif
 		
 			#if PRINT_SEARCH_TIME == 1
-				out << "searchTime = []; %turn, iteration" << std::endl; 
+				out << "searchTime = [];" << std::endl; 
 			#endif
 			
 			#if PRINT_NUMBER_OF_CUTOFFS == 1 && USE_MINIMAX_ONLY == 0				
-				out << "cutoffs = []; %turn, iteration, depth" << std::endl; 				
+				out << "cutoffs = [];" << std::endl; 				
 			#endif			
 		}							
 		

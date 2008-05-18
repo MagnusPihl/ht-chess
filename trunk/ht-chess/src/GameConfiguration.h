@@ -14,7 +14,7 @@
 #define USE_ITERATIVE_DEEPENING 1
 #define USE_UNSORTED_STACK 0 //only applies to alphabeta implementation
 #define USE_TIME_CONSTRAINT 1
-
+	
 //caching
 #define USE_EVALUATION_CACHING 1
 #define USE_LINKEDLISTS_WHEN_CACHING 0
