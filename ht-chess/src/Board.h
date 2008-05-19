@@ -331,6 +331,9 @@ public:
 	* return: bool
 	*/
 	bool hasPerformedCastling(Color color);
+
+	void setHasMoved(Color color, int _hasMoved);
+	int getHasMoved(Color color);
 	
 	/**
 	* Returns the sum value of the piece the specified color has left

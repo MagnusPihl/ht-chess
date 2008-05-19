@@ -9,7 +9,7 @@
 #include "PerformanceTester.h"
 #include "SDL_thread.h"
 #include "Core.h"
-#include "HttpTest.h"
+#include "ChessServer.h"
 #include "LayeredStack.h"
 #include "LayeredStack.cpp"
 #include <fstream>
@@ -21,7 +21,7 @@
 
 int threadfunc(void *unused)
 {
-    HttpTest http;
+    ChessServer http;
 	http.run();
 	return 0;
 }
@@ -42,8 +42,8 @@ int main(int argc, char *argv[])
 	atexit(SDL_Quit);
 
 	
-	/*SDL_Thread *thread;
-	thread = SDL_CreateThread(threadfunc, NULL);*/
+	//SDL_Thread *thread;
+	//thread = SDL_CreateThread(threadfunc, NULL);
 	Core core;
 	core.run();
 	//SDL_WaitThread(thread, NULL);
