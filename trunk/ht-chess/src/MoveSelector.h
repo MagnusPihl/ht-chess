@@ -22,16 +22,16 @@
 		{
 			int boardState;
 					
-			#if USE_TIME_CONSTRAINT == 1
+			/*#if USE_TIME_CONSTRAINT == 1
 				if (SDL_GetTicks() - timeStarted > MAX_SEARCH_TIME) {
 					printf("timeeee\n");
 				}
-			#endif		  
+			#endif		  */
 			
 			if (		
-				#if USE_TIME_CONSTRAINT == 1
+				/*#if USE_TIME_CONSTRAINT == 1
 					(SDL_GetTicks() - timeStarted > MAX_SEARCH_TIME) || 
-				#endif		  
+				#endif	*/	  
 				
 				(curDepth == maxDepth) || 
 				(((boardState = board.isCheckmate()) & (IS_STALEMATE | IS_CHECKMATE)) != 0))		//if leaf
@@ -130,9 +130,9 @@
 				#endif
 			#endif
 			
-			#if USE_TIME_CONSTRAINT == 1				
+			/*#if USE_TIME_CONSTRAINT == 1				
 				timeStarted = SDL_GetTicks();
-			#endif			
+			#endif*/
 			
 			miniMax(board, path, isMaximizer, 0, maxDepth);
 
@@ -260,11 +260,11 @@
 				int cutoffs = 0;			
 			#endif	
 		
-			#if USE_TIME_CONSTRAINT == 1
+			/*#if USE_TIME_CONSTRAINT == 1
 				if (SDL_GetTicks() - timeStarted > MAX_SEARCH_TIME) {
 					printf("time\n");
 				}
-			#endif
+			#endif*/
 			
 			int boardState;
 			
@@ -520,12 +520,12 @@
 						test().iteration = (i-1);	
 					#endif
 					
-					#if USE_TIME_CONSTRAINT == 1
+					/*#if USE_TIME_CONSTRAINT == 1
 						if (SDL_GetTicks() - timeStarted > MAX_SEARCH_TIME) {
 							printf("time %i\n", i);
 							break;
 						}
-					#endif
+					#endif*/
 					
 					alphaBeta(board, path, isMaximizer, i);
 
@@ -540,7 +540,7 @@
 						}
 					#endif
 					
-					#if PRINT_CACHE_SIZE == 1
+					#if PRINT_CACHE_SIZE == 1 && TEST_PERFORMANCE == 1
 						test().cacheSize[i-2] = evaluator.cache.getSize(); 				
 					#endif	
 				} 

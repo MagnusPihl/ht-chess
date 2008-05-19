@@ -4,7 +4,7 @@
 #define CONFIGURATION 0
 
 //standard configuration
-#define PRINT_MOVE_DESCRIPTIONS 1
+#define PRINT_MOVE_DESCRIPTIONS 0
 
 //move generation
 #define USE_FLAT_STACK 0
@@ -20,17 +20,17 @@
 //caching
 #define USE_EVALUATION_CACHING 1
 #define USE_LINKEDLISTS_WHEN_CACHING 0
-#define CACHE_SIZE 2097169
+#define CACHE_SIZE 3597169
 //#define REHASH_CACHE_ON_OVERFLOW 0 //rehashes the cache when overflowing. Don't use with DONT_CLEAR_ON_OVERFLOW
 #define CLEAR_CACHE_ON_OVERFLOW 1 //clears the cache when overflowing. when 1 don't set USE_REHASHING and CLEAR_CACHE_ON_NON_REVERSABLE_MOVE
 #define CLEAR_CACHE_ON_NON_REVERSABLE_MOVE 0 
 //clears the cache when a non reversable move has been executed, meaning a pawn or capture don't use with DONT_CLEAR_ON_OVERFLOW
 
-#define DEFAULT_PLY 4
+#define DEFAULT_PLY 5
 #define MAX_SEARCH_TIME 29500	//max milliseconds per turn
 
 //instrumentation
-#define TEST_PERFORMANCE 1
+#define TEST_PERFORMANCE 0
 #define PRINT_NUMBER_OF_EVALUATIONS 1
 #define PRINT_CACHE_RETRIEVALS 1
 #define PRINT_CACHE_SIZE 1
