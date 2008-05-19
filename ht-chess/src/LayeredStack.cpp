@@ -195,6 +195,7 @@ void LayeredStack<CONTENT_TYPE, STACK_COUNT>::sort() {
 			}
 						
 			++currentNode;
+			
 		}
 
 		item = (*unsortedOffset);

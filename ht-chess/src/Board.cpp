@@ -40,7 +40,7 @@ Board::Board() : content(std::vector<ColoredPiece>(CONTENT_SIZE)), moveList(Laye
 				zeroFilled++;
 		}
 	}
-	printf("Key collissions: %i, zero filled locks: %i\n", collissions, zeroFilled);
+	//printf("Key collissions: %i, zero filled locks: %i\n", collissions, zeroFilled);
 
 	resetBoard();
 }
