@@ -166,6 +166,11 @@ public:
 					cappedPos = INVALID_POSITION;
 				}
 				curMove.execute(board);
+				
+				#if PRINT_MOVE_DESCRIPTIONS == 1
+					cout << curMove;
+				#endif
+				
 				turnDone = true;
 			}
 			else if(gameTurn == BLACK && !player2IsHuman)
@@ -178,6 +183,11 @@ public:
                     cappedPos = INVALID_POSITION;
                 }
 				curMove.execute(board);
+				
+				#if PRINT_MOVE_DESCRIPTIONS == 1
+					cout << curMove;
+				#endif
+				
 				turnDone = true;
 			}
 
@@ -253,6 +263,11 @@ public:
 										selectedPiece = -1;
 										turnDone = true;
 										(*itr).execute(board);
+										
+										#if PRINT_MOVE_DESCRIPTIONS == 1
+											cout << (*itr);
+										#endif
+										
                                         if((*itr).getContent() != NO_PIECE)
                                         {
                                             cappedPos = (*itr).getNewPosition();
@@ -316,7 +331,7 @@ public:
 					/*test().out << "timeUsed = [timeUsed " << SDL_GetTicks() - performanceTimer << "];"  << std::endl;
 					test().out << "turnNumber = [turnNumber " << test().turn << "];"  << std::endl;*/
 					test().turn++;
-					test().out << "\n%Turn: " << test().turn << std::endl;
+					test().out << "\n%Turn: " << test().turn << std::endl;					
 				}
 			#endif
 		}

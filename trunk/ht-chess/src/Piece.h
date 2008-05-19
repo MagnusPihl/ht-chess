@@ -1,6 +1,8 @@
 #ifndef PIECE_H
 #define PIECE_H
 
+#include <string>
+
 /**
 * Returns true if color is equal to wanted color
 */
@@ -102,6 +104,23 @@ static const char PIECE_CHARACTERS[] =
 	'n',	//springer
 	'p',	//bonde
 	' '	//intet	
+};
+
+static const char* PIECE_NAMES[] =
+{
+	"King",	//konge
+	"Queen",	//dronning
+	"Rook",	//tårn
+	"Bishop",	//løber
+	"Knight",	//springer
+	"Pawn",	//bonde
+	""	//intet	
+};
+
+static const char* COLOR_NAMES[] =
+{
+	"Black",	//sort
+	"White",	//hvid
 };
 
 #endif

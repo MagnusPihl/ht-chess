@@ -264,4 +264,49 @@ void Move::unexecute(Board &board)
 	return true;
 }*/
 
+
+std::ostream& operator << (std::ostream& out, const Move& move) {	
+	out << COLOR_NAMES[(GET_PIECE_COLOR(move.piece) == WHITE)] << " " << PIECE_NAMES[GET_PIECE_TYPE(move.piece)];
+	
+	switch (GET_PIECE_TYPE(move.special)) {		
+		case PAWN: //en-passant or promotion			
+
+			//changed
+			#if USE_EN_PASSANT == 1
+				if (GET_ROW(move.to) == PAWN_ENPASSANT_TAKE_ROW[(GET_PIECE_COLOR(move.piece) == WHITE)]) { //en-passant
+					out << " used en-passant from "
+				} else {		
+			#endif			
+					out << " was promoted to a when moving from ";
+			#if USE_EN_PASSANT == 1
+				}			
+			#endif
+			
+			break;
+			
+		case KING: //castling									
+			if (GET_COLUMN(move.to) == COLUMN_G) { //kingside castling
+				out << " made kingside castling from ";
+			} else { //queenside castling										
+				out << " made queenside castling from ";
+			}
+			break;		
+		default:
+			out << " moved from ";	
+	}
+	
+	out << COLUMN_NAMES[GET_REAL_COLUMN(move.from)] << GET_ROW(move.to);	
+	
+	if (move.content != NO_PIECE) {
+		out << " capturing " << COLOR_NAMES[(GET_PIECE_COLOR(move.content) == WHITE)] << " " << PIECE_NAMES[GET_PIECE_TYPE(move.content)];
+		out << " at ";
+	} else {
+		out << " to ";
+	}
+	
+	out << COLUMN_NAMES[GET_REAL_COLUMN(move.to)] << GET_ROW(move.to) << std::endl;
+	
+	return out;
+}
+
 #endif

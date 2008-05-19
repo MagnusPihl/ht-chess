@@ -2,6 +2,7 @@
 #define POSITION_H
 
 #include "Piece.h"
+#include <string>
 
 #define ROW_COUNT 8	
 #define COLUMN_COUNT 8	
@@ -83,6 +84,11 @@ enum Column {
 	COLUMN_F = 0x50,
 	COLUMN_G = 0x60,
 	COLUMN_H = 0x70,
+};
+
+static const char* COLUMN_NAMES[] =
+{
+	"A","B","C","D","E","F","G","H"
 };
 
 #endif
