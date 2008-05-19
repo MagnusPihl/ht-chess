@@ -27,24 +27,7 @@ int threadfunc(void *unused)
 }
 
 int main(int argc, char *argv[])
-{		
-	//using namespace std;
-	
-	/*int turnNumber = 0;
-	std::ofstream outout;
-	outout.open("testtest.m");
-	
-	if (outout.is_open()) {
-		outout << "dsadsa";
-	}*/
-
-	/*BoardValue val = BoardValue(1,2,3);
-	
-	printf("%i, %i, %i\n", val.hash, val.lock, val.value);	
-	printf("%i, %i, %i\n", BoardValue(1,2,3).hash, BoardValue(1,2,3).lock, BoardValue(1,2,3).value);	*/
-	
-	
-	
+{			
 	/* initialize SDL */
 	if ( SDL_Init( SDL_INIT_VIDEO ) < 0 )
 	{

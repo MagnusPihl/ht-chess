@@ -5,6 +5,7 @@
 #include "Piece.h"
 #include "Board.h"
 #include "PerformanceTester.h"
+#include <iostream>
 
 class Board;
 class MoveGenerator;
@@ -209,7 +210,7 @@ public:
 	*/
 	inline int getReversableMoves() {
 		return reversableMoves;
-	}
+	}		
 		
 	/**
 	* Get the relative board value.
@@ -225,6 +226,8 @@ public:
 	/*inline void setBoardValue(int value) {
 		boardValue = boardValue;
 	}*/
+	
+	friend std::ostream& operator << (std::ostream& out, const Move& move);
 };
 
 #endif

@@ -4,6 +4,8 @@
 #define CONFIGURATION 0
 
 //standard configuration
+#define PRINT_MOVE_DESCRIPTIONS 1
+
 //move generation
 #define USE_FLAT_STACK 0
 #define USE_EN_PASSANT 0
@@ -25,7 +27,7 @@
 //clears the cache when a non reversable move has been executed, meaning a pawn or capture don't use with DONT_CLEAR_ON_OVERFLOW
 
 #define DEFAULT_PLY 5
-#define MAX_SEARCH_TIME 30000	//max milliseconds per turn
+#define MAX_SEARCH_TIME 29500	//max milliseconds per turn
 
 //instrumentation
 #define TEST_PERFORMANCE 1
