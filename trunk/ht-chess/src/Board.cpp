@@ -657,7 +657,7 @@ void Board::getKingMovesFrom(Position position, LayeredStack<Move, STACK_SIZE> &
 		//kingside
 		if ((!HAS_ROOK_H_MOVED(*this, colorIndex)) &&
 			(content[CASTLING_COLUMN_F[colorIndex]] == NO_PIECE) &&
-			(content[CASTLING_COLUMN_H[colorIndex]] == NO_PIECE) &&
+			(content[CASTLING_COLUMN_G[colorIndex]] == NO_PIECE) &&
 			(NO_PIECE == getThreatOf(CASTLING_COLUMN_F[colorIndex], color)) &&
 			(NO_PIECE == getThreatOf(CASTLING_COLUMN_G[colorIndex], color))) {
 				
@@ -671,10 +671,11 @@ void Board::getKingMovesFrom(Position position, LayeredStack<Move, STACK_SIZE> &
 			#if USE_EN_PASSANT == 1
 				enPassantPosition, 
 			#endif
-				reversableMoves));
-				
+				reversableMoves));				
+		} 
+		
 		//queenside
-		} else if ((!HAS_ROOK_A_MOVED(*this, colorIndex)) && 			
+		if ((!HAS_ROOK_A_MOVED(*this, colorIndex)) && 			
 			(content[CASTLING_COLUMN_B[colorIndex]] == NO_PIECE) &&
 			(content[CASTLING_COLUMN_C[colorIndex]] == NO_PIECE) &&
 			(content[CASTLING_COLUMN_D[colorIndex]] == NO_PIECE) &&

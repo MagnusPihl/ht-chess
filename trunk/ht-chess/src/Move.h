@@ -210,22 +210,7 @@ public:
 	*/
 	inline int getReversableMoves() {
 		return reversableMoves;
-	}		
-		
-	/**
-	* Get the relative board value.
-	* If no value has been set the return will be INVALID_BOARD_VALUE
-	*/
-	/*inline int getBoardValue() {
-		return boardValue;
-	}*/
-	
-	/**
-	* Set the relative board value;
-	*/
-	/*inline void setBoardValue(int value) {
-		boardValue = boardValue;
-	}*/
+	}			
 	
 	friend std::ostream& operator << (std::ostream& out, const Move& move);
 };

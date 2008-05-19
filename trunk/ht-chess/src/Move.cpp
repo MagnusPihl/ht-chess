@@ -154,8 +154,7 @@ void Move::unexecute(Board &board)
 	
 	if (GET_PIECE_TYPE(content) == KING) {
 		board.kingPosition[colorIndex ^ 0x01] = to;
-	}
-	
+	}	
 	
 	if (GET_PIECE_TYPE(piece) == KING) {		
 		board.kingPosition[colorIndex] = from;
@@ -202,69 +201,6 @@ void Move::unexecute(Board &board)
 	}
 }
 
-/**
- * Makes a general check on the validity of the move. 
- * Be advised though that this function does not check the actual board
- * for the legality. Does not check for checkmate, mate, stalemate, and blocking pieces
- * only validity of positions.
- */
-/*bool Move::isValid(Move &move) {
-	//position validity
-	if (!IS_VALID_POSITION(move.from)) {
-		return false;
-	}
-	if (!IS_VALID_POSITION(move.to)) {
-		return false;
-	}
-	
-	//moved piece and taken piece must be of different colors
-	if ((move.content & PIECE_COLOR) == (move.piece & PIECE_COLOR)) {
-		return false;
-	}
-
-	//special moves
-	if (move.special != NO_PIECE) {
-		if ((move.special & KING) == KING) {
-			//king must be in initial position
-			if (GET_COLUMN(move.from) != COLUMN_E) {
-				return false;
-			}
-			if ((GET_COLUMN(move.to) != COLUMN_G) && (GET_COLUMN(move.to) != COLUMN_C)) {
-				return false;	
-			}
-
-			if ((move.special & BLACK) == BLACK) { //black
-				//king must be in top row
-				if ((GET_ROW(move.from) != ROW_8) || (GET_ROW(move.to) != ROW_8)) {
-					return false;					
-				}
-
-			} else { //white
-				//king must be in top row
-				if ((GET_ROW(move.from) != ROW_1) || (GET_ROW(move.to) != ROW_1)) {
-					return false;
-				}
-			}
-
-		} else if ((move.special & PAWN) == PAWN) {
-
-			if ((move.special & BLACK) == BLACK) { //black
-				
-			}
-
-		} else {
-			return false;
-		}
-
-	} else {
-		/*if (move.piece & PAWN) {				
-			if (GET_ROW(from) == )
-		}*/
-/*	}		
-	return true;
-}*/
-
-
 std::ostream& operator << (std::ostream& out, const Move& move) {	
 	out << COLOR_NAMES[(GET_PIECE_COLOR(move.piece) == WHITE)] << " " << PIECE_NAMES[GET_PIECE_TYPE(move.piece)];
 	
@@ -277,7 +213,7 @@ std::ostream& operator << (std::ostream& out, const Move& move) {
 					out << " used en-passant from "
 				} else {		
 			#endif			
-					out << " was promoted to a when moving from ";
+					out << " was promoted when moving from ";
 			#if USE_EN_PASSANT == 1
 				}			
 			#endif
