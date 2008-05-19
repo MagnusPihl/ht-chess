@@ -231,7 +231,7 @@ std::ostream& operator << (std::ostream& out, const Move& move) {
 			out << " moved from ";	
 	}
 	
-	out << COLUMN_NAMES[GET_REAL_COLUMN(move.from)] << GET_ROW(move.to);	
+	out << COLUMN_NAMES[GET_REAL_COLUMN(move.from)] << GET_ROW(move.from)+1;	
 	
 	if (move.content != NO_PIECE) {
 		out << " capturing " << COLOR_NAMES[(GET_PIECE_COLOR(move.content) == WHITE)] << " " << PIECE_NAMES[GET_PIECE_TYPE(move.content)];
@@ -240,7 +240,7 @@ std::ostream& operator << (std::ostream& out, const Move& move) {
 		out << " to ";
 	}
 	
-	out << COLUMN_NAMES[GET_REAL_COLUMN(move.to)] << GET_ROW(move.to) << std::endl;
+	out << COLUMN_NAMES[GET_REAL_COLUMN(move.to)] << GET_ROW(move.to)+1 << std::endl;
 	
 	return out;
 }

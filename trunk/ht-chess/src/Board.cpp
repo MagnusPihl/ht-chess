@@ -277,6 +277,22 @@ bool Board::hasPerformedCastling(Color color) {
 
 /*****************************************************************************/
 
+int Board::getHasMoved(Color color)
+{
+	return hasMoved[(color == WHITE)];
+}
+
+
+/*****************************************************************************/
+
+void Board::setHasMoved(Color color, int _hasMoved)
+{
+	hasMoved[(color == WHITE)] = _hasMoved;
+}
+
+
+/*****************************************************************************/
+
 bool Board::hasKingMoved(Color color) {
 	return HAS_KING_MOVED(*this, color == WHITE);
 }

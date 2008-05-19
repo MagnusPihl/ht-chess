@@ -37,7 +37,7 @@ public:
 		generateResponse();
 	}
 
-	HttpResponse(char* msg) : message(msg)
+	HttpResponse(const char* msg) : message(msg)
 	{
 		generateResponse();
 	}

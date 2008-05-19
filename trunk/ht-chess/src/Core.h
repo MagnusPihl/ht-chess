@@ -27,6 +27,8 @@
 
 #define PITCH (screen->pitch / 4)
 
+Board board;
+
 class Core
 {
 private:
@@ -57,9 +59,8 @@ private:
 	AI_TYPE moveSelector;
 	LayeredStack<Move, STACK_SIZE> moveList;
 	BoardRenderer renderer;
-	Board board;
-        Position cappedPos;
-        Move curMove;
+	Position cappedPos;
+    Move curMove;
 
 public:
 	Core()
@@ -279,7 +280,8 @@ public:
 										//printf("The material value of white: %i, and black: %i\n", board.getMaterialValue(WHITE), board.getMaterialValue(BLACK));
 										break;
 									}
-								}								
+								}
+								SDL_Flip(screen);	//Update screen
 							}
 						}
 					}
