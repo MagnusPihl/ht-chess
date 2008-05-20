@@ -4,7 +4,7 @@
 #define CONFIGURATION 0
 
 //standard configuration
-#define PRINT_MOVE_DESCRIPTIONS 0
+#define PRINT_MOVE_DESCRIPTIONS 1
 
 //move generation
 #define USE_FLAT_STACK 0
@@ -54,7 +54,7 @@
 
 #if CONFIGURATION == 2
 	//minimax with no caching and illegal moves
-	#define USE_MINIMAX_ONLY 1
+	#define USE_MINIMAX_ONLY s1
 	#define USE_EVALUATION_CACHING 0
 #endif
 
