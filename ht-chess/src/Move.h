@@ -6,6 +6,7 @@
 #include "Board.h"
 #include "PerformanceTester.h"
 #include <iostream>
+#include <string>
 
 class Board;
 class MoveGenerator;
@@ -210,7 +211,10 @@ public:
 	*/
 	inline int getReversableMoves() {
 		return reversableMoves;
-	}			
+	}
+
+	std::string serialize();
+	void deserialize(std::string input);
 	
 	friend std::ostream& operator << (std::ostream& out, const Move& move);
 };
