@@ -201,6 +201,36 @@ void Move::unexecute(Board &board)
 	}
 }
 
+std::string Move::serialize()
+{
+	/*ostringstream buffer;
+	buffer << getOldPosition() << "," << getNewPosition() << "," << getSpecial() << "," <<
+		rgetPiece() << "," << getContent() << "," << getHasMoved() << "," << getReversableMoves();
+	return buffer.str();*/
+}
+
+void Move::deserialize(std::string input)
+{
+	/*std::vector<int> moveVec;
+	std::string::size_type lastPos = input.find_first_not_of(",", 0);
+    std::string::size_type pos     = input.find_first_of(",", lastPos);
+
+    while (std::string::npos != pos || std::string::npos != lastPos)
+    {
+		istringstream buffer(input.substr(lastPos, pos - lastPos));
+		int tempInt;
+		buffer >> tempInt;
+        moveVec.push_back(tempInt);
+        lastPos = input.find_first_not_of(",", pos);
+        pos = input.find_first_of(",", lastPos);
+    }
+	if(moveVec.size() == 7)
+	{
+		Move move((Position)moveVec[0], (Position)moveVec[1], (ColoredPiece)moveVec[2], (ColoredPiece)moveVec[3],
+			(ColoredPiece)moveVec[4], moveVec[5], moveVec[6]);
+	}*/
+}
+
 std::ostream& operator << (std::ostream& out, const Move& move) {	
 	out << COLOR_NAMES[(GET_PIECE_COLOR(move.piece) == WHITE)] << " " << PIECE_NAMES[GET_PIECE_TYPE(move.piece)];
 	

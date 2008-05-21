@@ -6,10 +6,10 @@
 #pragma comment(lib, "SDLmain.lib")
 #endif
 
-#include "PerformanceTester.h"
-#include "SDL_thread.h"
 #include "Core.h"
 #include "ChessServer.h"
+#include "PerformanceTester.h"
+#include "SDL_thread.h"
 #include "LayeredStack.h"
 #include "LayeredStack.cpp"
 #include <fstream>
