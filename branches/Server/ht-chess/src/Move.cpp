@@ -207,6 +207,7 @@ std::string Move::serialize()
 	buffer << getOldPosition() << "," << getNewPosition() << "," << getSpecial() << "," <<
 		rgetPiece() << "," << getContent() << "," << getHasMoved() << "," << getReversableMoves();
 	return buffer.str();*/
+	return "";
 }
 
 void Move::deserialize(std::string input)

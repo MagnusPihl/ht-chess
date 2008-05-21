@@ -41,6 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="D:\Programmer\boost\boost_1_34_1;E:\boost;&quot;C:\Program Files\boost\boost_1_34_1&quot;;&quot;../ht-chess/src&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -60,7 +61,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="SDL_ttf.lib SDL_net.lib"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="&quot;C:\Program Files\boost\boost_1_34_1\lib&quot;;D:\Programmer\boost\boost_1_34_1\lib;E:\boost\lib;&quot;${SolutionDir}\ht-chess\Release&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -85,7 +88,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="xcopy ..\post-build ${outdir} /H /R /E /Q /C /Y"
+				CommandLine="echo \.svn\ &gt; excludefile.txt&#x0D;&#x0A;echo excludefile.txt &gt;&gt; excludefile.txt&#x0D;&#x0A;xcopy ..\post-build $(OutDir) /H /R /E /Q /C /Y /EXCLUDE:excludefile.txt&#x0D;&#x0A;xcopy ..\post-build ..\ht-chess /H /R /E /Q /C /Y /EXCLUDE:excludefile.txt&#x0D;&#x0A;del excludefile.txt"
 			/>
 		</Configuration>
 		<Configuration
