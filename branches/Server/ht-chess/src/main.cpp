@@ -6,13 +6,13 @@
 #pragma comment(lib, "SDLmain.lib")
 #endif
 
-#include "Core.h"
+//#include "Core.h"
 #include "ChessServer.h"
-#include "PerformanceTester.h"
+//#include "PerformanceTester.h"
 #include "SDL_thread.h"
 #include "LayeredStack.h"
 #include "LayeredStack.cpp"
-#include <fstream>
+//#include <fstream>
 
 #define WIDTH 800
 #define HEIGHT 600
@@ -34,18 +34,18 @@ int main(int argc, char *argv[])
 		fprintf( stderr, "Video initialization failed: %s\n", SDL_GetError( ) );
 		SDL_Quit( );
 	}
-	if(TTF_Init()==-1)
+	/*if(TTF_Init()==-1)
 	{
 	    printf("TTF_Init: %s\n", TTF_GetError());
 	    exit(2);
-	}
+	}*/
 	atexit(SDL_Quit);
 
 	
-	//SDL_Thread *thread;
-	//thread = SDL_CreateThread(threadfunc, NULL);
-	Core core;
-	core.run();
+	SDL_Thread *thread;
+	thread = SDL_CreateThread(threadfunc, NULL);
+	/*Core core;
+	core.run();*/
 	//SDL_WaitThread(thread, NULL);
 		
 	return 0;

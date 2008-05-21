@@ -27,11 +27,10 @@
 
 #define PITCH (screen->pitch / 4)
 
-Board board;
-
 class Core
 {
 private:
+	Board board;
 	SDL_Surface* screen;
 	
 	SDL_Color colorWhite;

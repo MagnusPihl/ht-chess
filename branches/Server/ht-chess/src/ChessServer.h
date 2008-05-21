@@ -29,6 +29,8 @@ void Tokenize(const std::string& str, std::vector<int>& tokens, const std::strin
 
 int clientThread(void *thread)
 {
+	Board board;
+
 	//TCPsocket socket = (TCPsocket)clientSocket;
 	TCPsocket socket = chessServer_clients.back();
 	printf("Accepted a socket.\n");
