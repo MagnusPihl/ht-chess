@@ -26,11 +26,11 @@
 #define CLEAR_CACHE_ON_NON_REVERSABLE_MOVE 0 
 //clears the cache when a non reversable move has been executed, meaning a pawn or capture don't use with DONT_CLEAR_ON_OVERFLOW
 
-#define DEFAULT_PLY 5
+#define DEFAULT_PLY 4
 #define MAX_SEARCH_TIME 29500	//max milliseconds per turn
 
 //instrumentation
-#define TEST_PERFORMANCE 0
+#define TEST_PERFORMANCE 1
 #define PRINT_NUMBER_OF_EVALUATIONS 1
 #define PRINT_CACHE_RETRIEVALS 1
 #define PRINT_CACHE_SIZE 1
