@@ -1,12 +1,6 @@
 #ifndef CORE_H
 #define CORE_H
 
-#if USE_MINIMAX_ONLY == 1
-	#define AI_TYPE MiniMax
-#else
-	#define AI_TYPE AlphaBetaOptimized
-#endif
-
 #include "SDL.h"
 #include "SDL_ttf.h"
 #include "MouseHandler.h"
@@ -17,6 +11,12 @@
 #include "LayeredStack.h"
 #include <math.h>
 #include "PerformanceTester.h"
+
+#if USE_MINIMAX_ONLY == 1
+	#define AI_TYPE MiniMax
+#else
+	#define AI_TYPE AlphaBetaOptimized
+#endif
 
 #if TEST_PERFORMANCE == 1
 	#include <fstream>

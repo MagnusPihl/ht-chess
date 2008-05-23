@@ -508,8 +508,8 @@
 						#if PRINT_NUMBER_OF_EVALUATIONS == 1
 							test().evaluations[i-2] = 0;
 						#endif
-						
-						#if PRINT_CACHE_RETRIEVALS == 1
+					
+						#if USE_EVALUATION_CACHING == 1 && PRINT_CACHE_RETRIEVALS == 1
 							test().cacheRetrievals[i-2] = 0;
 						#endif
 						
@@ -540,7 +540,7 @@
 						}
 					#endif
 					
-					#if PRINT_CACHE_SIZE == 1 && TEST_PERFORMANCE == 1
+					#if USE_EVALUATION_CACHING == 1 && PRINT_CACHE_SIZE == 1 && TEST_PERFORMANCE == 1
 						test().cacheSize[i-2] = evaluator.cache.getSize(); 				
 					#endif	
 				} 
@@ -574,7 +574,7 @@
 						test().out << test().evaluations[maxDepth-2] << "]];" << std::endl;					 
 					#endif	
 					
-					#if PRINT_CACHE_RETRIEVALS == 1						
+					#if USE_EVALUATION_CACHING == 1 && PRINT_CACHE_RETRIEVALS == 1
 						test().out << "cacheRetrievals = [cacheRetrievals, [";
 						
 						for(int i = 0; i < (maxDepth-2); ++i) {
@@ -583,7 +583,7 @@
 						test().out << test().cacheRetrievals[maxDepth-2] << "]];" << std::endl; 				
 					#endif						
 					
-					#if PRINT_CACHE_SIZE == 1
+					#if USE_EVALUATION_CACHING == 1 && PRINT_CACHE_SIZE == 1
 						test().out << "cacheSize = [cacheSize, [";
 						
 						for(int i = 0; i < (maxDepth-2); ++i) {
@@ -592,7 +592,7 @@
 						test().out << test().cacheSize[maxDepth-2] << "]];" << std::endl; 				
 					#endif
 										
-					#if PRINT_CACHE_CLEARS == 1
+					#if USE_EVALUATION_CACHING == 1 && PRINT_CACHE_CLEARS == 1
 						test().out << "cacheClears = [cacheClears, [";
 						
 						for(int i = 0; i < (maxDepth-2); ++i) {

@@ -15,7 +15,7 @@
 #define USE_MINIMAX_ONLY 0
 #define USE_ITERATIVE_DEEPENING 1
 #define USE_UNSORTED_STACK 0 //only applies to alphabeta implementation
-#define USE_TIME_CONSTRAINT 1
+#define USE_TIME_CONSTRAINT 0
 	
 //caching
 #define USE_EVALUATION_CACHING 1
@@ -26,7 +26,7 @@
 #define CLEAR_CACHE_ON_NON_REVERSABLE_MOVE 0 
 //clears the cache when a non reversable move has been executed, meaning a pawn or capture don't use with DONT_CLEAR_ON_OVERFLOW
 
-#define DEFAULT_PLY 4
+#define DEFAULT_PLY 5
 #define MAX_SEARCH_TIME 29500	//max milliseconds per turn
 
 //instrumentation
