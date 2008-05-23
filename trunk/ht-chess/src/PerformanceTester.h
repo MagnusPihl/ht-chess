@@ -42,8 +42,8 @@
 					out << "cacheClears = [];" << std::endl; 
 				#endif
 				
-				#if PRINT_CACHE_CLEARS == 1
-					out << "cacheClears = [];" << std::endl; 
+				#if PRINT_CACHE_RETRIEVALS == 1
+					out << "cacheRetrievals = [];" << std::endl; 
 				#endif		 
 			#endif 
 								

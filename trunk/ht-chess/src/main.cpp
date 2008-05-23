@@ -7,7 +7,7 @@
 #endif
 
 #include "Core.h"
-#include "ChessServer.h"
+//#include "ChessServer.h"
 #include "PerformanceTester.h"
 #include "SDL_thread.h"
 #include "LayeredStack.h"
@@ -19,12 +19,12 @@
 
 #define PITCH (screen->pitch / 4)
 
-int threadfunc(void *unused)
-{
-    ChessServer http;
-	http.run();
-	return 0;
-}
+//int threadfunc(void *unused)
+//{
+//    ChessServer http;
+//	http.run();
+//	return 0;
+//}
 
 int main(int argc, char *argv[])
 {			

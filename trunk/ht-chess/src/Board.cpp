@@ -897,8 +897,8 @@ void Board::resetBoard() {
 	content[A8] = ROOK_BLACK;
 	content[B8] = KNIGHT_BLACK;
 	content[C8] = BISHOP_BLACK;
-	content[D8] = KING_BLACK;
-	content[E8] = QUEEN_BLACK;
+	content[E8] = KING_BLACK;
+	content[D8] = QUEEN_BLACK;
 	content[F8] = BISHOP_BLACK;
 	content[G8] = KNIGHT_BLACK;
 	content[H8] = ROOK_BLACK;
@@ -932,7 +932,7 @@ void Board::resetBoard() {
 	content[H1] = ROOK_WHITE;
 	
 	
-	kingPosition[BLACK_INDEX] = D8;	
+	kingPosition[BLACK_INDEX] = E8;	
 	kingPosition[WHITE_INDEX] = E1;
 	hasMoved[BLACK_INDEX] = 0;	
 	hasMoved[WHITE_INDEX] = 0;	
