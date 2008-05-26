@@ -1,0 +1,11 @@
+idsecs = id / 1000;
+figure();
+hold on;
+title('Search time comparison with/without iterative deepening');
+xlabel('Turn Number');
+ylabel('Calculation Time (seconds)');
+bar(idsecs, 'group');
+legend('Without Iterative Deepening', 'With Iterative Deepening');
+axis tight;
+grid on;
+hold off;

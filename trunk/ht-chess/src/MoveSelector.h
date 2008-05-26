@@ -37,7 +37,7 @@
 				(((boardState = board.isCheckmate()) & (IS_STALEMATE | IS_CHECKMATE)) != 0))		//if leaf
 			{				
 				return evaluator(board, curDepth, boardState);
-			}
+			}			
 			else if(isMaximizer)	//if maximizer
 			{
 				int bestMove = -10000;
@@ -46,13 +46,14 @@
 							
 				for(LayeredStack<Move,1>::iterator itr = moves.begin(); itr != moves.end(); ++itr)
 				{			
-					(*itr).execute(board);
 					moves.setReturnPoint();
+					(*itr).execute(board);
 					curMove = miniMax(board, path, false, curDepth+1, maxDepth);
 					if(curMove > bestMove)
 					{
 						bestMove = curMove;
-						path = (*itr);
+						if(curDepth == 0)
+							path = (*itr);
 					}
 					(*itr).unexecute(board);
 					moves.rollBack();
@@ -72,13 +73,14 @@
 				
 				for(LayeredStack<Move,1>::iterator itr = moves.begin(); itr != moves.end(); ++itr)
 				{
-					(*itr).execute(board);
 					moves.setReturnPoint();
+					(*itr).execute(board);
 					curMove = miniMax(board, path, true, curDepth+1, maxDepth);
 					if(curMove < bestMove)
 					{
 						bestMove = curMove;
-						path = (*itr);
+						if(curDepth == 0)
+							path = (*itr);
 					}
 					(*itr).unexecute(board);
 					moves.rollBack();
@@ -134,6 +136,8 @@
 				timeStarted = SDL_GetTicks();
 			#endif*/
 			
+			moves.clear();
+
 			miniMax(board, path, isMaximizer, 0, maxDepth);
 
 			#if TEST_PERFORMANCE == 1

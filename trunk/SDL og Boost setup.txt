@@ -1,3 +1,10 @@
+Boost installation instructions:
+http://www.boost.org/doc/libs/1_35_0/more/getting_started/windows.html
+
+SDL installation instructions:
+http://pgdc.purdue.org/sdltutorial/sdl_setup.html
+
+
 1. Visual Studio -> Tools -> Options... -> Projects and Solutions -> VC++ Directories:
 Tilføj SDL "include" folderen og SLD "lib" folderen til Include files og Library files.
 
