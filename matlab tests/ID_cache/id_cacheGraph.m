@@ -1,0 +1,11 @@
+time = id_cache / 1000;
+figure();
+hold on;
+title('Search time comparison with/without caching without iterative deepening', 'FontSize', 12);
+xlabel('Turn Number');
+ylabel('Calculation Time (seconds)');
+bar(time, 'group');
+legend('Without Cache', 'With Cache');
+axis tight;
+grid on;
+hold off;

@@ -1,0 +1,11 @@
+time = alphabeta / 1000;
+figure();
+hold on;
+title('Search time comparison with MiniMax and AlphaBeta (with/without sorting)', 'FontSize', 12);
+xlabel('Turn Number');
+ylabel('Calculation Time (seconds)');
+bar(time, 'group');
+legend('Sorted AlphaBeta', 'Unsorted AlphaBeta', 'MiniMax');
+axis tight;
+grid on;
+hold off;

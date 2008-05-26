@@ -1,0 +1,11 @@
+cachesecs = cache' / 1000;
+figure();
+hold on;
+title('Caching with Vectors vs. Linked Lists, each with 10.000 cache slots');
+xlabel('Turn Number');
+ylabel('Calculation Time (seconds)');
+bar(cachesecs, 'group');
+legend('Vectors', 'Linked Lists');
+axis tight;
+grid on;
+hold off;
