@@ -240,7 +240,7 @@ std::ostream& operator << (std::ostream& out, const Move& move) {
 			//changed
 			#if USE_EN_PASSANT == 1
 				if (GET_ROW(move.to) == PAWN_ENPASSANT_TAKE_ROW[(GET_PIECE_COLOR(move.piece) == WHITE)]) { //en-passant
-					out << " used en-passant from "
+					out << " used en-passant from ";
 				} else {		
 			#endif			
 					out << " was promoted when moving from ";
