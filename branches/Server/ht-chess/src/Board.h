@@ -1,12 +1,14 @@
 #ifndef BOARD_H
 #define BOARD_H
 
+#define INVALID_BOARD_VALUE 0xFFFFFFFF
+
+#include "GameConfiguration.h"
 #include "Piece.h"
 #include "Position.h"
 #include "Move.h"
 #include "MoveGenerator.h"
 #include "LayeredStack.h"
-#include "GameConfiguration.h"
 #include <vector>
 
 class MoveGenerator;

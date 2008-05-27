@@ -103,11 +103,6 @@ class ChessServer
 public:
 	ChessServer()
 	{
-		if(SDL_Init(0)==-1)
-		{
-			printf("SDL_Init: %s\n", SDL_GetError());
-			exit(1);
-		}
 		if(SDLNet_Init()==-1)
 		{
 			printf("SDLNet_Init: %s\n", SDLNet_GetError());

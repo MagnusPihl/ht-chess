@@ -136,7 +136,7 @@
 			
 			if(
 				#if USE_TIME_CONSTRAINT == 1
-					(SDL_GetTicks() - timeStarted > maxTime) || 
+					(SDL_GetTicks() - (unsigned int)timeStarted > (unsigned int)maxTime) || 
 				#endif		    		    
 				(curDepth == maxDepth) || 
 				(((boardState = board.isCheckmate()) & (IS_CHECKMATE | IS_STALEMATE)) != 0))		//if leaf
