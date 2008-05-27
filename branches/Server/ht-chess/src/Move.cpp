@@ -203,8 +203,8 @@ void Move::unexecute(Board &board)
 
 std::string Move::serialize()
 {
-	/*ostringstream buffer;
-	buffer << getOldPosition() << "," << getNewPosition() << "," << getSpecial() << "," <<
+	//ostringstream buffer;
+	/*buffer << getOldPosition() << "," << getNewPosition() << "," << getSpecial() << "," <<
 		rgetPiece() << "," << getContent() << "," << getHasMoved() << "," << getReversableMoves();
 	return buffer.str();*/
 	return "";
