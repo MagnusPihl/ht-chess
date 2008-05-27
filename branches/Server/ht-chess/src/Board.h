@@ -335,6 +335,9 @@ public:
 	void setHasMoved(Color color, int _hasMoved);
 	int getHasMoved(Color color);
 	
+	void setEnPassantPosition(Position pos);
+	Position getEnPassantPosition();
+	
 	/**
 	* Returns the sum value of the piece the specified color has left
 	* The material value does not include the king

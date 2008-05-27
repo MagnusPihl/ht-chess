@@ -52,24 +52,18 @@ int clientThread(void *thread)
 	if(i != -1)
 		boardMsg = fullMsg.substr(i, j-i);
 	
-	i = fullMsg.find("Move:") + 6;
-	j = fullMsg.find('\n', i);
-	if(i != -1)
-		moveMsg = fullMsg.substr(i, j-i);
 	printf("Received request.\n");
-	//printf("Board:%s\n", boardMsg.c_str());
-	//printf("Move:%s\n", moveMsg.c_str());
 	
-	std::vector<int> settingsVec;		//(max_depth),(max_search_time)
+	std::vector<int> settingsVec;		//(max_depth),(max_search_time),(turn_color)
 	Tokenize(settingsMsg, settingsVec);
 
-	std::vector<int> boardVec;
+	std::vector<int> boardVec;			//(hasMovedWhite),(hasMovedBlack),(enPassant),(content 0-64)
 	Tokenize(boardMsg, boardVec);
-	if(boardVec.size() == 66)
+	if(boardVec.size() == 67)
 	{
 		board.setHasMoved(WHITE, boardVec[0]);
 		board.setHasMoved(BLACK, boardVec[1]);
-		int pos = 2;
+		int pos = 3;
 		for(int i=0; i<8; i++)
 		{
 			for(int j=0; j<8; j++)
@@ -80,30 +74,20 @@ int clientThread(void *thread)
 		}
 	}
 
-	std::vector<int> moveVec;
-	Tokenize(moveMsg, moveVec);
-	if(moveVec.size() >= 7)
-	{
-		Move move((Position)moveVec[0], (Position)moveVec[1], (ColoredPiece)moveVec[2], (ColoredPiece)moveVec[3],
-			(ColoredPiece)moveVec[4], moveVec[5], moveVec[6]);
-		board.setHasMoved(WHITE, boardVec[0]);
-		//Don't execute the move. The received board is up-to-date.
-		//move.execute(board);
+	printf("Calculating move with depth of %i in a maximum of %i milliseconds...\n", settingsVec[0], settingsVec[1]);
+	Move result = chessServer_moveSelector(board, IS_WHITE(settingsVec[2]), settingsVec[0], settingsVec[1]);
+	printf("Done calculating move.\n");
 
-		printf("Calculating move with depth of %i in a maximum of %i milliseconds...\n", settingsVec[0], settingsVec[1]);
-		Move result = chessServer_moveSelector(board, IS_WHITE(move.getPiece()), settingsVec[0], settingsVec[1]);
-		printf("Done calculating move.\n");
-	
-		ostringstream buffer;
-		buffer << result.getOldPosition() << "," << result.getNewPosition() << "," << result.getSpecial() << "," <<
-			result.getPiece() << "," << result.getContent() << "," << result.getHasMoved() << "," << result.getReversableMoves();
-		HttpResponse resp(buffer.str().c_str());
+	ostringstream buffer;
+	buffer << result.getOldPosition() << "," << result.getNewPosition() << "," << result.getSpecial() << "," <<
+		result.getPiece() << "," << result.getContent() << "," << result.getHasMoved() << "," << result.getReversableMoves();
+	HttpResponse resp(buffer.str().c_str());
 
-		int tcpResult = SDLNet_TCP_Send(socket, resp(), resp.getLength());
-		if( tcpResult < resp.getLength() )
-			printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
-		printf("Sent response.\n");
-	}
+	int tcpResult = SDLNet_TCP_Send(socket, resp(), resp.getLength());
+	if( tcpResult < resp.getLength() )
+		printf("SDLNet_TCP_Send: %s\n", SDLNet_GetError());
+	printf("Sent response.\n");
+
 	SDLNet_TCP_Close(socket);
 	SDL_WaitThread((SDL_Thread*)thread, NULL);
 	return 0;

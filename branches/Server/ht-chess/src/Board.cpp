@@ -290,6 +290,16 @@ void Board::setHasMoved(Color color, int _hasMoved)
 	hasMoved[(color == WHITE)] = _hasMoved;
 }
 
+Position Board::getEnPassantPosition()
+{
+	return enPassantPosition;
+}
+
+void Board::setEnPassantPosition(Position pos)
+{
+	enPassantPosition = pos;
+}
+
 
 /*****************************************************************************/
 
