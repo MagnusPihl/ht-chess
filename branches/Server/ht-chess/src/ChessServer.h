@@ -85,7 +85,8 @@ int clientThread(void *thread)
 
 	ostringstream buffer;
 	buffer << result.getOldPosition() << "," << result.getNewPosition() << "," << result.getSpecial() << "," <<
-		result.getPiece() << "," << result.getContent() << "," << result.getHasMoved() << "," << result.getReversableMoves();
+		result.getPiece() << "," << result.getContent() << "," << result.getHasMoved() << "," <<
+		result.getReversableMoves() << "," << result.getEnPassantPosition();
 	HttpResponse resp(buffer.str().c_str());
 
 	int tcpResult = SDLNet_TCP_Send(socket, resp(), resp.getLength());
