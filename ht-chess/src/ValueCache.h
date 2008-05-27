@@ -5,7 +5,6 @@
 #include <vector>
 #include <list>
 #include "Board.h"
-#include "PerformanceTester.h"
 
 #if USE_LINKEDLISTS_WHEN_CACHING == 0	
 	#define LIST_TYPE vector
@@ -129,15 +128,8 @@ public:
 	}
 	
 	//remove all keys
-	void clear() {
-		#if PRINT_CACHE_CLEARS == 1 && TEST_PERFORMANCE == 1 && USE_EVALUATION_CACHING == 1
-			#if USE_ITERATIVE_DEEPENING == 1 && USE_MINIMAX_ONLY == 0
-				test().cacheClears[test().iteration-1]++;
-			#else
-				test().cacheClears++;
-			#endif			
-		#endif
-		
+	void clear()
+	{	
 		vector<LIST_TYPE<BoardValue>>::iterator end = table->end();
 		
 		for (vector<LIST_TYPE<BoardValue>>::iterator i = table->begin(); i != end; ++i) {		

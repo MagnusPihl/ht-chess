@@ -4,7 +4,7 @@
 
 #include "Piece.h"
 #include "Board.h"
-#include "PerformanceTester.h"
+#include "GameConfiguration.h"
 #include <iostream>
 #include <string>
 
