@@ -4,12 +4,17 @@
 #define SERVER_PORT 9999
 
 #include <string>
+#include "GameConfiguration.h"
 #include "SDL_net.h"
 #include "HttpResponse.h"
 #include "MoveSelector.h"
 
 std::vector<TCPsocket> chessServer_clients;
-AlphaBetaOptimized chessServer_moveSelector;
+#if USE_MINIMAX_ONLY == 1
+	MiniMax chessServer_moveSelector;
+#else
+	AlphaBetaOptimized chessServer_moveSelector;
+#endif
 
 void Tokenize(const std::string& str, std::vector<int>& tokens, const std::string& delimiters = ",")
 {
