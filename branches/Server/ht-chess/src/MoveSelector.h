@@ -252,6 +252,7 @@
 		Move nextMove[2];	//0 == WHITE, 1 == BLACK
 		#if USE_TIME_CONSTRAINT == 1
 			int timeStarted;
+			int maxTime;
 		#endif
 
 		int alphaBeta(Board &board, Move &path, bool isMaximizer, int curDepth, int maxDepth, int alpha, int beta)
@@ -270,7 +271,7 @@
 			
 			if(
 				#if USE_TIME_CONSTRAINT == 1
-					(SDL_GetTicks() - timeStarted > MAX_SEARCH_TIME) || 
+					(SDL_GetTicks() - timeStarted > maxTime) || 
 				#endif		    		    
 				(curDepth == maxDepth) || 
 				(((boardState = board.isCheckmate()) & (IS_CHECKMATE | IS_STALEMATE)) != 0))		//if leaf
@@ -473,12 +474,13 @@
 			//moveFile.open("moves.txt");
 		}
 
-		Move operator()(Board &board, bool isMaximizer=true, int maxDepth=DEFAULT_PLY)
+		Move operator()(Board &board, bool isMaximizer=true, int maxDepth=DEFAULT_PLY, int timeCutoff=MAX_SEARCH_TIME)
 		{
 			Move path;
 			moveList.clear();
 			
 			#if USE_TIME_CONSTRAINT == 1
+				maxTime = MAX_SEARCH_TIME;
 				timeStarted = SDL_GetTicks();
 			#endif									
 						

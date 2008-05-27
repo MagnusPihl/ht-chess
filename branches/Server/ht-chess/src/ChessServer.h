@@ -38,20 +38,31 @@ int clientThread(void *thread)
 	char msg[4096];
 	SDLNet_TCP_Recv(socket, msg, 4095);
 	std::string fullMsg = msg;
+	std::string settingsMsg;
 	std::string boardMsg;
 	std::string moveMsg;
-	int i = fullMsg.find("Board:") + 7;
-	int j = fullMsg.find('\n', i);
+	
+	int i = fullMsg.find("Settings:") + 10;
+	int j = fullMsg.find("\n", i);
+	if(i != -1)
+		settingsMsg = fullMsg.substr(i, j-i);
+	
+	i = fullMsg.find("Board:") + 7;
+	j = fullMsg.find('\n', i);
 	if(i != -1)
 		boardMsg = fullMsg.substr(i, j-i);
+	
 	i = fullMsg.find("Move:") + 6;
 	j = fullMsg.find('\n', i);
 	if(i != -1)
 		moveMsg = fullMsg.substr(i, j-i);
 	printf("Received request.\n");
-	printf("Board:%s\n", boardMsg.c_str());
-	printf("Move:%s\n", moveMsg.c_str());
+	//printf("Board:%s\n", boardMsg.c_str());
+	//printf("Move:%s\n", moveMsg.c_str());
 	
+	std::vector<int> settingsVec;		//(max_depth),(max_search_time)
+	Tokenize(settingsMsg, settingsVec);
+
 	std::vector<int> boardVec;
 	Tokenize(boardMsg, boardVec);
 	if(boardVec.size() == 66)
@@ -68,16 +79,20 @@ int clientThread(void *thread)
 			}
 		}
 	}
+
 	std::vector<int> moveVec;
 	Tokenize(moveMsg, moveVec);
-	if(moveVec.size() == 7)
+	if(moveVec.size() >= 7)
 	{
 		Move move((Position)moveVec[0], (Position)moveVec[1], (ColoredPiece)moveVec[2], (ColoredPiece)moveVec[3],
 			(ColoredPiece)moveVec[4], moveVec[5], moveVec[6]);
 		board.setHasMoved(WHITE, boardVec[0]);
-		move.execute(board);
+		//Don't execute the move. The received board is up-to-date.
+		//move.execute(board);
 
-		Move result = chessServer_moveSelector(board, IS_WHITE((ColoredPiece)moveVec[3]));
+		printf("Calculating move with depth of %i in a maximum of %i milliseconds...\n", settingsVec[0], settingsVec[1]);
+		Move result = chessServer_moveSelector(board, IS_WHITE(move.getPiece()), settingsVec[0], settingsVec[1]);
+		printf("Done calculating move.\n");
 	
 		ostringstream buffer;
 		buffer << result.getOldPosition() << "," << result.getNewPosition() << "," << result.getSpecial() << "," <<
@@ -146,7 +161,7 @@ public:
 			if(clientSocket != NULL)
 			{
 				chessServer_clients.push_back(clientSocket);
-				SDL_Thread *client;
+				SDL_Thread *client = NULL;
 				client = SDL_CreateThread(clientThread, client);
 			}
 		}
