@@ -42,8 +42,10 @@ int main(int argc, char *argv[])
 	atexit(SDL_Quit);
 
 	
-	SDL_Thread *thread;
-	thread = SDL_CreateThread(threadfunc, NULL);
+	//SDL_Thread *thread;
+	//thread = SDL_CreateThread(threadfunc, NULL);
+	ChessServer http;
+	http.run();
 	/*Core core;
 	core.run();*/
 	//SDL_WaitThread(thread, NULL);
