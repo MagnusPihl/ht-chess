@@ -9,12 +9,12 @@
 #define IS_COLOR(color, wantedColor) (((color) & PIECE_COLOR) == (wantedColor))
 
 /**
-* Returns true if color is WHITE
+* Returns true if color is BLACK
 */
 #define IS_BLACK(color) (((color) & PIECE_COLOR) == BLACK)
 
 /**
-* Returns true if color is BLACK
+* Returns true if color is WHITE
 */
 #define IS_WHITE(color) (((color) & PIECE_COLOR) == WHITE)
 

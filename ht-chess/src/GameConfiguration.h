@@ -8,7 +8,7 @@
 
 //move generation
 #define USE_FLAT_STACK 0
-#define USE_EN_PASSANT 0
+#define USE_EN_PASSANT 1
 #define ONLY_GENERATE_LEGAL_MOVES 0
 
 //minimax

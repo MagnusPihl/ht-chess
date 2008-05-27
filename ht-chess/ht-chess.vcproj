@@ -88,7 +88,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="echo \.svn\ &gt; excludefile.txt&#x0D;&#x0A;echo excludefile.txt &gt;&gt; excludefile.txt&#x0D;&#x0A;xcopy ..\post-build $(OutDir) /H /R /E /Q /C /Y /EXCLUDE:excludefile.txt&#x0D;&#x0A;xcopy ..\post-build ..\ht-chess /H /R /E /Q /C /Y /EXCLUDE:excludefile.txt&#x0D;&#x0A;del excludefile.txt"
+				CommandLine="echo \.svn\ &gt; excludefile.txt&#x0D;&#x0A;echo excludefile.txt &gt;&gt; excludefile.txt&#x0D;&#x0A;xcopy ..\post-build $(OutDir) /H /R /E /Q /C /Y /EXCLUDE:excludefile.txt&#x0D;&#x0A;xcopy ..\post-build ..\ht-chess /H /R /E /Q /C /Y /EXCLUDE:excludefile.txt&#x0D;&#x0A;del excludefile.txt&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -209,15 +209,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\BoardRenderer.h"
-				>
-			</File>
-			<File
 				RelativePath=".\src\ChessServer.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\Core.h"
 				>
 			</File>
 			<File
@@ -233,15 +225,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\HttpTest.h"
-				>
-			</File>
-			<File
 				RelativePath=".\src\LayeredStack.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\MouseHandler.h"
 				>
 			</File>
 			<File
