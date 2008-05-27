@@ -126,4 +126,6 @@ public:
 	void setValue(iterator &itr, int value);
 };
 
+#include "LayeredStack.cpp"
+
 #endif

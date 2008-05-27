@@ -17,7 +17,6 @@ static int PAWN_ENPASSANT_CONTENT_ROW[2] = {ROW_4, ROW_5}; //0 = black, 1 = whit
 #endif
 
 static int PAWN_DIRECTION[2] = {-1, 1}; //0 = black, 1 = white
-#define INVALID_BOARD_VALUE 0xFFFFFFFF
 
 class Move
 {
