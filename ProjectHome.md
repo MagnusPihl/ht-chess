@@ -1,0 +1,1 @@
+Chess Computer Game for AI Course at IHK
